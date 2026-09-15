@@ -43,7 +43,7 @@ function Home() {
               + mais informações
             </Button>
           </div>
-          <div className="mt-1 flex w-[380px] justify-between text-sm text-muted-foreground">
+          <div className="mt-1 flex w-full max-w-[380px] justify-between text-sm text-muted-foreground">
             <span>{patient.sexo}</span>
             <span>{patient.idade}</span>
           </div>
@@ -57,7 +57,7 @@ function Home() {
         </div>
 
         <div className="flex flex-col gap-5">
-          <div className="flex justify-end">
+          <div className="hidden justify-end sm:flex">
             <Avatar />
           </div>
 
@@ -71,12 +71,12 @@ function Home() {
             </span>
           </label>
 
-          <div className="grid flex-1 grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-5">
             {railItems.map((c) => (
               <Link
                 key={c.to}
                 to={c.to}
-                className="group relative flex min-h-[180px] flex-col overflow-hidden rounded-[1.5rem] transition-transform hover:-translate-y-0.5 sm:min-h-[220px]"
+                className="group relative flex aspect-[427/268] min-w-0 flex-col overflow-hidden rounded-[1.5rem] transition-transform hover:-translate-y-0.5"
               >
                 <img src={pasta.url} alt="" className="absolute inset-0 size-full" />
                 <span className="relative z-10 px-5 pb-3 pt-4 text-xl sm:text-2xl">{c.nome}</span>
@@ -84,7 +84,7 @@ function Home() {
                   src={c.img}
                   alt={c.nome}
                   loading="lazy"
-                  className="relative z-10 mx-4 mb-4 h-0 w-[calc(100%-2rem)] flex-1 rounded-[1rem] object-cover"
+                  className="relative z-10 mx-4 mb-4 h-0 min-h-0 w-[calc(100%-2rem)] flex-1 rounded-[1rem] object-cover"
                 />
               </Link>
             ))}

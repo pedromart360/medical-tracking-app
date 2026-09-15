@@ -21,7 +21,7 @@ export function Avatar() {
 
 export function Rail() {
   return (
-    <div className="flex items-center gap-3">
+    <nav aria-label="Categorias" className="flex items-center gap-3">
       {railItems.map((r) => (
         <Link key={r.to} to={r.to} title={r.nome}>
           <img
@@ -33,7 +33,7 @@ export function Rail() {
         </Link>
       ))}
       <Avatar />
-    </div>
+    </nav>
   );
 }
 
