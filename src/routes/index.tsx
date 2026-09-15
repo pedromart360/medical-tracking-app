@@ -93,7 +93,10 @@ function Home() {
         <Timeline
           onClick={() => setCalendario(true)}
           action={
-            <button className="rounded-full bg-primary px-7 py-4 text-sm text-primary-foreground transition-opacity hover:opacity-90">
+            <button
+              onClick={() => setCalendario(true)}
+              className="rounded-full bg-primary px-7 py-4 text-sm text-primary-foreground transition-opacity hover:opacity-90"
+            >
               resumo geral
             </button>
           }
