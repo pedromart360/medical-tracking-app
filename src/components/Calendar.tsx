@@ -5,7 +5,7 @@ import { marcadores, meses, registrosDoDia } from "@/lib/data";
 export function CalendarOverlay({ onClose }: { onClose: () => void }) {
   const [mesIndex, setMesIndex] = useState(0);
   const [dia, setDia] = useState<string | null>(null);
-  const mes = meses[mesIndex];
+  const mes = meses[mesIndex] as string;
   const dias = 30 + (mesIndex % 2 === 0 ? 1 : 0) - (mesIndex === 1 ? 3 : 0);
   const badges = marcadores[mes] ?? {};
 
