@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DoencasRouteImport } from './routes/doencas'
+import { Route as TratamentosRouteImport } from './routes/tratamentos'
+import { Route as ExamesIndexRouteImport } from './routes/exames.index'
+import { Route as MedicosIndexRouteImport } from './routes/medicos.index'
+import { Route as ExamesSlugIndexRouteImport } from './routes/exames.$slug.index'
+import { Route as ExamesSlugTipoRouteImport } from './routes/exames.$slug.$tipo'
+import { Route as MedicosEspIndexRouteImport } from './routes/medicos.$esp.index'
+import { Route as MedicosEspDocRouteImport } from './routes/medicos.$esp.$doc'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoencasRoute = DoencasRouteImport.update({
+  id: '/doencas',
+  path: '/doencas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TratamentosRoute = TratamentosRouteImport.update({
+  id: '/tratamentos',
+  path: '/tratamentos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamesIndexRoute = ExamesIndexRouteImport.update({
+  id: '/exames/',
+  path: '/exames/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MedicosIndexRoute = MedicosIndexRouteImport.update({
+  id: '/medicos/',
+  path: '/medicos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamesSlugIndexRoute = ExamesSlugIndexRouteImport.update({
+  id: '/exames/$slug/',
+  path: '/exames/$slug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamesSlugTipoRoute = ExamesSlugTipoRouteImport.update({
+  id: '/exames/$slug/$tipo',
+  path: '/exames/$slug/$tipo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MedicosEspIndexRoute = MedicosEspIndexRouteImport.update({
+  id: '/medicos/$esp/',
+  path: '/medicos/$esp/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MedicosEspDocRoute = MedicosEspDocRouteImport.update({
+  id: '/medicos/$esp/$doc',
+  path: '/medicos/$esp/$doc',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/doencas': typeof DoencasRoute
+  '/tratamentos': typeof TratamentosRoute
+  '/exames/': typeof ExamesIndexRoute
+  '/medicos/': typeof MedicosIndexRoute
+  '/exames/$slug/$tipo': typeof ExamesSlugTipoRoute
+  '/medicos/$esp/$doc': typeof MedicosEspDocRoute
+  '/exames/$slug/': typeof ExamesSlugIndexRoute
+  '/medicos/$esp/': typeof MedicosEspIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/doencas': typeof DoencasRoute
+  '/tratamentos': typeof TratamentosRoute
+  '/exames': typeof ExamesIndexRoute
+  '/medicos': typeof MedicosIndexRoute
+  '/exames/$slug/$tipo': typeof ExamesSlugTipoRoute
+  '/medicos/$esp/$doc': typeof MedicosEspDocRoute
+  '/exames/$slug': typeof ExamesSlugIndexRoute
+  '/medicos/$esp': typeof MedicosEspIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/doencas': typeof DoencasRoute
+  '/tratamentos': typeof TratamentosRoute
+  '/exames/': typeof ExamesIndexRoute
+  '/medicos/': typeof MedicosIndexRoute
+  '/exames/$slug/$tipo': typeof ExamesSlugTipoRoute
+  '/medicos/$esp/$doc': typeof MedicosEspDocRoute
+  '/exames/$slug/': typeof ExamesSlugIndexRoute
+  '/medicos/$esp/': typeof MedicosEspIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/doencas'
+    | '/tratamentos'
+    | '/exames/'
+    | '/medicos/'
+    | '/exames/$slug/$tipo'
+    | '/medicos/$esp/$doc'
+    | '/exames/$slug/'
+    | '/medicos/$esp/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/doencas'
+    | '/tratamentos'
+    | '/exames'
+    | '/medicos'
+    | '/exames/$slug/$tipo'
+    | '/medicos/$esp/$doc'
+    | '/exames/$slug'
+    | '/medicos/$esp'
+  id:
+    | '__root__'
+    | '/'
+    | '/doencas'
+    | '/tratamentos'
+    | '/exames/'
+    | '/medicos/'
+    | '/exames/$slug/$tipo'
+    | '/medicos/$esp/$doc'
+    | '/exames/$slug/'
+    | '/medicos/$esp/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DoencasRoute: typeof DoencasRoute
+  TratamentosRoute: typeof TratamentosRoute
+  ExamesIndexRoute: typeof ExamesIndexRoute
+  MedicosIndexRoute: typeof MedicosIndexRoute
+  ExamesSlugTipoRoute: typeof ExamesSlugTipoRoute
+  MedicosEspDocRoute: typeof MedicosEspDocRoute
+  ExamesSlugIndexRoute: typeof ExamesSlugIndexRoute
+  MedicosEspIndexRoute: typeof MedicosEspIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doencas': {
+      id: '/doencas'
+      path: '/doencas'
+      fullPath: '/doencas'
+      preLoaderRoute: typeof DoencasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tratamentos': {
+      id: '/tratamentos'
+      path: '/tratamentos'
+      fullPath: '/tratamentos'
+      preLoaderRoute: typeof TratamentosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exames/': {
+      id: '/exames/'
+      path: '/exames'
+      fullPath: '/exames/'
+      preLoaderRoute: typeof ExamesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medicos/': {
+      id: '/medicos/'
+      path: '/medicos'
+      fullPath: '/medicos/'
+      preLoaderRoute: typeof MedicosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exames/$slug/': {
+      id: '/exames/$slug/'
+      path: '/exames/$slug'
+      fullPath: '/exames/$slug/'
+      preLoaderRoute: typeof ExamesSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/exames/$slug/$tipo': {
+      id: '/exames/$slug/$tipo'
+      path: '/exames/$slug/$tipo'
+      fullPath: '/exames/$slug/$tipo'
+      preLoaderRoute: typeof ExamesSlugTipoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medicos/$esp/': {
+      id: '/medicos/$esp/'
+      path: '/medicos/$esp'
+      fullPath: '/medicos/$esp/'
+      preLoaderRoute: typeof MedicosEspIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/medicos/$esp/$doc': {
+      id: '/medicos/$esp/$doc'
+      path: '/medicos/$esp/$doc'
+      fullPath: '/medicos/$esp/$doc'
+      preLoaderRoute: typeof MedicosEspDocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DoencasRoute: DoencasRoute,
+  TratamentosRoute: TratamentosRoute,
+  ExamesIndexRoute: ExamesIndexRoute,
+  MedicosIndexRoute: MedicosIndexRoute,
+  ExamesSlugTipoRoute: ExamesSlugTipoRoute,
+  MedicosEspDocRoute: MedicosEspDocRoute,
+  ExamesSlugIndexRoute: ExamesSlugIndexRoute,
+  MedicosEspIndexRoute: MedicosEspIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

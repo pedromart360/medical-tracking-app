@@ -1,0 +1,74 @@
+import { Link } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
+import { Timeline } from "@/components/Timeline";
+import exames from "@/assets/exames.jpg";
+import medicos from "@/assets/medicos.jpg";
+import tratamentos from "@/assets/tratamentos.jpg";
+import doencas from "@/assets/doencas.jpg";
+
+export const railItems = [
+  { to: "/exames", img: exames, nome: "Exames" },
+  { to: "/medicos", img: medicos, nome: "Médicos" },
+  { to: "/tratamentos", img: tratamentos, nome: "Tratamentos" },
+  { to: "/doencas", img: doencas, nome: "Doenças" },
+];
+
+export function Avatar() {
+  return (
+    <div className="size-14 shrink-0 rounded-full bg-gradient-to-br from-muted to-border ring-2 ring-foreground/80" />
+  );
+}
+
+export function Rail() {
+  return (
+    <div className="flex items-center gap-3">
+      {railItems.map((r) => (
+        <Link key={r.to} to={r.to} title={r.nome}>
+          <img
+            src={r.img}
+            alt={r.nome}
+            loading="lazy"
+            className="size-11 rounded-full object-cover transition-transform hover:scale-105"
+          />
+        </Link>
+      ))}
+      <Avatar />
+    </div>
+  );
+}
+
+export function PageShell({
+  label,
+  title,
+  backTo,
+  children,
+}: {
+  label: string;
+  title: string;
+  backTo: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mx-auto flex min-h-screen max-w-[1366px] flex-col px-8 py-7">
+      <div className="flex items-start justify-between">
+        <div className="flex items-start gap-3">
+          <Link
+            to={backTo}
+            className="mt-2 flex size-7 items-center justify-center rounded-full bg-border text-muted-foreground transition-colors hover:bg-muted-foreground/30"
+          >
+            <ChevronLeft className="size-4" />
+          </Link>
+          <div>
+            <p className="text-xs text-muted-foreground">{label}</p>
+            <h1 className="text-4xl font-medium tracking-tight">{title}</h1>
+          </div>
+        </div>
+        <Rail />
+      </div>
+
+      <div className="flex-1 py-8">{children}</div>
+
+      <Timeline />
+    </div>
+  );
+}
