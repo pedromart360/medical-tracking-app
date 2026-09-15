@@ -6,6 +6,8 @@ import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
 import body from "@/assets/body.png";
+import pasta from "@/assets/pasta.svg.asset.json";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,16 +34,16 @@ function Home() {
   const [calendario, setCalendario] = useState(false);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-[1366px] flex-col px-8 py-7">
-      <div className="grid flex-1 grid-cols-[1fr_1.25fr] gap-6">
+    <main className="mx-auto flex min-h-screen max-w-[1080px] flex-col px-4 py-5 sm:px-8 sm:py-7">
+      <div className="grid flex-1 gap-6 md:grid-cols-[0.8fr_1.2fr]">
         <div className="relative flex flex-col">
           <div className="flex items-center gap-5">
-            <h1 className="text-6xl font-medium tracking-tight">{patient.nome}</h1>
-            <button className="rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground transition-opacity hover:opacity-90">
+            <h1 className="text-4xl font-medium sm:text-6xl">{patient.nome}</h1>
+            <Button className="hidden rounded-full px-5 sm:inline-flex">
               + mais informações
-            </button>
+            </Button>
           </div>
-          <div className="mt-1 flex w-[380px] justify-between text-sm text-muted-foreground">
+          <div className="mt-1 flex w-full max-w-[380px] justify-between text-sm text-muted-foreground">
             <span>{patient.sexo}</span>
             <span>{patient.idade}</span>
           </div>
@@ -50,12 +52,12 @@ function Home() {
             alt="Ilustração do corpo da paciente"
             width={768}
             height={1536}
-            className="mx-auto mt-2 h-[calc(100vh-320px)] w-auto object-contain"
+            className="mx-auto mt-2 h-[360px] w-auto object-contain sm:h-[calc(100vh-320px)]"
           />
         </div>
 
         <div className="flex flex-col gap-5">
-          <div className="flex justify-end">
+          <div className="hidden justify-end sm:flex">
             <Avatar />
           </div>
 
@@ -69,19 +71,20 @@ function Home() {
             </span>
           </label>
 
-          <div className="grid flex-1 grid-cols-2 gap-5">
+          <div className="grid grid-cols-2 gap-5">
             {railItems.map((c) => (
               <Link
                 key={c.to}
                 to={c.to}
-                className="group flex flex-col rounded-[1.75rem] bg-card p-4 transition-transform hover:-translate-y-0.5"
+                className="group relative flex aspect-[427/268] min-w-0 flex-col overflow-hidden rounded-[1.5rem] transition-transform hover:-translate-y-0.5"
               >
-                <span className="px-2 pb-3 pt-1 text-2xl">{c.nome}</span>
+                <img src={pasta.url} alt="" className="absolute inset-0 size-full" />
+                <span className="relative z-10 px-5 pb-3 pt-4 text-xl sm:text-2xl">{c.nome}</span>
                 <img
                   src={c.img}
                   alt={c.nome}
                   loading="lazy"
-                  className="h-full w-full flex-1 rounded-[1.25rem] object-cover"
+                  className="relative z-10 mx-4 mb-4 h-0 min-h-0 w-[calc(100%-2rem)] flex-1 rounded-[1rem] object-cover"
                 />
               </Link>
             ))}
@@ -93,12 +96,12 @@ function Home() {
         <Timeline
           onClick={() => setCalendario(true)}
           action={
-            <button
+            <Button
               onClick={() => setCalendario(true)}
-              className="rounded-full bg-primary px-7 py-4 text-sm text-primary-foreground transition-opacity hover:opacity-90"
+              className="h-12 rounded-full px-7"
             >
               resumo geral
-            </button>
+            </Button>
           }
         />
       </div>

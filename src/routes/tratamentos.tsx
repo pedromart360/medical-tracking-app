@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { tratamentoTipos, tratamentos } from "@/lib/data";
 import tratamentosImg from "@/assets/tratamentos.jpg";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/tratamentos")({
   head: () => ({
@@ -29,34 +30,36 @@ function Tratamentos() {
 
   return (
     <PageShell label="" title="Tratamentos" backTo="/">
-      <div className="grid grid-cols-[300px_1fr] gap-6">
+      <div className="grid gap-6 md:grid-cols-[260px_1fr] lg:grid-cols-[300px_1fr]">
         <div className="space-y-4">
           {tratamentoTipos.map((t) => (
-            <button
+            <Button
               key={t.slug}
               onClick={() => {
                 setTipo(t.slug);
                 setDetalhe(null);
               }}
-              className={`flex w-full items-center justify-between rounded-[1.5rem] py-3 pl-6 pr-3 text-base transition-colors ${
+              variant="ghost"
+              className={`h-auto w-full justify-between rounded-[1.5rem] py-3 pl-6 pr-3 text-base ${
                 tipo === t.slug ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"
               }`}
             >
               <span>{t.nome}</span>
               <img src={tratamentosImg} alt="" loading="lazy" className="size-9 rounded-full object-cover" />
-            </button>
+            </Button>
           ))}
 
           {tipo && !detalhe && (
             <div className="space-y-3 pt-2">
               {lista.map((t) => (
-                <button
+                <Button
                   key={t.nome}
                   onClick={() => setDetalhe(t.nome)}
-                  className="w-full rounded-[1.25rem] bg-card px-5 py-3 text-left text-sm transition-colors hover:bg-muted"
+                  variant="ghost"
+                  className="h-auto w-full justify-start rounded-[1.25rem] bg-card px-5 py-3 text-left text-sm hover:bg-muted"
                 >
                   {t.nome}
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -70,12 +73,14 @@ function Tratamentos() {
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2">
                   {detalhe && (
-                    <button
+                    <Button
                       onClick={() => setDetalhe(null)}
-                      className="flex size-6 items-center justify-center rounded-full bg-border text-muted-foreground"
+                      variant="secondary"
+                      size="icon"
+                      className="size-6 rounded-full"
                     >
                       <ChevronLeft className="size-3" />
-                    </button>
+                    </Button>
                   )}
                   {detalhe ?? "Período:"}
                 </span>
@@ -85,7 +90,7 @@ function Tratamentos() {
               </div>
 
               {detalhe && item && (
-                <div className="mt-5 grid grid-cols-2 gap-5">
+                <div className="mt-5 grid gap-5 sm:grid-cols-2">
                   <div className="rounded-[1.25rem] bg-muted p-5 text-xs text-muted-foreground">
                     <p className="text-sm text-foreground">Dados do tratamento</p>
                     <div className="mt-3 space-y-1">
@@ -105,7 +110,7 @@ function Tratamentos() {
                 </div>
               )}
 
-              <div className="mt-6 grid grid-cols-6 gap-3">
+              <div className="mt-6 grid grid-cols-4 gap-3 sm:grid-cols-6">
                 {datas.map((d, i) => (
                   <span
                     key={i}

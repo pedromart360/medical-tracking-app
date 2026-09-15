@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { especialidades, examesSolicitados, medicos, remediosPrescritos } from "@/lib/data";
 import medicosImg from "@/assets/medicos.jpg";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/medicos/$esp/$doc")({
   head: () => ({
@@ -23,7 +24,8 @@ const datas = Array.from({ length: 14 }, (_, i) => `${String((i % 28) + 1).padSt
 
 function MedicoDetalhe() {
   const { esp, doc } = Route.useParams();
-  const medico = medicos.find((m) => m.id === doc) ?? medicos[0]!;
+  const medico = medicos.find((m) => m.id === doc) ?? medicos[0];
+  if (!medico) return null;
   const nomeEsp =
     especialidades.find(
       (e) =>
@@ -33,17 +35,19 @@ function MedicoDetalhe() {
 
   return (
     <PageShell label="Médicos" title={nomeEsp} backTo={`/medicos/${esp}`}>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-5">
           {dia ? (
             <div className="rounded-[1.75rem] bg-card p-6">
               <div className="flex items-center gap-3">
-                <button
+                <Button
                   onClick={() => setDia(null)}
-                  className="flex size-7 items-center justify-center rounded-full bg-border text-muted-foreground"
+                  variant="secondary"
+                  size="icon"
+                  className="size-7 rounded-full"
                 >
                   <ChevronLeft className="size-4" />
-                </button>
+                </Button>
                 <h2 className="text-xl font-medium">{dia}</h2>
               </div>
 
@@ -86,7 +90,7 @@ function MedicoDetalhe() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid gap-5 sm:grid-cols-2">
             <Lista titulo="Remédios prescritos:" itens={remediosPrescritos} />
             <Lista titulo="Exames solicitados:" itens={examesSolicitados} />
           </div>
@@ -101,15 +105,16 @@ function MedicoDetalhe() {
           </div>
           <div className="mt-5 grid grid-cols-5 gap-3">
             {datas.map((d, i) => (
-              <button
+              <Button
                 key={i}
                 onClick={() => setDia(d)}
-                className={`flex aspect-square items-center justify-center rounded-full text-xs transition-colors ${
+                variant="ghost"
+                className={`aspect-square h-auto rounded-full p-0 text-xs ${
                   dia === d ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:bg-border"
                 }`}
               >
                 {d}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

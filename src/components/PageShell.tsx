@@ -21,7 +21,7 @@ export function Avatar() {
 
 export function Rail() {
   return (
-    <div className="flex items-center gap-3">
+    <nav aria-label="Categorias" className="flex items-center gap-3">
       {railItems.map((r) => (
         <Link key={r.to} to={r.to} title={r.nome}>
           <img
@@ -33,7 +33,7 @@ export function Rail() {
         </Link>
       ))}
       <Avatar />
-    </div>
+    </nav>
   );
 }
 
@@ -49,8 +49,8 @@ export function PageShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto flex min-h-screen max-w-[1366px] flex-col px-8 py-7">
-      <div className="flex items-start justify-between">
+    <main className="mx-auto flex min-h-screen max-w-[1080px] flex-col px-4 py-5 sm:px-8 sm:py-7">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           <Link
             to={backTo}
@@ -60,15 +60,15 @@ export function PageShell({
           </Link>
           <div>
             <p className="text-xs text-muted-foreground">{label}</p>
-            <h1 className="text-4xl font-medium tracking-tight">{title}</h1>
+            <h1 className="text-3xl font-medium sm:text-5xl">{title}</h1>
           </div>
         </div>
-        <Rail />
+        <div className="hidden sm:block"><Rail /></div>
       </div>
 
-      <div className="flex-1 py-8">{children}</div>
+      <div className="flex-1 py-6 sm:py-8">{children}</div>
 
       <Timeline />
-    </div>
+    </main>
   );
 }

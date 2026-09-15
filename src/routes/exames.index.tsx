@@ -20,11 +20,11 @@ export const Route = createFileRoute("/exames/")({
 function Exames() {
   return (
     <PageShell label="" title="Exames" backTo="/">
-      <div className="grid max-w-[720px] grid-cols-2 gap-x-5 gap-y-4">
+      <div className="grid max-w-[840px] grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
         {exameCategorias.map((c) => {
           const temDetalhe = Boolean(tiposPorCategoria[c.slug]);
           const conteudo = (
-            <div className="flex items-center justify-between rounded-[1.5rem] bg-card py-3 pl-6 pr-3 text-base transition-colors hover:bg-muted">
+            <div className="flex min-h-16 items-center justify-between rounded-[1.5rem] bg-card py-3 pl-6 pr-3 text-base transition-colors hover:bg-muted">
               <span>{c.nome}</span>
               <img src={exames} alt="" loading="lazy" className="size-9 rounded-full object-cover" />
             </div>
@@ -33,9 +33,7 @@ function Exames() {
             <Link key={c.slug} to="/exames/$slug" params={{ slug: c.slug }}>
               {conteudo}
             </Link>
-          ) : (
-            <div key={c.slug}>{conteudo}</div>
-          );
+          ) : null;
         })}
       </div>
     </PageShell>
