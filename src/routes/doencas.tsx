@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageShell } from "@/components/PageShell";
 import { doencas } from "@/lib/data";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/doencas")({
   head: () => ({
@@ -23,21 +24,22 @@ function Doencas() {
 
   return (
     <PageShell label="" title="Doenças" backTo="/">
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-[1.75rem] bg-card p-6">
           <p className="text-sm">Histórico</p>
           <div className="mt-5 space-y-1">
             {doencas.map((d) => (
-              <button
+              <Button
                 key={d.nome}
                 onClick={() => setSel(d.nome)}
-                className={`flex w-full justify-between rounded-[1rem] px-4 py-2.5 text-sm transition-colors ${
+                variant="ghost"
+                className={`h-auto w-full justify-between rounded-[1rem] px-4 py-2.5 text-sm ${
                   sel === d.nome ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted"
                 }`}
               >
                 <span>{d.nome}</span>
                 <span>{d.data}</span>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

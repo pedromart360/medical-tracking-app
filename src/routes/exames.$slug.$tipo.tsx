@@ -23,7 +23,7 @@ function Resultados() {
 
   return (
     <PageShell label="Exames" title={nome} backTo="/exames">
-      <div className="grid grid-cols-5 gap-x-5 gap-y-8">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:gap-x-5">
         {itens.map((r, i) => (
           <div key={i}>
             <div className="aspect-[3/4] rounded-[1rem] bg-gradient-to-br from-muted via-card to-border" />

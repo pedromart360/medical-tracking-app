@@ -27,9 +27,9 @@ function Especialidade() {
 
   return (
     <PageShell label="Médicos" title={nome} backTo="/medicos">
-      <div className="flex flex-wrap gap-10">
+      <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
         {listaMedicos.map((m) => (
-          <Link key={m.id} to="/medicos/$esp/$doc" params={{ esp, doc: m.id }} className="w-[150px] text-center">
+          <Link key={m.id} to="/medicos/$esp/$doc" params={{ esp, doc: m.id }} className="mx-auto w-[150px] text-center">
             <img
               src={medicosImg}
               alt={m.nome}

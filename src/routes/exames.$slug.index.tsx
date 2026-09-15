@@ -27,18 +27,18 @@ function Categoria() {
 
   return (
     <PageShell label="Exames" title={nome} backTo="/exames">
-      <div className={comCorpo ? "grid grid-cols-[320px_1fr] gap-10" : ""}>
+      <div className={comCorpo ? "grid gap-8 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]" : ""}>
         {comCorpo && (
-          <img src={body} alt="Corpo" loading="lazy" className="h-[420px] w-auto object-contain" />
+          <img src={body} alt="Corpo" loading="lazy" className="mx-auto h-[360px] w-auto object-contain md:h-[420px]" />
         )}
         <div className="space-y-10">
           <section>
             <h2 className="text-2xl">Áreas médicas</h2>
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 flex max-h-28 flex-nowrap gap-3 overflow-x-auto pb-2">
               {areasMedicas.map((a) => (
                 <span
                   key={a}
-                  className="flex items-center gap-3 rounded-full bg-card py-2 pl-2 pr-5 text-sm"
+                  className="flex shrink-0 items-center gap-3 rounded-full bg-card py-2 pl-2 pr-5 text-sm"
                 >
                   <img src={medicos} alt="" loading="lazy" className="size-8 rounded-full object-cover" />
                   {a}
@@ -49,11 +49,11 @@ function Categoria() {
 
           <section>
             <h2 className="text-2xl">Tipos de exames</h2>
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 flex max-h-28 flex-nowrap gap-3 overflow-x-auto pb-2">
               {tipos.map((t) => {
                 const clicavel = Boolean(resultadosExame[t.slug]);
                 const chip = (
-                  <span className="flex items-center gap-3 rounded-full bg-card py-2 pl-2 pr-5 text-sm transition-colors hover:bg-muted">
+                  <span className="flex shrink-0 items-center gap-3 rounded-full bg-card py-2 pl-2 pr-5 text-sm transition-colors hover:bg-muted">
                     <img src={exames} alt="" loading="lazy" className="size-8 rounded-full object-cover" />
                     {t.nome}
                   </span>
@@ -62,9 +62,7 @@ function Categoria() {
                   <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }}>
                     {chip}
                   </Link>
-                ) : (
-                  <span key={t.slug}>{chip}</span>
-                );
+                ) : <span key={t.slug}>{chip}</span>;
               })}
             </div>
           </section>
