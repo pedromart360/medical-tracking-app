@@ -34,16 +34,13 @@ function Home() {
   const [calendario, setCalendario] = useState(false);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-[1080px] flex-col px-4 py-5 sm:px-8 sm:py-7">
-      <div className="grid flex-1 gap-6 md:grid-cols-[0.8fr_1.2fr]">
+    <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-5 py-6 sm:px-10 sm:py-10">
+      <div className="grid flex-1 gap-6 md:grid-cols-[minmax(0,400px)_minmax(0,875px)] md:gap-[30px]">
         <div className="relative flex flex-col">
-          <div className="flex items-center gap-5">
-            <h1 className="text-4xl font-medium sm:text-6xl">{patient.nome}</h1>
-            <Button className="hidden rounded-full px-5 sm:inline-flex">
-              + mais informações
-            </Button>
-          </div>
-          <div className="mt-1 flex w-full max-w-[380px] justify-between text-sm text-muted-foreground">
+          <h1 className="text-4xl font-medium leading-none tracking-tight sm:text-[56px]">
+            {patient.nome}
+          </h1>
+          <div className="mt-2 flex w-full max-w-[380px] justify-between text-sm text-muted-foreground">
             <span>{patient.sexo}</span>
             <span>{patient.idade}</span>
           </div>
@@ -52,21 +49,24 @@ function Home() {
             alt="Ilustração do corpo da paciente"
             width={768}
             height={1536}
-            className="mx-auto mt-2 h-[360px] w-auto object-contain sm:h-[calc(100vh-320px)]"
+            className="mx-auto mt-3 h-[360px] w-auto object-contain sm:h-[700px]"
           />
         </div>
 
         <div className="flex flex-col gap-5">
-          <div className="hidden justify-end sm:flex">
+          <div className="flex items-center justify-between gap-4">
+            <Button className="h-[42px] rounded-full px-6 text-[15px] font-normal">
+              + adicionar dados
+            </Button>
             <Avatar />
           </div>
 
-          <label className="flex items-center gap-3 rounded-[1.75rem] bg-card px-7 py-5">
+          <label className="flex h-[76px] items-center gap-3 rounded-full bg-card px-8">
             <input
               placeholder="Pesquisar..."
               className="flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground"
             />
-            <span className="flex size-8 items-center justify-center rounded-full bg-border text-muted-foreground">
+            <span className="flex size-9 items-center justify-center rounded-full bg-border text-muted-foreground">
               <Search className="size-4" />
             </span>
           </label>
@@ -76,15 +76,15 @@ function Home() {
               <Link
                 key={c.to}
                 to={c.to}
-                className="group relative flex aspect-[427/268] min-w-0 flex-col overflow-hidden rounded-[1.5rem] transition-transform hover:-translate-y-0.5"
+                className="group relative flex aspect-[427/268] min-w-0 flex-col overflow-hidden transition-transform hover:-translate-y-0.5"
               >
                 <img src={pasta.url} alt="" className="absolute inset-0 size-full" />
-                <span className="relative z-10 px-5 pb-3 pt-4 text-xl sm:text-2xl">{c.nome}</span>
+                <span className="relative z-10 px-6 pb-3 pt-3 text-xl sm:text-[26px]">{c.nome}</span>
                 <img
                   src={c.img}
                   alt={c.nome}
                   loading="lazy"
-                  className="relative z-10 mx-4 mb-4 h-0 min-h-0 w-[calc(100%-2rem)] flex-1 rounded-[1rem] object-cover"
+                  className="relative z-10 mx-5 mb-5 h-0 min-h-0 w-[calc(100%-2.5rem)] flex-1 rounded-[1rem] object-cover"
                 />
               </Link>
             ))}
