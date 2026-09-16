@@ -62,7 +62,7 @@ function Home() {
             <Button className="h-[clamp(36px,3.6vw,42px)] rounded-full px-[clamp(1rem,2vw,1.5rem)] text-[clamp(0.8125rem,1.2vw,0.9375rem)] font-normal">
               + adicionar dados
             </Button>
-            <Avatar />
+            <Avatar className="hidden md:block" />
           </div>
 
           <label className="flex h-[clamp(52px,6vw,76px)] items-center gap-3 rounded-full bg-card px-[clamp(1.25rem,2.5vw,2rem)]">
