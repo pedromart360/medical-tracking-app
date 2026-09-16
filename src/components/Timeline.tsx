@@ -12,16 +12,17 @@ export function Timeline({
   const dots = Array.from({ length: 48 });
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-[clamp(0.5rem,1.5vw,1rem)]">
       <div
         onClick={onClick}
-        className={`flex-1 rounded-[2rem] bg-card px-8 pb-3 pt-4 ${onClick ? "cursor-pointer" : ""}`}
+        className={`min-w-0 flex-1 rounded-[clamp(1rem,2.4vw,2rem)] bg-card px-[clamp(1rem,2.4vw,2rem)] pb-3 pt-4 ${onClick ? "cursor-pointer" : ""}`}
       >
-        <div className="flex justify-around text-[11px] tracking-wide text-muted-foreground">
+        <div className="flex justify-around text-[clamp(0.5625rem,0.9vw,0.6875rem)] tracking-wide text-muted-foreground">
           {anos.map((a) => (
             <span key={a}>{a}</span>
           ))}
         </div>
+
         <div className="mt-3 flex items-center justify-between">
           {dots.map((_, i) => (
             <span
