@@ -38,12 +38,13 @@ function Home() {
       <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
           <header className="flex items-center gap-3">
-            <h1 className="min-w-0 flex-1 truncate text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-none tracking-tight">
+            <h1 className="min-w-0 flex-1 text-[clamp(1.25rem,4.4vw,3.5rem)] font-medium leading-tight tracking-tight">
               {patient.nome}
             </h1>
-            <Button className="h-9 shrink-0 rounded-full px-4 text-[0.8125rem] font-normal md:hidden">
+            <Button className="h-8 shrink-0 rounded-full px-3 text-[0.6875rem] font-normal md:hidden">
               + adicionar dados
             </Button>
+
             <Avatar className="size-11 md:hidden" />
           </header>
 
