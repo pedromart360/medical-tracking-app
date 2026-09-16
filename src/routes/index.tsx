@@ -37,21 +37,28 @@ function Home() {
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
       <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
-          <header className="flex items-center gap-3">
-            <h1 className="min-w-0 flex-1 text-[clamp(1.25rem,4.4vw,3.5rem)] font-medium leading-tight tracking-tight">
-              {patient.nome}
-            </h1>
-            <Button className="h-8 shrink-0 rounded-full px-3 text-[0.6875rem] font-normal md:hidden">
-              + adicionar dados
-            </Button>
+          <header className="flex flex-col gap-2 md:contents">
+            <div className="flex items-center gap-3">
+              <h1 className="min-w-0 flex-1 truncate text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-none tracking-tight">
+                {patient.nome}
+              </h1>
+              <Avatar className="size-10 md:hidden" />
+            </div>
 
-            <Avatar className="size-11 md:hidden" />
+            <div className="flex items-center justify-between gap-3 md:mt-2 md:max-w-[380px] md:justify-between">
+              <div className="flex min-w-0 items-center gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
+                <span className="truncate">{patient.sexo}</span>
+                <span className="md:hidden" aria-hidden>
+                  ·
+                </span>
+                <span>{patient.idade}</span>
+              </div>
+              <Button className="h-8 shrink-0 rounded-full px-4 text-[0.75rem] font-normal md:hidden">
+                + adicionar dados
+              </Button>
+            </div>
           </header>
 
-          <div className="mt-2 flex w-full max-w-[380px] justify-between text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
-            <span>{patient.sexo}</span>
-            <span>{patient.idade}</span>
-          </div>
           <img
             src={body}
             alt="Ilustração do corpo da paciente"
