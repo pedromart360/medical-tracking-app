@@ -13,11 +13,14 @@ export const railItems = [
   { to: "/doencas", img: doencas, nome: "Doenças" },
 ];
 
-export function Avatar() {
+export function Avatar({ className = "" }: { className?: string }) {
   return (
-    <div className="size-14 shrink-0 rounded-full bg-gradient-to-br from-muted to-border ring-2 ring-foreground/80" />
+    <div
+      className={`size-14 shrink-0 rounded-full bg-gradient-to-br from-muted to-border ring-2 ring-foreground/80 ${className}`}
+    />
   );
 }
+
 
 export function Rail() {
   return (
