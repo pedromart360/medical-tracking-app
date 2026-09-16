@@ -37,12 +37,16 @@ function Home() {
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
       <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
-          <div className="flex items-center justify-between gap-3">
-            <h1 className="truncate text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-none tracking-tight">
+          <header className="flex items-center gap-3">
+            <h1 className="min-w-0 flex-1 text-[clamp(1.25rem,4.4vw,3.5rem)] font-medium leading-tight tracking-tight">
               {patient.nome}
             </h1>
+            <Button className="h-8 shrink-0 rounded-full px-3 text-[0.6875rem] font-normal md:hidden">
+              + adicionar dados
+            </Button>
+
             <Avatar className="size-11 md:hidden" />
-          </div>
+          </header>
 
           <div className="mt-2 flex w-full max-w-[380px] justify-between text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
             <span>{patient.sexo}</span>
@@ -58,12 +62,13 @@ function Home() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-[clamp(0.75rem,1.6vw,1.25rem)]">
-          <div className="flex items-center justify-between gap-4">
+          <div className="hidden items-center justify-between gap-4 md:flex">
             <Button className="h-[clamp(36px,3.6vw,42px)] rounded-full px-[clamp(1rem,2vw,1.5rem)] text-[clamp(0.8125rem,1.2vw,0.9375rem)] font-normal">
               + adicionar dados
             </Button>
-            <Avatar className="hidden md:block" />
+            <Avatar />
           </div>
+
 
           <label className="flex h-[clamp(52px,6vw,76px)] items-center gap-3 rounded-full bg-card px-[clamp(1.25rem,2.5vw,2rem)]">
             <input
