@@ -37,9 +37,13 @@ function Home() {
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
       <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
-          <h1 className="truncate text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-none tracking-tight">
-            {patient.nome}
-          </h1>
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="truncate text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-none tracking-tight">
+              {patient.nome}
+            </h1>
+            <Avatar className="size-11 md:hidden" />
+          </div>
+
           <div className="mt-2 flex w-full max-w-[380px] justify-between text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
             <span>{patient.sexo}</span>
             <span>{patient.idade}</span>
@@ -58,7 +62,7 @@ function Home() {
             <Button className="h-[clamp(36px,3.6vw,42px)] rounded-full px-[clamp(1rem,2vw,1.5rem)] text-[clamp(0.8125rem,1.2vw,0.9375rem)] font-normal">
               + adicionar dados
             </Button>
-            <Avatar />
+            <Avatar className="hidden md:block" />
           </div>
 
           <label className="flex h-[clamp(52px,6vw,76px)] items-center gap-3 rounded-full bg-card px-[clamp(1.25rem,2.5vw,2rem)]">
