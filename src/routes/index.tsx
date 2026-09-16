@@ -95,19 +95,20 @@ function Home() {
       </div>
 
 
-      <div className="pt-6">
+      <div className="pt-[clamp(1rem,2.5vw,1.5rem)]">
         <Timeline
           onClick={() => setCalendario(true)}
           action={
             <Button
               onClick={() => setCalendario(true)}
-              className="h-12 rounded-full px-7"
+              className="h-[clamp(40px,4.4vw,48px)] shrink-0 rounded-full px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)]"
             >
               resumo geral
             </Button>
           }
         />
       </div>
+
 
       {calendario && <CalendarOverlay onClose={() => setCalendario(false)} />}
     </main>
