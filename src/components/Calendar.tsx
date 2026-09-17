@@ -6,7 +6,7 @@ import { Timeline } from "@/components/Timeline";
 const TOTAL = anos.length * 12;
 
 export function CalendarOverlay({ onClose }: { onClose: () => void }) {
-  // índice global: 0 = Janeiro do primeiro ano da lista (2026) ... 47 = Dezembro do último (2023)
+  // pos = índice do ponto na linha do tempo (anos exibidos do mais recente ao mais antigo)
   const [pos, setPos] = useState(0);
   const [dia, setDia] = useState<string | null>(null);
 
@@ -17,8 +17,14 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
   const dias = new Date(ano, mesIndex + 1, 0).getDate();
   const badges = marcadores[mes] ?? {};
 
-  const ir = (delta: number) =>
-    setPos((p) => Math.min(TOTAL - 1, Math.max(0, p + delta)));
+  // índice cronológico: 0 = Janeiro do ano mais antigo ... TOTAL-1 = Dezembro do mais recente
+  const cron = (anos.length - 1 - anoIndex) * 12 + mesIndex;
+
+  const ir = (delta: number) => {
+    const alvo = Math.min(TOTAL - 1, Math.max(0, cron + delta));
+    const ai = anos.length - 1 - Math.floor(alvo / 12);
+    setPos(ai * 12 + (alvo % 12));
+  };
 
   const seta =
     "flex size-[clamp(2rem,3.4vw,2.75rem)] items-center justify-center rounded-full text-foreground transition-colors hover:bg-muted disabled:opacity-30";
