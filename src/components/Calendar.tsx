@@ -72,7 +72,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
               <div className="flex min-h-0 flex-1 items-center gap-[clamp(0.25rem,1.5vw,1rem)]">
                 <button
                   aria-label="Mês anterior"
-                  disabled={pos === 0}
+                  disabled={cron === 0}
                   onClick={() => ir(-1)}
                   className={`hidden sm:flex ${seta}`}
                 >
@@ -89,7 +89,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                       {ano}
                     </span>
                   </h2>
-                  <div className="mt-[clamp(1.25rem,3vw,2.5rem)] grid grid-cols-7 gap-[2.5%]">
+                  <div className="mx-auto mt-[clamp(1.25rem,3vw,2.5rem)] grid w-full max-w-[min(100%,62vh)] grid-cols-7 gap-[2.5%]">
                     {Array.from({ length: dias }).map((_, i) => (
                       <button
                         key={i}
@@ -114,7 +114,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
 
                 <button
                   aria-label="Próximo mês"
-                  disabled={pos === TOTAL - 1}
+                  disabled={cron === TOTAL - 1}
                   onClick={() => ir(1)}
                   className={`hidden sm:flex ${seta}`}
                 >
@@ -128,7 +128,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
               <div className="mt-3 flex shrink-0 items-center justify-center gap-6 sm:hidden">
                 <button
                   aria-label="Mês anterior"
-                  disabled={pos === 0}
+                  disabled={cron === 0}
                   onClick={() => ir(-1)}
                   className={seta}
                 >
@@ -136,7 +136,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                 </button>
                 <button
                   aria-label="Próximo mês"
-                  disabled={pos === TOTAL - 1}
+                  disabled={cron === TOTAL - 1}
                   onClick={() => ir(1)}
                   className={seta}
                 >
