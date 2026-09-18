@@ -103,7 +103,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                     </span>
                   </h2>
 
-                  <div className="mx-auto mt-[clamp(1rem,2.4vw,2rem)] w-full max-w-[min(100%,62vh)]">
+                  <div className="mx-auto mt-[clamp(1rem,2.4vw,2rem)] w-full max-w-[min(100%,52vh)]">
                     <div className="grid grid-cols-7 gap-[2.5%] px-[1%] text-center text-[clamp(0.5rem,1vw,0.75rem)] uppercase tracking-[0.12em] text-muted-foreground">
                       {semana.map((d) => (
                         <span key={d}>{d}</span>
