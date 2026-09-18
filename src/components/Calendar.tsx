@@ -95,22 +95,22 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                   />
                 </button>
 
-                <div className="flex max-h-full min-w-0 flex-1 flex-col overflow-y-auto rounded-[clamp(1rem,2.4vw,1.75rem)] bg-muted px-[clamp(0.75rem,3vw,3rem)] py-[clamp(1rem,2.5vw,2rem)]">
-                  <h2 className="flex items-baseline justify-center gap-2 text-center text-[clamp(1.5rem,3vw,2.5rem)] font-medium lowercase">
+                <div className="flex max-h-full min-w-0 flex-1 flex-col overflow-y-auto rounded-[clamp(1rem,2.4vw,1.75rem)] bg-muted px-[clamp(0.5rem,3vw,3rem)] py-[clamp(0.875rem,2.5vw,2rem)]">
+                  <h2 className="flex items-baseline justify-center gap-2 text-center text-[clamp(1.375rem,5vw,2.5rem)] font-medium lowercase">
                     {mes}
                     <span className="text-[0.4em] tracking-wide text-muted-foreground">
                       {ano}
                     </span>
                   </h2>
 
-                  <div className="mx-auto mt-[clamp(1rem,2.4vw,2rem)] w-full max-w-[min(100%,46vh)]">
-                    <div className="grid grid-cols-7 gap-[2.5%] px-[1%] text-center text-[clamp(0.5rem,1vw,0.75rem)] uppercase tracking-[0.12em] text-muted-foreground">
+                  <div className="mx-auto mt-[clamp(0.75rem,2.4vw,2rem)] w-full max-w-[min(100%,46vh)]">
+                    <div className="grid grid-cols-7 gap-[2%] px-[1%] text-center text-[clamp(0.4375rem,1.7vw,0.75rem)] uppercase tracking-[0.06em] text-muted-foreground sm:gap-[2.5%] sm:tracking-[0.12em]">
                       {semana.map((d) => (
                         <span key={d}>{d}</span>
                       ))}
                     </div>
 
-                    <div className="mt-[clamp(0.5rem,1.2vw,0.875rem)] grid grid-cols-7 gap-[2.5%]">
+                    <div className="mt-[clamp(0.375rem,1.2vw,0.875rem)] grid grid-cols-7 gap-[2%] sm:gap-[2.5%]">
                       {Array.from({ length: offset }).map((_, i) => (
                         <span key={`v${i}`} className="aspect-square" />
                       ))}
@@ -122,14 +122,18 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                               `${String(i + 1).padStart(2, "0")}/${String(mesIndex + 1).padStart(2, "0")}/${ano}`,
                             )
                           }
-                          className="relative flex aspect-square items-center justify-center rounded-full bg-card text-[clamp(0.625rem,1.3vw,1.125rem)] text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+                          className="relative flex aspect-square items-center justify-center rounded-full bg-card text-[clamp(0.5625rem,2.2vw,1.125rem)] text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
                         >
                           {String(i + 1).padStart(2, "0")}
                           {badges[i] ? (
-                            <span className="absolute -top-[12%] -right-[6%] flex size-[clamp(0.95rem,2vw,1.75rem)] items-center justify-center rounded-full bg-foreground text-[clamp(0.4rem,0.85vw,0.6875rem)] font-medium text-background">
+                            <span className="absolute -top-[10%] -right-[8%] flex size-[clamp(0.75rem,3vw,1.75rem)] items-center justify-center rounded-full bg-foreground text-[clamp(0.375rem,1.3vw,0.6875rem)] font-medium leading-none text-background">
                               +{badges[i]}
                             </span>
                           ) : null}
+                        </button>
+                      ))}
+                    </div>
+
                         </button>
                       ))}
                     </div>
