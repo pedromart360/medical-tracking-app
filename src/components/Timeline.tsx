@@ -64,7 +64,7 @@ export function Timeline({
             <span
               key={i}
               className={`w-px bg-border ${i % 3 === 0 ? "h-2 sm:h-2.5" : "h-1.5"} ${
-                i % 12 === 0 ? "" : i % 3 === 0 ? "hidden xs:block" : "hidden sm:block"
+                i % 12 === 0 ? "" : i % 3 === 0 ? "hidden min-[420px]:block" : "hidden sm:block"
               }`}
             />
           ))}
