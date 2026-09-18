@@ -89,7 +89,7 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                       {ano}
                     </span>
                   </h2>
-                  <div className="mt-[clamp(1.25rem,3vw,2.5rem)] grid grid-cols-7 gap-[2.5%]">
+                  <div className="mx-auto mt-[clamp(1.25rem,3vw,2.5rem)] grid w-full max-w-[min(100%,62vh)] grid-cols-7 gap-[2.5%]">
                     {Array.from({ length: dias }).map((_, i) => (
                       <button
                         key={i}
