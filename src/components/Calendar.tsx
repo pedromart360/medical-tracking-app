@@ -133,10 +133,6 @@ export function CalendarOverlay({ onClose }: { onClose: () => void }) {
                         </button>
                       ))}
                     </div>
-
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
 
