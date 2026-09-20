@@ -22,11 +22,12 @@ export const Route = createFileRoute("/exames/")({
 
 function Cards() {
   return (
-    <div className="grid h-full w-full max-w-[1034px] grid-cols-1 gap-[clamp(0.625rem,1.5vw,1.25rem)] sm:grid-cols-2">
+    <div className="grid w-full max-w-[1034px] grid-cols-1 gap-[clamp(0.625rem,1.5vw,1.25rem)] sm:grid-cols-2">
       {exameCategorias.map((c) => {
         const temDetalhe = Boolean(tiposPorCategoria[c.slug]);
         const conteudo = (
-          <div className="flex h-full min-h-[clamp(3.5rem,9vw,7.75rem)] items-center justify-between rounded-[clamp(1rem,2.2vw,1.875rem)] bg-card pl-[clamp(1rem,2.9vw,2.5rem)] pr-[clamp(0.5rem,1.5vw,1.25rem)] transition-colors hover:bg-muted">
+          <div className="flex h-[clamp(3.5rem,9vw,7.75rem)] items-center justify-between rounded-[clamp(1rem,2.2vw,1.875rem)] bg-muted pl-[clamp(1rem,2.9vw,2.5rem)] pr-[clamp(0.5rem,1.5vw,1.25rem)] transition-colors hover:bg-border">
+
             <span className="truncate text-[clamp(0.9375rem,1.55vw,1.375rem)]">{c.nome}</span>
             <img
               src={exames}
