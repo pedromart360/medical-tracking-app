@@ -41,7 +41,7 @@ function Tratamentos() {
               }}
               variant="ghost"
               className={`h-auto w-full justify-between rounded-[1.5rem] py-3 pl-6 pr-3 text-base ${
-                tipo === t.slug ? "bg-primary text-primary-foreground" : "bg-card hover:bg-muted"
+                tipo === t.slug ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-card"
               }`}
             >
               <span>{t.nome}</span>
@@ -56,7 +56,7 @@ function Tratamentos() {
                   key={t.nome}
                   onClick={() => setDetalhe(t.nome)}
                   variant="ghost"
-                  className="h-auto w-full justify-start rounded-[1.25rem] bg-card px-5 py-3 text-left text-sm hover:bg-muted"
+                  className="h-auto w-full justify-start rounded-[1.25rem] bg-muted px-5 py-3 text-left text-sm hover:bg-card"
                 >
                   {t.nome}
                 </Button>
@@ -65,7 +65,7 @@ function Tratamentos() {
           )}
         </div>
 
-        <div className="rounded-[1.75rem] bg-card p-6">
+        <div className="rounded-[1.75rem] bg-muted p-6">
           {!tipo ? (
             <p className="text-sm text-muted-foreground">Selecione um tipo de tratamento.</p>
           ) : (
@@ -91,7 +91,7 @@ function Tratamentos() {
 
               {detalhe && item && (
                 <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                  <div className="rounded-[1.25rem] bg-muted p-5 text-xs text-muted-foreground">
+                  <div className="rounded-[1.25rem] bg-card p-5 text-xs text-muted-foreground">
                     <p className="text-sm text-foreground">Dados do tratamento</p>
                     <div className="mt-3 space-y-1">
                       <p>Medicamento: {item.nome}</p>
@@ -100,7 +100,7 @@ function Tratamentos() {
                       <p>Local: {item.local}</p>
                     </div>
                   </div>
-                  <div className="rounded-[1.25rem] bg-muted p-5">
+                  <div className="rounded-[1.25rem] bg-card p-5">
                     <p className="text-sm">Resumo</p>
                     <textarea
                       placeholder="Escreva aqui um resumo do tratamento..."
@@ -117,7 +117,7 @@ function Tratamentos() {
                     className={`flex aspect-square items-center justify-center rounded-full text-xs ${
                       detalhe && i < 6
                         ? "bg-foreground text-background"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-card text-muted-foreground"
                     }`}
                   >
                     {d}

@@ -25,7 +25,7 @@ function Doencas() {
   return (
     <PageShell label="" title="Doenças" backTo="/">
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-[1.75rem] bg-card p-6">
+        <div className="rounded-[1.75rem] bg-muted p-6">
           <p className="text-sm">Histórico</p>
           <div className="mt-5 space-y-1">
             {doencas.map((d) => (
@@ -34,7 +34,7 @@ function Doencas() {
                 onClick={() => setSel(d.nome)}
                 variant="ghost"
                 className={`h-auto w-full justify-between rounded-[1rem] px-4 py-2.5 text-sm ${
-                  sel === d.nome ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-muted"
+                  sel === d.nome ? "bg-card text-foreground" : "text-muted-foreground hover:bg-card"
                 }`}
               >
                 <span>{d.nome}</span>
@@ -44,14 +44,14 @@ function Doencas() {
           </div>
         </div>
 
-        <div className="rounded-[1.75rem] bg-card p-6">
+        <div className="rounded-[1.75rem] bg-muted p-6">
           {item ? (
             <>
               <div className="flex items-center justify-between">
                 <p className="text-sm">{item.nome}</p>
                 <span className="text-xs text-muted-foreground">{item.data}</span>
               </div>
-              <div className="mt-5 rounded-[1.25rem] bg-muted p-5 text-xs text-muted-foreground">
+              <div className="mt-5 rounded-[1.25rem] bg-card p-5 text-xs text-muted-foreground">
                 <p className="text-sm text-foreground">Dados do tratamento</p>
                 <div className="mt-3 space-y-1">
                   <p>Medicamento: Imunoglobulina</p>
@@ -68,7 +68,7 @@ function Doencas() {
                   </span>
                 </div>
               </div>
-              <div className="mt-5 rounded-[1.25rem] bg-muted p-5">
+              <div className="mt-5 rounded-[1.25rem] bg-card p-5">
                 <p className="text-sm">Observação</p>
                 <textarea
                   placeholder="Escreva aqui uma observação sobre a doença..."

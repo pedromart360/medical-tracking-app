@@ -38,7 +38,7 @@ function MedicoDetalhe() {
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-5">
           {dia ? (
-            <div className="rounded-[1.75rem] bg-card p-6">
+            <div className="rounded-[1.75rem] bg-muted p-6">
               <div className="flex items-center gap-3">
                 <Button
                   onClick={() => setDia(null)}
@@ -69,7 +69,7 @@ function MedicoDetalhe() {
                 ))}
               </div>
 
-              <div className="mt-6 rounded-[1.25rem] bg-muted p-4">
+              <div className="mt-6 rounded-[1.25rem] bg-card p-4">
                 <p className="text-xs text-muted-foreground">Resumo</p>
                 <textarea
                   placeholder="Escreva aqui um resumo da consulta..."
@@ -78,7 +78,7 @@ function MedicoDetalhe() {
               </div>
             </div>
           ) : (
-            <div className="rounded-[1.75rem] bg-card p-6">
+            <div className="rounded-[1.75rem] bg-muted p-6">
               <div className="flex items-center gap-5">
                 <img src={medicosImg} alt={medico.nome} loading="lazy" className="size-24 rounded-full object-cover" />
                 <div>
@@ -96,7 +96,7 @@ function MedicoDetalhe() {
           </div>
         </div>
 
-        <div className="rounded-[1.75rem] bg-card p-6">
+        <div className="rounded-[1.75rem] bg-muted p-6">
           <div className="flex items-center justify-between text-sm">
             <span>Consultas:</span>
             <span className="flex items-center gap-1 text-muted-foreground">
@@ -110,7 +110,7 @@ function MedicoDetalhe() {
                 onClick={() => setDia(d)}
                 variant="ghost"
                 className={`aspect-square h-auto rounded-full p-0 text-xs ${
-                  dia === d ? "bg-foreground text-background" : "bg-muted text-muted-foreground hover:bg-border"
+                  dia === d ? "bg-foreground text-background" : "bg-card text-muted-foreground hover:bg-border"
                 }`}
               >
                 {d}
@@ -125,7 +125,7 @@ function MedicoDetalhe() {
 
 function Lista({ titulo, itens }: { titulo: string; itens: { nome: string; data: string }[] }) {
   return (
-    <div className="rounded-[1.5rem] bg-card p-5">
+    <div className="rounded-[1.5rem] bg-muted p-5">
       <p className="text-sm">{titulo}</p>
       <div className="mt-4 space-y-2">
         {itens.map((r) => (
