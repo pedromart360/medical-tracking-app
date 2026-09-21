@@ -277,3 +277,136 @@ export const doencas = [
   { nome: "Dengue", data: "28/08/2025" },
   { nome: "Sinusite", data: "09/11/2025" },
 ];
+
+/* ---- Figura 3D interativa: pontos do corpo por categoria de exame ---- */
+
+export type ExameCorpo = {
+  nome: string;
+  data: string;
+  pedidoPor: string;
+  realizadoEm: string;
+  local: string;
+};
+
+export type PontoCorpo = {
+  id: string;
+  parte: string;
+  /** posição no modelo 3D em metros [x, y, z] */
+  pos: [number, number, number];
+  exames: ExameCorpo[];
+};
+
+const ex = (nome: string, data: string, pedidoPor: string, local: string): ExameCorpo => ({
+  nome,
+  data,
+  pedidoPor,
+  realizadoEm: data,
+  local,
+});
+
+export const pontosCorpo: Record<string, PontoCorpo[]> = {
+  "de-imagem": [
+    {
+      id: "cranio",
+      parte: "Crânio e face",
+      pos: [0.16, 1.66, 0.06],
+      exames: [
+        ex("RX da face", "04/05/2026", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
+        ex("RX da face", "02/11/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
+        ex("RX do crânio", "15/03/2025", "Dr. João Cabral", "Clínica SulAmérica"),
+      ],
+    },
+    {
+      id: "ombro",
+      parte: "Ombro direito",
+      pos: [0.24, 1.36, 0.08],
+      exames: [
+        ex("RX do ombro", "22/08/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
+        ex("Ressonância do ombro", "09/01/2025", "Dr. Gabriel Garcia", "Clínica Unimed"),
+      ],
+    },
+    {
+      id: "torax",
+      parte: "Tórax",
+      pos: [0.0, 1.25, 0.18],
+      exames: [
+        ex("RX de tórax", "12/06/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
+        ex("Tomografia de tórax", "30/09/2024", "Dr. João Cabral", "Hospital Santa Cruz"),
+        ex("RX de tórax", "04/02/2024", "Dra. Edith Stein", "Clínica Unimed"),
+        ex("Ultrassonografia de mama", "18/07/2024", "Dra. Edith Stein", "Clínica SulAmérica"),
+      ],
+    },
+    {
+      id: "abdome",
+      parte: "Abdome",
+      pos: [0.05, 1.0, 0.16],
+      exames: [
+        ex("Ultrassonografia abdominal", "19/07/2025", "Dr. João Cabral", "Clínica Unimed"),
+        ex("Tomografia de abdome", "28/03/2025", "Dr. João Cabral", "Hospital Praia Grande"),
+      ],
+    },
+    {
+      id: "joelho",
+      parte: "Joelho esquerdo",
+      pos: [-0.11, 0.46, 0.1],
+      exames: [
+        ex("RX do joelho", "05/12/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
+        ex("Ressonância do joelho", "21/05/2025", "Dr. Gabriel Garcia", "Clínica SulAmérica"),
+        ex("RX do joelho", "13/07/2024", "Dr. Gabriel Garcia", "Clínica Unimed"),
+      ],
+    },
+    {
+      id: "pe",
+      parte: "Pé direito",
+      pos: [0.11, 0.06, 0.12],
+      exames: [ex("RX do pé", "03/06/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande")],
+    },
+  ],
+  nucleares: [
+    {
+      id: "cerebro",
+      parte: "Cérebro",
+      pos: [0.14, 1.68, 0.05],
+      exames: [
+        ex("Cintilografia cerebral", "10/04/2026", "Dra. Edith Stein", "Hospital Santa Cruz"),
+        ex("PET-CT cerebral", "02/10/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
+        ex("SPECT cerebral", "14/06/2025", "Dr. João Cabral", "Clínica Unimed"),
+        ex("Cintilografia cerebral", "08/01/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
+        ex("PET-CT cerebral", "27/09/2024", "Dr. João Cabral", "Clínica Unimed"),
+      ],
+    },
+    {
+      id: "tireoide",
+      parte: "Tireoide",
+      pos: [0.08, 1.48, 0.1],
+      exames: [
+        ex("Cintilografia da tireoide", "17/05/2025", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
+        ex("Captação de iodo", "03/02/2025", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
+      ],
+    },
+    {
+      id: "coracao",
+      parte: "Coração",
+      pos: [-0.07, 1.27, 0.17],
+      exames: [
+        ex("Cintilografia miocárdica", "22/11/2025", "Dr. Jorge Luís Borges", "Clínica Unimed"),
+        ex("Cintilografia miocárdica", "12/03/2025", "Dr. Gabriel Garcia", "Clínica Unimed"),
+      ],
+    },
+    {
+      id: "rins",
+      parte: "Rins",
+      pos: [0.09, 1.02, -0.14],
+      exames: [ex("Cintilografia renal", "06/08/2025", "Dr. João Cabral", "Hospital Praia Grande")],
+    },
+    {
+      id: "ossos",
+      parte: "Esqueleto",
+      pos: [-0.1, 0.72, 0.12],
+      exames: [
+        ex("Cintilografia óssea", "29/07/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
+        ex("Cintilografia óssea", "16/12/2024", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
+      ],
+    },
+  ],
+};
