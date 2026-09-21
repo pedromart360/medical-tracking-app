@@ -26,7 +26,7 @@ function Medicos() {
       <div className="grid max-w-[840px] grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
         {especialidades.map((e) => (
           <Link key={e} to="/medicos/$esp" params={{ esp: slugify(e) }}>
-            <div className="flex items-center justify-between gap-2 rounded-[1.5rem] bg-card py-3 pl-6 pr-3 text-base transition-colors hover:bg-muted">
+            <div className="flex items-center justify-between gap-2 rounded-[1.5rem] bg-muted py-3 pl-6 pr-3 text-base transition-colors hover:bg-border">
               <span className="truncate">{e}</span>
               <img src={medicos} alt="" loading="lazy" className="size-9 shrink-0 rounded-full object-cover" />
             </div>
