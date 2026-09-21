@@ -41,7 +41,7 @@ function Tratamentos() {
               }}
               variant="ghost"
               className={`h-auto w-full justify-between rounded-[1.5rem] py-3 pl-6 pr-3 text-base ${
-                tipo === t.slug ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-card"
+                tipo === t.slug ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-border"
               }`}
             >
               <span>{t.nome}</span>
@@ -56,7 +56,7 @@ function Tratamentos() {
                   key={t.nome}
                   onClick={() => setDetalhe(t.nome)}
                   variant="ghost"
-                  className="h-auto w-full justify-start rounded-[1.25rem] bg-muted px-5 py-3 text-left text-sm hover:bg-card"
+                  className="h-auto w-full justify-start rounded-[1.25rem] bg-muted px-5 py-3 text-left text-sm hover:bg-border"
                 >
                   {t.nome}
                 </Button>

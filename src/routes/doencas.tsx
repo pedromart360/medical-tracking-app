@@ -34,7 +34,7 @@ function Doencas() {
                 onClick={() => setSel(d.nome)}
                 variant="ghost"
                 className={`h-auto w-full justify-between rounded-[1rem] px-4 py-2.5 text-sm ${
-                  sel === d.nome ? "bg-card text-foreground" : "text-muted-foreground hover:bg-card"
+                  sel === d.nome ? "bg-card text-foreground" : "text-muted-foreground hover:bg-border"
                 }`}
               >
                 <span>{d.nome}</span>
