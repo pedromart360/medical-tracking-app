@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { areasMedicas, exameCategorias, resultadosExame, tiposPorCategoria } from "@/lib/data";
+import { areasMedicas, exameCategorias, pontosCorpo, resultadosExame, tiposPorCategoria } from "@/lib/data";
+import { BodyViewer } from "@/components/BodyViewer";
 import exames from "@/assets/exames.jpg";
 import medicos from "@/assets/medicos.jpg";
 
@@ -41,40 +42,52 @@ function Categoria() {
   const { slug } = Route.useParams();
   const nome = exameCategorias.find((c) => c.slug === slug)?.nome ?? "Exames";
   const tipos = tiposPorCategoria[slug] ?? [];
+  const pontos = pontosCorpo[slug];
+
+  const secoes = (
+    <div className="flex h-full min-w-0 flex-col justify-center gap-[clamp(1.25rem,3.2vw,2.75rem)]">
+      <Secao titulo="Áreas médicas">
+        {areasMedicas.map((a) => (
+          <span key={a} className={chipClass}>
+            <img src={medicos} alt="" loading="lazy" className={chipImg} />
+            {a}
+          </span>
+        ))}
+      </Secao>
+
+      <Secao titulo="Tipos de exames">
+        {tipos.map((t) => {
+          const clicavel = Boolean(resultadosExame[t.slug]);
+          const chip = (
+            <span className={`${chipClass} ${clicavel ? "hover:bg-border" : ""}`}>
+              <img src={exames} alt="" loading="lazy" className={chipImg} />
+              {t.nome}
+            </span>
+          );
+          return clicavel ? (
+            <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }} className="shrink-0">
+              {chip}
+            </Link>
+          ) : (
+            <span key={t.slug} className="shrink-0">
+              {chip}
+            </span>
+          );
+        })}
+      </Secao>
+    </div>
+  );
 
   return (
     <PageShell label="Exames" title={nome} backTo="/exames">
-      <div className="flex h-full flex-col justify-center gap-[clamp(1.25rem,3.2vw,2.75rem)]">
-        <Secao titulo="Áreas médicas">
-          {areasMedicas.map((a) => (
-            <span key={a} className={chipClass}>
-              <img src={medicos} alt="" loading="lazy" className={chipImg} />
-              {a}
-            </span>
-          ))}
-        </Secao>
-
-        <Secao titulo="Tipos de exames">
-          {tipos.map((t) => {
-            const clicavel = Boolean(resultadosExame[t.slug]);
-            const chip = (
-              <span className={`${chipClass} ${clicavel ? "hover:bg-border" : ""}`}>
-                <img src={exames} alt="" loading="lazy" className={chipImg} />
-                {t.nome}
-              </span>
-            );
-            return clicavel ? (
-              <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }} className="shrink-0">
-                {chip}
-              </Link>
-            ) : (
-              <span key={t.slug} className="shrink-0">
-                {chip}
-              </span>
-            );
-          })}
-        </Secao>
-      </div>
+      {pontos ? (
+        <div className="grid h-full gap-[clamp(1rem,2.4vw,2rem)] lg:grid-cols-[minmax(0,34%)_minmax(0,1fr)]">
+          <BodyViewer pontos={pontos} />
+          {secoes}
+        </div>
+      ) : (
+        secoes
+      )}
     </PageShell>
   );
 }
