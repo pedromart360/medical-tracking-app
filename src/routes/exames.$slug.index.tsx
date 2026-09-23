@@ -44,36 +44,37 @@ function Categoria() {
   const tipos = tiposPorCategoria[slug] ?? [];
   const pontos = pontosCorpo[slug];
 
+  const areas = Array.from(
+    new Set(arquivosExame.filter((a) => a.categoriaSlug === slug).map((a) => a.areaMedica)),
+  );
+
   const secoes = (
     <div className="flex h-full min-w-0 flex-col justify-center gap-[clamp(1.25rem,3.2vw,2.75rem)]">
       <Secao titulo="Áreas médicas">
-        {areasMedicas.map((a) => (
-          <span key={a} className={chipClass}>
-            <img src={medicos} alt="" loading="lazy" className={chipImg} />
-            {a}
-          </span>
+        {areas.map((a) => (
+          <Link
+            key={a}
+            to="/exames/$slug/area/$area"
+            params={{ slug, area: areaSlug(a) }}
+            className="shrink-0"
+          >
+            <span className={`${chipClass} hover:bg-border`}>
+              <img src={medicos} alt="" loading="lazy" className={chipImg} />
+              {a}
+            </span>
+          </Link>
         ))}
       </Secao>
 
       <Secao titulo="Tipos de exames">
-        {tipos.map((t) => {
-          const clicavel = Boolean(resultadosExame[t.slug]);
-          const chip = (
-            <span className={`${chipClass} ${clicavel ? "hover:bg-border" : ""}`}>
+        {tipos.map((t) => (
+          <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }} className="shrink-0">
+            <span className={`${chipClass} hover:bg-border`}>
               <img src={exames} alt="" loading="lazy" className={chipImg} />
               {t.nome}
             </span>
-          );
-          return clicavel ? (
-            <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }} className="shrink-0">
-              {chip}
-            </Link>
-          ) : (
-            <span key={t.slug} className="shrink-0">
-              {chip}
-            </span>
-          );
-        })}
+          </Link>
+        ))}
       </Secao>
     </div>
   );
