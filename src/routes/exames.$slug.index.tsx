@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { areasMedicas, exameCategorias, pontosCorpo, resultadosExame, tiposPorCategoria } from "@/lib/data";
+import { areaSlug, arquivosExame, exameCategorias, pontosCorpo, tiposPorCategoria } from "@/lib/data";
 import { BodyViewer } from "@/components/BodyViewer";
 import exames from "@/assets/exames.jpg";
 import medicos from "@/assets/medicos.jpg";

@@ -18,6 +18,7 @@ import { Route as ExamesSlugIndexRouteImport } from './routes/exames.$slug.index
 import { Route as ExamesSlugTipoRouteImport } from './routes/exames.$slug.$tipo'
 import { Route as MedicosEspIndexRouteImport } from './routes/medicos.$esp.index'
 import { Route as MedicosEspDocRouteImport } from './routes/medicos.$esp.$doc'
+import { Route as ExamesSlugAreaAreaRouteImport } from './routes/exames.$slug.area.$area'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -64,6 +65,11 @@ const MedicosEspDocRoute = MedicosEspDocRouteImport.update({
   path: '/medicos/$esp/$doc',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExamesSlugAreaAreaRoute = ExamesSlugAreaAreaRouteImport.update({
+  id: '/exames/$slug/area/$area',
+  path: '/exames/$slug/area/$area',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/medicos/$esp/$doc': typeof MedicosEspDocRoute
   '/exames/$slug/': typeof ExamesSlugIndexRoute
   '/medicos/$esp/': typeof MedicosEspIndexRoute
+  '/exames/$slug/area/$area': typeof ExamesSlugAreaAreaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +93,7 @@ export interface FileRoutesByTo {
   '/medicos/$esp/$doc': typeof MedicosEspDocRoute
   '/exames/$slug': typeof ExamesSlugIndexRoute
   '/medicos/$esp': typeof MedicosEspIndexRoute
+  '/exames/$slug/area/$area': typeof ExamesSlugAreaAreaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   '/medicos/$esp/$doc': typeof MedicosEspDocRoute
   '/exames/$slug/': typeof ExamesSlugIndexRoute
   '/medicos/$esp/': typeof MedicosEspIndexRoute
+  '/exames/$slug/area/$area': typeof ExamesSlugAreaAreaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +120,7 @@ export interface FileRouteTypes {
     | '/medicos/$esp/$doc'
     | '/exames/$slug/'
     | '/medicos/$esp/'
+    | '/exames/$slug/area/$area'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +132,7 @@ export interface FileRouteTypes {
     | '/medicos/$esp/$doc'
     | '/exames/$slug'
     | '/medicos/$esp'
+    | '/exames/$slug/area/$area'
   id:
     | '__root__'
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/medicos/$esp/$doc'
     | '/exames/$slug/'
     | '/medicos/$esp/'
+    | '/exames/$slug/area/$area'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +157,7 @@ export interface RootRouteChildren {
   MedicosEspDocRoute: typeof MedicosEspDocRoute
   ExamesSlugIndexRoute: typeof ExamesSlugIndexRoute
   MedicosEspIndexRoute: typeof MedicosEspIndexRoute
+  ExamesSlugAreaAreaRoute: typeof ExamesSlugAreaAreaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MedicosEspDocRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/exames/$slug/area/$area': {
+      id: '/exames/$slug/area/$area'
+      path: '/exames/$slug/area/$area'
+      fullPath: '/exames/$slug/area/$area'
+      preLoaderRoute: typeof ExamesSlugAreaAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -225,6 +245,7 @@ const rootRouteChildren: RootRouteChildren = {
   MedicosEspDocRoute: MedicosEspDocRoute,
   ExamesSlugIndexRoute: ExamesSlugIndexRoute,
   MedicosEspIndexRoute: MedicosEspIndexRoute,
+  ExamesSlugAreaAreaRoute: ExamesSlugAreaAreaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
