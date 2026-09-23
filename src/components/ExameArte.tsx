@@ -1,7 +1,9 @@
+import { useId } from "react";
 import type { MidiaExame } from "@/lib/data";
 
 /** Arte gerada por CSS/SVG que representa o arquivo do exame. */
 export function ExameArte({ midia, seed = 0, className = "" }: { midia: MidiaExame; seed?: number; className?: string }) {
+  const uid = useId();
   if (midia === "grafico") {
     const linhas = [0, 1, 2, 3];
     return (
