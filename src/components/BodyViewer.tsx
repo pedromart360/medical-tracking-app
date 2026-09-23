@@ -36,7 +36,18 @@ export function BodyViewer({ pontos }: { pontos: PontoCorpo[] }) {
         <RotateCcw className="size-3" /> arraste para girar
       </span>
 
-      {exame && <DetalheExame exame={exame} onClose={() => setExame(null)} />}
+      {exame && (
+        <ExameModal
+          exame={{
+            nome: exame.nome,
+            pedidoPor: exame.pedidoPor,
+            data: exame.data,
+            local: exame.local,
+            midia: "rx",
+          }}
+          onClose={() => setExame(null)}
+        />
+      )}
     </div>
   );
 }
