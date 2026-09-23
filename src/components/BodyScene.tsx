@@ -8,7 +8,7 @@ const SOMBRA = "#E8714F";
 function Parte({
   pos,
   args,
-  rot,
+  rot = [0, 0, 0],
   cor = PELE,
 }: {
   pos: [number, number, number];
