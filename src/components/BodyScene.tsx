@@ -129,7 +129,7 @@ export default function BodyScene({
   onSelecionar: (e: ExameCorpo) => void;
 }) {
   return (
-    <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.15, 2.6], fov: 42 }}>
+    <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0.1, 3.5], fov: 40 }}>
       <color attach="background" args={["#F6F6F6"]} />
       <ambientLight intensity={0.6} />
       <directionalLight position={[3, 6, 4]} intensity={1.4} castShadow />
@@ -156,7 +156,7 @@ export default function BodyScene({
         enableZoom={false}
         minPolarAngle={Math.PI / 2.6}
         maxPolarAngle={Math.PI / 1.9}
-        target={[0, 0.25, 0]}
+        target={[0, 0, 0]}
       />
     </Canvas>
   );
