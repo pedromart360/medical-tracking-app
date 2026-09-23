@@ -410,3 +410,151 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
     },
   ],
 };
+
+/* ---- Base unificada de arquivos de exames ---- */
+
+export type MidiaExame = "rx" | "grafico" | "laudo" | "microscopia";
+
+export type ExameArquivo = {
+  id: string;
+  nome: string;
+  categoriaSlug: string;
+  tipoSlug: string;
+  tipoNome: string;
+  areaMedica: string;
+  data: string;
+  ano: number;
+  pedidoPor: string;
+  realizadoPor: string;
+  local: string;
+  midia: MidiaExame;
+  temLaudo: boolean;
+};
+
+type PerfilTipo = { nomes: string[]; area: string; midia: MidiaExame };
+
+const perfilTipo: Record<string, PerfilTipo> = {
+  radiografia: {
+    nomes: ["RX do úmero", "RX da perna direita", "RX do crânio", "RX do pé esquerdo", "RX de tórax"],
+    area: "Ortopedia",
+    midia: "rx",
+  },
+  ultrassonografia: {
+    nomes: ["US abdominal", "US de tireoide", "US de mama", "US obstétrico"],
+    area: "Ginecologia e Obstetrícia",
+    midia: "rx",
+  },
+  "tomografia-computadorizada": {
+    nomes: ["TC de tórax", "TC de abdome", "TC de crânio", "TC de coluna"],
+    area: "Neurologia",
+    midia: "rx",
+  },
+  "ressonancia-magnetica": {
+    nomes: ["RM do joelho", "RM de crânio", "RM do ombro", "RM de coluna lombar"],
+    area: "Ortopedia",
+    midia: "rx",
+  },
+  cardiacos: {
+    nomes: ["Eletrocardiograma", "Holter 24h", "Teste ergométrico", "MAPA 24h"],
+    area: "Cardiologia",
+    midia: "grafico",
+  },
+  neurologicos: {
+    nomes: ["Eletroencefalograma", "Eletroneuromiografia", "Potencial evocado"],
+    area: "Neurologia",
+    midia: "grafico",
+  },
+  respiratorios: {
+    nomes: ["Espirometria", "Prova broncodilatadora", "Oximetria noturna"],
+    area: "Pneumatologia",
+    midia: "grafico",
+  },
+  sono: { nomes: ["Polissonografia", "Actigrafia", "Poligrafia respiratória"], area: "Pneumatologia", midia: "grafico" },
+  obstetricos: { nomes: ["Cardiotocografia", "Doppler obstétrico"], area: "Ginecologia e Obstetrícia", midia: "grafico" },
+  auditivos: { nomes: ["Audiometria tonal", "Impedanciometria", "Emissões otoacústicas"], area: "Otorrinolaringologia", midia: "grafico" },
+  vasculares: { nomes: ["Doppler de carótidas", "Doppler venoso de MMII"], area: "Angiologia", midia: "grafico" },
+  urologicos: { nomes: ["Urofluxometria", "Estudo urodinâmico"], area: "Urologia", midia: "grafico" },
+  hematologicos: { nomes: ["Hemograma completo", "Coagulograma", "Ferritina sérica"], area: "Hematologia", midia: "laudo" },
+  bioquimicos: { nomes: ["Glicemia de jejum", "Perfil lipídico", "Função hepática", "Creatinina"], area: "Endocrinologia", midia: "laudo" },
+  hormonais: { nomes: ["TSH e T4 livre", "Cortisol sérico", "Prolactina"], area: "Endocrinologia", midia: "laudo" },
+  imunologicos: { nomes: ["FAN", "Fator reumatoide", "Proteína C reativa"], area: "Alergia e Imunologia", midia: "laudo" },
+  parasitologicos: { nomes: ["Parasitológico de fezes", "Pesquisa de sangue oculto"], area: "Infectologia", midia: "laudo" },
+  osseos: { nomes: ["Cintilografia óssea", "Densitometria óssea"], area: "Ortopedia", midia: "rx" },
+  tireoidianos: { nomes: ["Cintilografia da tireoide", "Captação de iodo"], area: "Endocrinologia", midia: "rx" },
+  renais: { nomes: ["Cintilografia renal", "Renograma com DTPA"], area: "Nefrologia", midia: "rx" },
+  pulmonares: { nomes: ["Cintilografia pulmonar", "Perfusão pulmonar"], area: "Pneumatologia", midia: "rx" },
+  oncologicos: { nomes: ["PET-CT oncológico", "Cintilografia com gálio"], area: "Hematologia", midia: "rx" },
+  ginecologicos: { nomes: ["Citologia cervical", "Colposcopia dirigida"], area: "Ginecologia e Obstetrícia", midia: "microscopia" },
+  mamarios: { nomes: ["Punção aspirativa de mama", "Citologia mamária"], area: "Mastologia", midia: "microscopia" },
+  digestivos: { nomes: ["Endoscopia digestiva alta", "Colonoscopia"], area: "Gastroenterologia", midia: "rx" },
+  visuais: { nomes: ["Campimetria", "Tonometria", "Mapeamento de retina"], area: "Oftalmologia", midia: "grafico" },
+};
+
+const medicosSolicitantes = ["Dr. Davi", "Dra. Edith Stein", "Dr. João Cabral", "Dr. Gabriel Garcia"];
+const medicosRealizadores = ["Dra. Antonieta", "Dr. Rubem Braga", "Dra. Cecília Meireles"];
+const locais = ["Clínica Eccoar", "Hospital Santa Cruz", "Clínica SulAmérica", "Hospital Praia Grande"];
+
+function slugArea(area: string) {
+  return area
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export const areaSlug = slugArea;
+
+function gerarArquivos(): ExameArquivo[] {
+  const lista: ExameArquivo[] = [];
+  let n = 0;
+
+  for (const cat of exameCategorias) {
+    const tipos = tiposPorCategoria[cat.slug] ?? [];
+    for (const tipo of tipos) {
+      const perfil =
+        perfilTipo[tipo.slug] ??
+        ({ nomes: [`${tipo.nome} — painel 1`, `${tipo.nome} — painel 2`], area: areasMedicas[n % areasMedicas.length]!, midia: "laudo" } as PerfilTipo);
+
+      const total = 10;
+      for (let i = 0; i < total; i++) {
+        n++;
+        const ano = [2026, 2025, 2025, 2024, 2024][i % 5]!;
+        const mes = ((n * 3) % 12) + 1;
+        const dia = ((n * 7) % 27) + 1;
+        const pad = (v: number) => String(v).padStart(2, "0");
+        lista.push({
+          id: `${cat.slug}-${tipo.slug}-${i}`,
+          nome: perfil.nomes[i % perfil.nomes.length]!,
+          categoriaSlug: cat.slug,
+          tipoSlug: tipo.slug,
+          tipoNome: tipo.nome,
+          areaMedica: perfil.area,
+          data: `${pad(dia)}/${pad(mes)}/${ano}`,
+          ano,
+          pedidoPor: medicosSolicitantes[n % medicosSolicitantes.length]!,
+          realizadoPor: medicosRealizadores[n % medicosRealizadores.length]!,
+          local: locais[n % locais.length]!,
+          midia: perfil.midia,
+          temLaudo: true,
+        });
+      }
+    }
+  }
+
+  return lista;
+}
+
+export const arquivosExame: ExameArquivo[] = gerarArquivos();
+
+const porAno = (a: ExameArquivo, b: ExameArquivo) => b.ano - a.ano;
+
+export function arquivosPorTipo(categoriaSlug: string, tipoSlug: string) {
+  return arquivosExame.filter((a) => a.categoriaSlug === categoriaSlug && a.tipoSlug === tipoSlug).sort(porAno);
+}
+
+export function arquivosPorArea(categoriaSlug: string, area: string) {
+  return arquivosExame
+    .filter((a) => a.categoriaSlug === categoriaSlug && slugArea(a.areaMedica) === slugArea(area))
+    .sort(porAno);
+}
