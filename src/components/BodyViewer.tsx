@@ -1,6 +1,7 @@
 import { Suspense, lazy, useState } from "react";
 import { ClientOnly } from "@tanstack/react-router";
-import { X, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
+import { ExameModal } from "@/components/ExameModal";
 import type { ExameCorpo, PontoCorpo } from "@/lib/data";
 
 const BodyScene = lazy(() => import("@/components/BodyScene"));
