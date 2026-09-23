@@ -11,8 +11,14 @@ function Placeholder() {
 
 function DetalheExame({ exame, onClose }: { exame: ExameCorpo; onClose: () => void }) {
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center p-[clamp(0.5rem,2vw,2rem)]">
-      <div className="relative flex max-h-full w-full max-w-[640px] flex-col gap-4 overflow-y-auto rounded-[clamp(1.25rem,2.4vw,2rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.4)]">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/10 p-[clamp(0.75rem,3vw,2.5rem)] backdrop-blur-[2px]"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative flex max-h-[90vh] w-full max-w-[720px] flex-col gap-4 overflow-y-auto rounded-[clamp(1.25rem,2.4vw,2rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)] shadow-[0_30px_80px_-40px_rgba(0,0,0,0.4)]"
+      >
         <button
           onClick={onClose}
           aria-label="Fechar exame"
