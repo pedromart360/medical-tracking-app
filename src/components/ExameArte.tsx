@@ -60,27 +60,30 @@ export function ExameArte({ midia, seed = 0, className = "" }: { midia: MidiaExa
   }
 
   // rx
+  const gid = `osso-${uid.replace(/[:]/g, "")}`;
   return (
-    <div className={`relative overflow-hidden bg-[#0d0f11] ${className}`}>
+    <div className={`relative overflow-hidden bg-[#0b0d0f] ${className}`}>
       <svg viewBox="0 0 100 100" className="absolute inset-0 size-full">
         <defs>
-          <radialGradient id={`osso-${seed}`} cx="50%" cy="45%" r="60%">
-            <stop offset="0%" stopColor="rgba(240,244,248,0.95)" />
-            <stop offset="60%" stopColor="rgba(200,212,220,0.45)" />
-            <stop offset="100%" stopColor="rgba(20,24,28,0)" />
+          <radialGradient id={gid} cx="50%" cy="40%" r="55%">
+            <stop offset="0%" stopColor="#f4f7fa" stopOpacity="0.92" />
+            <stop offset="55%" stopColor="#c9d6df" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#0b0d0f" stopOpacity="0" />
           </radialGradient>
         </defs>
-        <ellipse cx="50" cy="42" rx="26" ry="20" fill={`url(#osso-${seed})`} />
-        <rect x="42" y="42" width="16" height="48" rx="8" fill={`url(#osso-${seed})`} />
-        {Array.from({ length: 6 }, (_, i) => (
+        {Array.from({ length: 7 }, (_, i) => (
           <path
             key={i}
-            d={`M ${12 + i} ${28 + i * 11} Q 50 ${16 + i * 12} ${92 - i} ${30 + i * 11}`}
+            d={`M ${10 + i * 1.5} ${24 + i * 10} Q 50 ${12 + i * 11} ${90 - i * 1.5} ${26 + i * 10}`}
             fill="none"
-            stroke="rgba(214,226,235,0.22)"
-            strokeWidth="2.4"
+            stroke="#dbe6ee"
+            strokeOpacity="0.28"
+            strokeWidth="3"
           />
         ))}
+        <ellipse cx="46" cy="34" rx="20" ry="16" fill={`url(#${gid})`} />
+        <rect x="40" y="36" width="15" height="52" rx="7.5" fill={`url(#${gid})`} />
+        <circle cx="62" cy="30" r="7" fill="#eef4f8" fillOpacity="0.5" />
       </svg>
     </div>
   );
