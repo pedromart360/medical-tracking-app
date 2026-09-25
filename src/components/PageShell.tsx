@@ -74,7 +74,7 @@ export function PageShell({
   children: React.ReactNode;
 }) {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-[1366px] flex-col gap-[clamp(0.75rem,1.6vw,1.375rem)] px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.75rem,1.5vw,1.25rem)]">
+    <main className="mx-auto flex min-h-screen w-full max-w-[1366px] flex-col gap-[clamp(0.75rem,1.6vw,1.375rem)] px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.75rem,1.5vw,1.25rem)] md:h-dvh md:min-h-0 md:overflow-hidden">
       {/* Mobile: layout simples sem a pasta */}
       <div className="flex flex-1 flex-col gap-5 rounded-[1.75rem] bg-card/60 p-4 md:hidden">
         <div className="flex items-center justify-between gap-3">
@@ -86,7 +86,7 @@ export function PageShell({
 
       {/* Desktop: pasta grande como fundo */}
       <div
-        className="relative hidden aspect-[1326/781] w-full bg-contain bg-top bg-no-repeat md:block"
+        className="relative hidden aspect-[1326/781] w-full bg-contain bg-top bg-no-repeat md:mx-auto md:block md:max-w-[calc((100dvh-9rem)*1326/781)] md:shrink-0"
         style={{ backgroundImage: `url(${pastaGrande.url})` }}
       >
         <div className="absolute inset-0 flex flex-col">
