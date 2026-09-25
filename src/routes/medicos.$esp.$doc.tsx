@@ -205,7 +205,7 @@ function MedicoDetalhe() {
           className={consulta ? "opacity-45" : ""}
           onItemClick={(item) => {
             const midia = medico.consultas.flatMap((c) => c.exames).find((e) => e.nome === item.nome)?.midia;
-            setExame({ nome: item.nome, pedidoPor: medico.nome, data: item.data, local: medico.consultas.find((c) => c.data === item.data)?.local ?? "Não informado", midia });
+            setExame({ nome: item.nome, pedidoPor: medico.nome, data: item.data, local: medico.consultas.find((c) => c.data === item.data)?.local ?? "Não informado", ...(midia ? { midia } : {}) });
           }}
         />
       </div>
