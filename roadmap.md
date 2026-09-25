@@ -10,3 +10,12 @@
 - [x] Tela de seleção de arquivos de exames (grid + régua de anos) por tipo e por área médica
 - [x] Pop-up de detalhe do exame (imagem, dados, laudo, observações)
 - [ ] Substituir dados de exemplo pela lista real de exames
+
+- [x] Módulo Médicos: especialidades, seleção de médicos, ficha do médico
+- [x] Consultas por ano com setas e quadros extras quando extrapolam a grade
+- [x] Chips de laudos abrem o visualizador de documentos (leitor de PDF simples)
+- [x] Chips de exames solicitados abrem o pop-up do exame
+- [x] Avatar genérico quando o médico não tem foto
+- [ ] Calendário contextual filtrado por módulo (exames, médicos, tratamentos)
+- [ ] Tela "+ adicionar dados"
+- [ ] Polimento fino da responsividade mobile

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { especialidades, medicos as listaMedicos } from "@/lib/data";
-import medicosImg from "@/assets/medicos.jpg";
+import { FotoMedico } from "@/components/FotoMedico";
+import { medicosPorEspecialidade, nomeEspecialidadePorSlug } from "@/lib/data";
 
 export const Route = createFileRoute("/medicos/$esp/")({
   head: () => ({
@@ -19,28 +19,34 @@ export const Route = createFileRoute("/medicos/$esp/")({
 
 function Especialidade() {
   const { esp } = Route.useParams();
-  const nome =
-    especialidades.find(
-      (e) =>
-        e.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-") === esp,
-    ) ?? "Especialidade";
+  const nome = nomeEspecialidadePorSlug(esp) ?? "Especialidade";
+  const lista = medicosPorEspecialidade(esp);
 
   return (
     <PageShell label="Médicos" title={nome} backTo="/medicos">
-      <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
-        {listaMedicos.map((m) => (
-          <Link key={m.id} to="/medicos/$esp/$doc" params={{ esp, doc: m.id }} className="mx-auto w-[150px] text-center">
-            <img
-              src={medicosImg}
-              alt={m.nome}
-              loading="lazy"
-              className="size-[130px] rounded-full object-cover transition-transform hover:scale-105"
-            />
-            <p className="mt-3 text-sm font-medium leading-tight">{m.nome}</p>
-            <p className="text-xs text-muted-foreground">{m.especialidade}</p>
-          </Link>
-        ))}
-      </div>
+      {lista.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Nenhum médico cadastrado nesta especialidade.</p>
+      ) : (
+        <div className="flex flex-wrap gap-[clamp(1rem,3vw,3rem)]">
+          {lista.map((m) => (
+            <Link
+              key={m.id}
+              to="/medicos/$esp/$doc"
+              params={{ esp, doc: m.id }}
+              className="w-[clamp(6rem,12vw,10rem)] text-center"
+            >
+              <FotoMedico
+                nome={m.nome}
+                className="mx-auto size-[clamp(5.5rem,11vw,9rem)] transition-transform hover:scale-105"
+              />
+              <p className="mt-[clamp(0.5rem,1vw,0.875rem)] text-[clamp(0.75rem,1.1vw,1rem)] font-medium leading-tight">
+                {m.nome}
+              </p>
+              <p className="text-[clamp(0.625rem,0.9vw,0.8125rem)] text-muted-foreground">{m.cargo}</p>
+            </Link>
+          ))}
+        </div>
+      )}
     </PageShell>
   );
 }

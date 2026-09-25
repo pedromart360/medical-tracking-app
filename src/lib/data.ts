@@ -558,3 +558,212 @@ export function arquivosPorArea(categoriaSlug: string, area: string) {
     .filter((a) => a.categoriaSlug === categoriaSlug && slugArea(a.areaMedica) === slugArea(area))
     .sort(porAno);
 }
+
+/* =====================  Módulo Médicos  ===================== */
+
+export type DocumentoConsulta = {
+  id: string;
+  titulo: string;
+  paginas: number;
+};
+
+export type ExameDaConsulta = {
+  nome: string;
+  midia: MidiaExame;
+};
+
+export type Consulta = {
+  id: string;
+  dia: string; // 05/03
+  data: string; // 05/03/2026
+  ano: number;
+  local: string;
+  laudos: DocumentoConsulta[];
+  exames: ExameDaConsulta[];
+  resumo: string;
+};
+
+export type Medico = {
+  id: string;
+  nome: string;
+  cargo: string;
+  especialidade: string;
+  especialidadeSlug: string;
+  bio: string;
+  crm: string;
+  consultas: Consulta[];
+  remedios: { nome: string; data: string }[];
+  examesSolicitados: { nome: string; data: string }[];
+};
+
+export const especialidadeSlug = slugArea;
+
+const cargoPorEspecialidade: Record<string, string> = {
+  Cardiologia: "Cardiologista",
+  Psiquiatria: "Psiquiatra",
+  Endocrinologia: "Endocrinologista",
+  Ortopedia: "Ortopedista",
+  Pediatria: "Pediatra",
+  Otorrinolaringologia: "Otorrinolaringologista",
+  "Ginecologia e Obstetrícia": "Ginecologista e Obstetra",
+  Oftalmologia: "Oftalmologista",
+  Urologia: "Urologista",
+  Dermatologia: "Dermatologista",
+  Neurologia: "Neurologista",
+  Gastroenterologia: "Gastroenterologista",
+  Pneumatologia: "Pneumologista",
+  Reumatologia: "Reumatologista",
+  Nefrologia: "Nefrologista",
+  Infectologia: "Infectologista",
+  Geriatria: "Geriatra",
+  Hematologia: "Hematologista",
+  Mastologia: "Mastologista",
+  Coloproctologia: "Coloproctologista",
+  Angiologia: "Angiologista",
+  "Alergia e Imunologia": "Alergista e Imunologista",
+};
+
+const nomesProfissionais: { nome: string; f: boolean }[] = [
+  { nome: "Jorge Luís Borges", f: false },
+  { nome: "Edith Stein", f: true },
+  { nome: "Gabriel Garcia", f: false },
+  { nome: "Cecília Meireles", f: true },
+  { nome: "João Cabral", f: false },
+  { nome: "Antonieta Duarte", f: true },
+  { nome: "Rubem Braga", f: false },
+  { nome: "Clarice Lispector", f: true },
+  { nome: "Mário Quintana", f: false },
+  { nome: "Hilda Hilst", f: true },
+  { nome: "Davi Rocha", f: false },
+  { nome: "Marina Colasanti", f: true },
+  { nome: "Manuel Bandeira", f: false },
+  { nome: "Adélia Prado", f: true },
+  { nome: "Carlos Drummond", f: false },
+  { nome: "Rachel de Queiroz", f: true },
+];
+
+const remediosPool = [
+  "Buscopan",
+  "Omeprazol",
+  "Dipirona",
+  "Tramadol",
+  "Losartana",
+  "Pregabalina",
+  "Amoxicilina",
+  "Prednisona",
+  "Metformina",
+  "Sertralina",
+];
+
+const documentosPool = [
+  "atestado de alta",
+  "prontuário clínico",
+  "relatório médico",
+  "receituário",
+  "laudo clínico",
+  "encaminhamento",
+];
+
+const resumosPool = [
+  "Paciente compareceu para acompanhamento de rotina. Queixas leves, exame físico sem alterações relevantes. Mantida a conduta anterior.",
+  "Retorno com resultados de exames. Quadro estável, ajuste de dose da medicação em curso e novo retorno em três meses.",
+  "Consulta de avaliação inicial. Solicitados exames complementares para investigação e orientações gerais de cuidado.",
+  "Avaliação pós-procedimento. Boa evolução clínica, sem intercorrências. Liberada para atividades habituais.",
+];
+
+function examesDaArea(area: string): ExameDaConsulta[] {
+  const lista: ExameDaConsulta[] = [];
+  for (const [, perfil] of Object.entries(perfilTipo)) {
+    if (perfil.area === area) for (const nome of perfil.nomes) lista.push({ nome, midia: perfil.midia });
+  }
+  if (lista.length === 0) {
+    return [
+      { nome: "Hemograma completo", midia: "laudo" },
+      { nome: "Perfil lipídico", midia: "laudo" },
+      { nome: "RX de tórax", midia: "rx" },
+    ];
+  }
+  return lista;
+}
+
+function gerarMedicos(): Medico[] {
+  const lista: Medico[] = [];
+  let n = 3;
+
+  for (const esp of especialidades) {
+    const cargo = cargoPorEspecialidade[esp] ?? "Médico";
+    const pool = examesDaArea(esp);
+    const quantos = 4 + (esp.length % 3);
+
+    for (let d = 0; d < quantos; d++) {
+      n += 5;
+      const base = nomesProfissionais[(n + d * 3) % nomesProfissionais.length]!;
+      const titulo = base.f ? "Dra." : "Dr.";
+      const nome = `${titulo} ${base.nome}`;
+      const id = `${slugArea(base.nome)}-${d + 1}`;
+
+      const consultas: Consulta[] = [];
+      for (const ano of [2026, 2025, 2024]) {
+        const total = 3 + ((n + ano + d) % 12);
+        for (let c = 0; c < total; c++) {
+          n += 3;
+          const dia = ((n * 7) % 27) + 1;
+          const mes = ((n * 5) % 12) + 1;
+          const pad = (v: number) => String(v).padStart(2, "0");
+          const nLaudos = 1 + ((n + c) % 3);
+          const nExames = (n + c) % 4;
+          consultas.push({
+            id: `${id}-${ano}-${c}`,
+            dia: `${pad(dia)}/${pad(mes)}`,
+            data: `${pad(dia)}/${pad(mes)}/${ano}`,
+            ano,
+            local: locais[(n + c) % locais.length]!,
+            laudos: Array.from({ length: nLaudos }, (_, i) => ({
+              id: `${id}-${ano}-${c}-doc${i}`,
+              titulo: documentosPool[(n + i + c) % documentosPool.length]!,
+              paginas: 2 + ((n + i) % 3),
+            })),
+            exames: Array.from({ length: nExames }, (_, i) => pool[(n + i * 2 + c) % pool.length]!),
+            resumo: resumosPool[(n + c) % resumosPool.length]!,
+          });
+        }
+      }
+      consultas.sort((a, b) => b.ano - a.ano);
+
+      lista.push({
+        id,
+        nome,
+        cargo,
+        especialidade: esp,
+        especialidadeSlug: slugArea(esp),
+        crm: `CRM ${100000 + ((n * 37) % 899999)}`,
+        bio: `${nome} atua em ${esp} há mais de ${8 + (n % 18)} anos, atendendo em ${locais[n % locais.length]} e ${locais[(n + 1) % locais.length]}. Acompanha Ana Carolina em consultas periódicas e no seguimento dos exames solicitados.`,
+        consultas,
+        remedios: Array.from({ length: 4 + (n % 4) }, (_, i) => ({
+          nome: remediosPool[(n + i * 3) % remediosPool.length]!,
+          data: consultas[(i * 2) % consultas.length]?.data ?? "01/03/2025",
+        })),
+        examesSolicitados: Array.from({ length: 4 + ((n + 1) % 4) }, (_, i) => ({
+          nome: pool[(n + i) % pool.length]!.nome,
+          data: consultas[(i * 3) % consultas.length]?.data ?? "01/03/2025",
+        })),
+      });
+    }
+  }
+
+  return lista;
+}
+
+export const medicosBase: Medico[] = gerarMedicos();
+
+export function medicosPorEspecialidade(slug: string) {
+  return medicosBase.filter((m) => m.especialidadeSlug === slug);
+}
+
+export function acharMedico(espSlug: string, id: string) {
+  return medicosBase.find((m) => m.especialidadeSlug === espSlug && m.id === id);
+}
+
+export function nomeEspecialidadePorSlug(slug: string) {
+  return especialidades.find((e) => slugArea(e) === slug);
+}
