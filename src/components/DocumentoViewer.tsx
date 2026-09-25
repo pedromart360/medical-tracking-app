@@ -102,9 +102,9 @@ function Pagina({ doc, indice }: { doc: DocumentoAberto; indice: number }) {
         </p>
       )}
 
-      <div className="mt-[6%] flex flex-col gap-[2.6%]">
+      <div className="mt-[6%] space-y-[10px]">
         {linhas.map((l, i) => (
-          <span key={i} className="h-[5px] rounded-full bg-muted-foreground/25" style={{ width: `${l}%` }} />
+          <div key={i} className="h-[5px] rounded-full bg-muted-foreground/25" style={{ width: `${l}%` }} />
         ))}
       </div>
 
