@@ -592,7 +592,7 @@ export type Medico = {
   bio: string;
   crm: string;
   consultas: Consulta[];
-  remedios: { nome: string; data: string }[];
+  remedios: { nome: string; data: string; consultaId: string }[];
   examesSolicitados: { nome: string; data: string }[];
 };
 
@@ -739,10 +739,14 @@ function gerarMedicos(): Medico[] {
         crm: `CRM ${100000 + ((n * 37) % 899999)}`,
         bio: `${nome} atua em ${esp} há mais de ${8 + (n % 18)} anos, atendendo em ${locais[n % locais.length]} e ${locais[(n + 1) % locais.length]}. Acompanha Ana Carolina em consultas periódicas e no seguimento dos exames solicitados.`,
         consultas,
-        remedios: Array.from({ length: 4 + (n % 4) }, (_, i) => ({
-          nome: remediosPool[(n + i * 3) % remediosPool.length]!,
-          data: consultas[(i * 2) % consultas.length]?.data ?? "01/03/2025",
-        })),
+        remedios: Array.from({ length: 4 + (n % 4) }, (_, i) => {
+          const consulta = consultas[(i * 2) % consultas.length];
+          return {
+            nome: remediosPool[(n + i * 3) % remediosPool.length]!,
+            data: consulta?.data ?? "01/03/2025",
+            consultaId: consulta?.id ?? "",
+          };
+        }),
         examesSolicitados: Array.from({ length: 4 + ((n + 1) % 4) }, (_, i) => ({
           nome: pool[(n + i) % pool.length]!.nome,
           data: consultas[(i * 3) % consultas.length]?.data ?? "01/03/2025",
