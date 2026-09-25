@@ -87,17 +87,17 @@ function Pagina({ doc, indice }: { doc: DocumentoAberto; indice: number }) {
     <article className="aspect-[1/1.414] w-full overflow-hidden rounded-[0.5rem] bg-card p-[8%] shadow-[0_10px_30px_-18px_rgba(0,0,0,0.5)]">
       <header className="flex items-start justify-between gap-3 border-b border-border pb-[4%]">
         <div className="min-w-0">
-          <p className="truncate text-[2.6cqw] font-medium capitalize sm:text-sm">{doc.titulo}</p>
-          <p className="truncate text-[2.2cqw] text-muted-foreground sm:text-xs">{doc.local}</p>
+          <p className="truncate text-[0.65rem] font-medium capitalize sm:text-sm">{doc.titulo}</p>
+          <p className="truncate text-[0.5625rem] text-muted-foreground sm:text-xs">{doc.local}</p>
         </div>
         <div className="shrink-0 text-right">
-          <p className="text-[2.2cqw] text-muted-foreground sm:text-xs">{doc.medico}</p>
-          <p className="text-[2.2cqw] text-muted-foreground sm:text-xs">{doc.crm}</p>
+          <p className="text-[0.5625rem] text-muted-foreground sm:text-xs">{doc.medico}</p>
+          <p className="text-[0.5625rem] text-muted-foreground sm:text-xs">{doc.crm}</p>
         </div>
       </header>
 
       {indice === 0 && (
-        <p className="mt-[6%] text-[2.4cqw] leading-relaxed text-foreground/80 sm:text-xs">
+        <p className="mt-[6%] text-[0.6rem] leading-relaxed text-foreground/80 sm:text-xs">
           Documento emitido em {doc.data}, referente ao atendimento da paciente Ana Carolina.
         </p>
       )}
@@ -108,7 +108,7 @@ function Pagina({ doc, indice }: { doc: DocumentoAberto; indice: number }) {
         ))}
       </div>
 
-      <p className="mt-[8%] text-right text-[2.2cqw] text-muted-foreground sm:text-xs">
+      <p className="mt-[8%] text-right text-[0.5625rem] text-muted-foreground sm:text-xs">
         página {indice + 1} de {doc.paginas}
       </p>
     </article>
