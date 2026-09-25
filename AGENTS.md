@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep PageShell's desktop folder aspect ratio within viewport height and scroll only its inner content, so the folder and header stay stationary while long medical records remain reachable.

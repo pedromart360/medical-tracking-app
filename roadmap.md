@@ -16,6 +16,8 @@
 - [x] Chips de laudos abrem o visualizador de documentos (leitor de PDF simples)
 - [x] Chips de exames solicitados abrem o pop-up do exame
 - [x] Avatar genérico quando o médico não tem foto
+- [x] Pasta e cabeçalho estáticos com conteúdo rolando por dentro na ficha médica
+- [x] Lista de exames abre a ficha do exame; remédios filtrados por consulta e lista atenuada ao selecionar data
 - [ ] Calendário contextual filtrado por módulo (exames, médicos, tratamentos)
 - [ ] Tela "+ adicionar dados"
 - [ ] Polimento fino da responsividade mobile

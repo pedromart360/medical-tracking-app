@@ -47,7 +47,7 @@ function MedicoDetalhe() {
     );
   }
 
-  const ano = anosDisponiveis[anoIdx] ?? anosDisponiveis[0]!;
+  const ano = anosDisponiveis[anoIdx] ?? anosDisponiveis[0];
   const doAno = medico.consultas.filter((c) => c.ano === ano);
   const quadros: Consulta[][] = [];
   for (let i = 0; i < doAno.length; i += POR_QUADRO) quadros.push(doAno.slice(i, i + POR_QUADRO));
@@ -194,8 +194,20 @@ function MedicoDetalhe() {
         </div>
 
         {/* Inferiores */}
-        <Lista titulo="Remédios prescritos:" itens={medico.remedios} />
-        <Lista titulo="Exames solicitados:" itens={medico.examesSolicitados} />
+        <Lista
+          titulo="Remédios prescritos:"
+          itens={consulta ? medico.remedios.filter((r) => r.consultaId === consulta.id) : medico.remedios}
+          vazio="Nenhum remédio prescrito nesta consulta."
+        />
+        <Lista
+          titulo="Lista de exames:"
+          itens={medico.examesSolicitados}
+          className={consulta ? "opacity-45" : ""}
+          onItemClick={(item) => {
+            const midia = medico.consultas.flatMap((c) => c.exames).find((e) => e.nome === item.nome)?.midia;
+            setExame({ nome: item.nome, pedidoPor: medico.nome, data: item.data, local: medico.consultas.find((c) => c.data === item.data)?.local ?? "Não informado", ...(midia ? { midia } : {}) });
+          }}
+        />
       </div>
 
       {documento && <DocumentoViewer doc={documento} onClose={() => setDocumento(null)} />}
@@ -215,16 +227,31 @@ function Chip({ children, onClick }: { children: React.ReactNode; onClick: () =>
   );
 }
 
-function Lista({ titulo, itens }: { titulo: string; itens: { nome: string; data: string }[] }) {
+function Lista({ titulo, itens, vazio, className = "", onItemClick }: {
+  titulo: string;
+  itens: { nome: string; data: string }[];
+  vazio?: string;
+  className?: string;
+  onItemClick?: (item: { nome: string; data: string }) => void;
+}) {
   return (
-    <div className="rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,1.8vw,1.75rem)]">
+    <div className={`rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,1.8vw,1.75rem)] transition-opacity ${className}`}>
       <p className="text-[clamp(0.75rem,1vw,0.9375rem)]">{titulo}</p>
       <div className="mt-[clamp(0.625rem,1.2vw,1rem)] max-h-[clamp(7rem,14vw,11rem)] space-y-2 overflow-y-auto pr-1">
-        {itens.map((r, i) => (
-          <div
+        {itens.length === 0 && <p className="text-sm text-muted-foreground">{vazio}</p>}
+        {itens.map((r, i) => onItemClick ? (
+          <Button
             key={`${r.nome}-${i}`}
-            className="flex justify-between gap-3 text-[clamp(0.6875rem,0.95vw,0.875rem)] text-muted-foreground"
+            type="button"
+            variant="ghost"
+            onClick={() => onItemClick(r)}
+            className="flex h-auto w-full min-w-0 justify-between gap-3 rounded-none p-0 text-left text-[clamp(0.6875rem,0.95vw,0.875rem)] font-normal text-muted-foreground hover:bg-transparent hover:text-foreground"
           >
+            <span className="min-w-0 truncate">{r.nome}</span>
+            <span className="shrink-0">{r.data}</span>
+          </Button>
+        ) : (
+          <div key={`${r.nome}-${i}`} className="flex justify-between gap-3 text-[clamp(0.6875rem,0.95vw,0.875rem)] text-muted-foreground">
             <span className="truncate">{r.nome}</span>
             <span className="shrink-0">{r.data}</span>
           </div>
