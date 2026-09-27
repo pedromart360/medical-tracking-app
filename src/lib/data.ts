@@ -841,12 +841,18 @@ function gerarTratamentos(): TratamentoRegistro[] {
 
     for (const ano of anos) {
       const total = cat === "medicamentoso" ? 8 : 12 + (n % 5);
+      let anteriorMes = 1;
+      let anteriorDia = 1;
       for (let i = 0; i < total; i++) {
         n += 7;
-        const mes = ((n * 5) % 12) + 1;
-        const diaBase = ((n * 3) % 24) + 1;
+        const repetirDia = i > 0 && i % 4 === 0;
+        const mes = repetirDia ? anteriorMes : ((n * 5) % 12) + 1;
+        const diaBase = repetirDia ? anteriorDia : ((n * 3) % 24) + 1;
+        anteriorMes = mes;
+        anteriorDia = diaBase;
         const duracao = cat === "medicamentoso" ? 3 + ((n + i) % 8) : 1;
         const dias = Array.from({ length: duracao }, (_, d) => `${pad(diaBase + d)}/${pad(mes)}`);
+
         const medico = medicosBase[(n * 13 + i) % medicosBase.length]!;
         const primeiro = dias[0]!;
         const ultimo = dias[dias.length - 1]!;
