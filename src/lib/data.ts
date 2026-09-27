@@ -859,7 +859,7 @@ function gerarTratamentos(): TratamentoRegistro[] {
 
         lista.push({
           id: `${cat}-${ano}-${i}`,
-          nome: nomes[(n + i) % nomes.length]!,
+          nome: nomes[(i * 3 + ano) % nomes.length]!,
           categoria: cat,
           ano,
           dias,
@@ -870,8 +870,11 @@ function gerarTratamentos(): TratamentoRegistro[] {
               : `${primeiro}/${ano}`,
           pedidoPor: { nome: medico.nome, espSlug: medico.especialidadeSlug, medicoId: medico.id },
           realizadoPor:
-            cat === "medicamentoso" ? "Ana Carolina" : equipeTratamento[(n + i) % equipeTratamento.length]!,
-          local: locais[(n + i) % locais.length]!,
+            cat === "medicamentoso"
+              ? "Ana Carolina"
+              : equipeTratamento[(i * 2 + ano) % equipeTratamento.length]!,
+          local: locais[(i + ano) % locais.length]!,
+
         });
       }
     }
