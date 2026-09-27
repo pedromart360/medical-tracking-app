@@ -1,8 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
-import { anos, tratamentoTipos, tratamentosPorCategoria, type TratamentoRegistro } from "@/lib/data";
+import {
+  anos,
+  meses,
+  tratamentoTipos,
+  tratamentosBase,
+  type TratamentoRegistro,
+} from "@/lib/data";
+import { exportarHistoricoPDF } from "@/lib/export-tratamentos";
 import tratamentosImg from "@/assets/tratamentos.jpg";
 import { Button } from "@/components/ui/button";
 
@@ -20,10 +27,9 @@ export const Route = createFileRoute("/tratamentos")({
   component: Tratamentos,
 });
 
-const ordemDia = (d: string) => {
-  const [dia, mes] = d.split("/");
-  return Number(mes) * 100 + Number(dia);
-};
+const pad = (v: number) => String(v).padStart(2, "0");
+const semana = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const TOTAL_MESES = anos.length * 12;
 
 function useResumo(id: string | undefined) {
   const [texto, setTexto] = useState("");
@@ -43,24 +49,48 @@ function useResumo(id: string | undefined) {
 
 function Tratamentos() {
   const [categoria, setCategoria] = useState<string | null>(null);
-  const [ano, setAno] = useState(anos[0]!);
   const [busca, setBusca] = useState("");
+  const [anoIndex, setAnoIndex] = useState(0);
+  const [mesIndex, setMesIndex] = useState(0);
   const [diaAberto, setDiaAberto] = useState<string | null>(null);
   const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
+  const [gerando, setGerando] = useState(false);
+
+  const ano = anos[anoIndex]!;
+  const mesNome = meses[mesIndex]!;
+  const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
+  const offset = new Date(ano, mesIndex, 1).getDay();
+
+  // índice cronológico: 0 = janeiro do ano mais antigo
+  const cron = (anos.length - 1 - anoIndex) * 12 + mesIndex;
+
+  const fechar = () => {
+    setDiaAberto(null);
+    setSelecionadoId(null);
+  };
+
+  const irMes = (delta: number) => {
+    const alvo = Math.min(TOTAL_MESES - 1, Math.max(0, cron + delta));
+    setAnoIndex(anos.length - 1 - Math.floor(alvo / 12));
+    setMesIndex(alvo % 12);
+    fechar();
+  };
 
   const registros = useMemo(
-    () => (categoria ? tratamentosPorCategoria(categoria, ano) : []),
-    [categoria, ano],
+    () =>
+      tratamentosBase.filter(
+        (t) => t.ano === ano && (categoria === null || t.categoria === categoria),
+      ),
+    [ano, categoria],
   );
 
-  const dias = useMemo(() => {
+  const mapaDias = useMemo(() => {
     const mapa = new Map<string, TratamentoRegistro[]>();
     for (const t of registros) {
       for (const dia of t.dias) mapa.set(dia, [...(mapa.get(dia) ?? []), t]);
     }
-    return [...mapa.entries()].sort((a, b) => ordemDia(a[0]) - ordemDia(b[0]));
+    return mapa;
   }, [registros]);
-
 
   const combinam = useMemo(() => {
     const q = busca.trim().toLowerCase();
@@ -68,38 +98,58 @@ function Tratamentos() {
     return registros.filter((t) => t.nome.toLowerCase().includes(q));
   }, [busca, registros]);
 
-  const doDia = diaAberto ? (dias.find(([d]) => d === diaAberto)?.[1] ?? []) : [];
+  const diasBusca = combinam ? new Set(combinam.flatMap((t) => t.dias)) : null;
+
+  const doDia = diaAberto ? (mapaDias.get(diaAberto) ?? []) : [];
   const selecionado = doDia.find((t) => t.id === selecionadoId) ?? doDia[0];
   const [resumo, setResumo] = useResumo(selecionado?.id);
 
-  const diasAtivos = new Set(selecionado?.dias ?? []);
-  const diasBusca = combinam ? new Set(combinam.flatMap((t) => t.dias)) : null;
-
-  const fechar = () => {
-    setDiaAberto(null);
-    setSelecionadoId(null);
-  };
-
   const trocarCategoria = (slug: string) => {
-    setCategoria(slug);
-    setBusca("");
+    setCategoria((atual) => (atual === slug ? null : slug));
     fechar();
   };
 
-  const mudarAno = (delta: number) => {
-    const i = anos.indexOf(ano);
-    const proximo = anos[i + delta];
-    if (proximo) {
-      setAno(proximo);
-      fechar();
+  const exportar = async () => {
+    setGerando(true);
+    try {
+      await exportarHistoricoPDF(ano);
+    } finally {
+      setGerando(false);
     }
   };
+
+  const nomeTipo = (slug: string) => tratamentoTipos.find((t) => t.slug === slug)?.nome ?? slug;
 
   return (
     <PageShell label="" title="Tratamentos" backTo="/">
       <div className="grid gap-[clamp(1rem,2.5vw,2.5rem)] md:grid-cols-[minmax(0,36%)_minmax(0,1fr)]">
         {/* Coluna esquerda */}
         <div className="space-y-[clamp(0.625rem,1.4vw,1.25rem)]">
+          <div className="flex items-center gap-2 rounded-full border border-border px-[clamp(1rem,1.8vw,1.75rem)] py-[clamp(0.375rem,0.8vw,0.625rem)]">
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Pesquisar tratamento..."
+              aria-label="Pesquisar tratamento"
+              className="min-w-0 flex-1 bg-transparent py-1 text-[clamp(0.8125rem,1.2vw,1rem)] outline-none placeholder:text-muted-foreground"
+            />
+            {busca ? (
+              <Button
+                onClick={() => setBusca("")}
+                variant="ghost"
+                size="icon"
+                aria-label="Limpar pesquisa"
+                className="size-[clamp(1.5rem,2.4vw,2.25rem)] shrink-0 rounded-full bg-border text-muted-foreground hover:bg-muted-foreground/30"
+              >
+                <X className="size-[50%]" />
+              </Button>
+            ) : (
+              <span className="flex size-[clamp(1.5rem,2.4vw,2.25rem)] shrink-0 items-center justify-center rounded-full bg-border text-muted-foreground">
+                <Search className="size-[50%]" />
+              </span>
+            )}
+          </div>
+
           {selecionado ? (
             <div className="rounded-[clamp(1.25rem,2vw,2rem)] bg-muted p-[clamp(0.875rem,1.6vw,1.5rem)]">
               <div className="flex items-center gap-3">
@@ -143,6 +193,10 @@ function Tratamentos() {
                 <p className="text-[clamp(0.75rem,1.1vw,1rem)]">Dados do tratamento</p>
                 <dl className="mt-3 space-y-1.5 text-[clamp(0.6875rem,1vw,0.9375rem)] text-muted-foreground">
                   <div className="flex gap-2">
+                    <dt>Tipo:</dt>
+                    <dd>{nomeTipo(selecionado.categoria)}</dd>
+                  </div>
+                  <div className="flex gap-2">
                     <dt>Pedido por:</dt>
                     <dd>
                       <Link
@@ -170,10 +224,7 @@ function Tratamentos() {
               </div>
 
               <div className="mt-[clamp(0.625rem,1.2vw,1rem)] rounded-[clamp(1rem,1.6vw,1.5rem)] border border-border p-[clamp(0.75rem,1.4vw,1.25rem)]">
-                <label
-                  htmlFor="resumo-tratamento"
-                  className="text-[clamp(0.75rem,1.1vw,1rem)]"
-                >
+                <label htmlFor="resumo-tratamento" className="text-[clamp(0.75rem,1.1vw,1rem)]">
                   Resumo
                 </label>
                 <textarea
@@ -208,98 +259,110 @@ function Tratamentos() {
                 </Button>
               ))}
 
-              {categoria === "medicamentoso" && (
-                <div className="flex items-center gap-2 rounded-full border border-border px-[clamp(1rem,1.8vw,1.75rem)] py-[clamp(0.375rem,0.8vw,0.625rem)]">
-                  <input
-                    value={busca}
-                    onChange={(e) => setBusca(e.target.value)}
-                    placeholder="Pesquisar medicamento..."
-                    aria-label="Pesquisar medicamento"
-                    className="min-w-0 flex-1 bg-transparent py-1 text-[clamp(0.8125rem,1.2vw,1rem)] outline-none placeholder:text-muted-foreground"
-                  />
-                  <span className="flex size-[clamp(1.5rem,2.4vw,2.25rem)] shrink-0 items-center justify-center rounded-full bg-border text-muted-foreground">
-                    <Search className="size-[50%]" />
-                  </span>
-                </div>
+              {combinam && (
+                <p className="px-2 text-[clamp(0.6875rem,1vw,0.875rem)] text-muted-foreground">
+                  {combinam.length === 0
+                    ? `Nenhum tratamento encontrado em ${ano}.`
+                    : `${combinam.length} tratamento(s) encontrado(s) em ${ano}.`}
+                </p>
               )}
             </>
           )}
         </div>
 
-        {/* Coluna direita: período */}
+        {/* Coluna direita: calendário */}
         <div className="rounded-[clamp(1.25rem,2vw,2rem)] bg-muted p-[clamp(0.875rem,1.8vw,1.75rem)]">
-          {!categoria ? (
-            <p className="text-[clamp(0.75rem,1.1vw,1rem)] text-muted-foreground">
-              Selecione um tipo de tratamento.
-            </p>
-          ) : (
-            <>
-              <div className="flex items-center justify-between text-[clamp(0.75rem,1.2vw,1.0625rem)]">
-                <span>Período:</span>
-                <span className="flex items-center gap-1">
-                  <Button
-                    onClick={() => mudarAno(1)}
-                    disabled={anos.indexOf(ano) === anos.length - 1}
-                    variant="ghost"
-                    size="icon"
-                    className="size-6 rounded-full text-muted-foreground disabled:opacity-25"
-                    aria-label="Ano anterior"
-                  >
-                    <ChevronLeft className="size-3.5" />
-                  </Button>
-                  {ano}
-                  <Button
-                    onClick={() => mudarAno(-1)}
-                    disabled={anos.indexOf(ano) === 0}
-                    variant="ghost"
-                    size="icon"
-                    className="size-6 rounded-full text-muted-foreground disabled:opacity-25"
-                    aria-label="Próximo ano"
-                  >
-                    <ChevronRight className="size-3.5" />
-                  </Button>
-                </span>
-              </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="flex items-center gap-1">
+              <Button
+                onClick={() => irMes(-1)}
+                disabled={cron === 0}
+                variant="ghost"
+                size="icon"
+                className="size-7 rounded-full text-muted-foreground disabled:opacity-25"
+                aria-label="Mês anterior"
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <span className="text-[clamp(0.875rem,1.5vw,1.375rem)] font-medium lowercase">
+                {mesNome}{" "}
+                <span className="text-[0.7em] text-muted-foreground">{ano}</span>
+              </span>
+              <Button
+                onClick={() => irMes(1)}
+                disabled={cron === TOTAL_MESES - 1}
+                variant="ghost"
+                size="icon"
+                className="size-7 rounded-full text-muted-foreground disabled:opacity-25"
+                aria-label="Próximo mês"
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </span>
 
-              <div className="mt-[clamp(0.875rem,1.8vw,1.75rem)] grid grid-cols-4 gap-[clamp(0.375rem,1vw,0.875rem)] sm:grid-cols-6">
-                {dias.map(([dia, itens]) => {
-                  const ativo = diasAtivos.has(dia);
-                  const emCiclo = selecionado ? selecionado.dias.includes(dia) : false;
-                  const apagado =
-                    (selecionado && !emCiclo) || (diasBusca !== null && !diasBusca.has(dia));
+            <Button
+              onClick={exportar}
+              disabled={gerando}
+              variant="ghost"
+              className="h-auto gap-2 rounded-full bg-card px-[clamp(0.75rem,1.2vw,1.125rem)] py-[clamp(0.3125rem,0.7vw,0.5rem)] text-[clamp(0.625rem,0.95vw,0.8125rem)] font-normal hover:bg-border"
+            >
+              <Download className="size-[1.1em]" />
+              {gerando ? "Gerando..." : `Exportar histórico ${ano}`}
+            </Button>
+          </div>
 
-                  return (
-                    <div key={dia} className="relative">
-                      {itens.length > 1 && (
-                        <span className="absolute -top-[14%] left-1/2 z-10 flex size-[clamp(1rem,2vw,1.75rem)] items-center justify-center rounded-full bg-foreground text-[clamp(0.4375rem,0.85vw,0.6875rem)] font-medium text-background">
-                          +{itens.length - 1}
-                        </span>
-                      )}
-                      <Button
-                        onClick={() => {
-                          setDiaAberto(dia);
-                          setSelecionadoId(itens[0]!.id);
-                        }}
-                        variant="ghost"
-                        className={`flex aspect-square h-auto w-full items-center justify-center rounded-full p-0 text-[clamp(0.5625rem,1.1vw,1rem)] transition-opacity ${
-                          emCiclo || ativo
+          <div className="mt-[clamp(0.75rem,1.6vw,1.5rem)]">
+            <div className="grid grid-cols-7 gap-[2%] px-[1%] text-center text-[clamp(0.5rem,1.1vw,0.75rem)] uppercase tracking-[0.06em] text-muted-foreground">
+              {semana.map((d) => (
+                <span key={d}>{d}</span>
+              ))}
+            </div>
+
+            <div className="mt-[clamp(0.375rem,1vw,0.75rem)] grid grid-cols-7 gap-[2.5%]">
+              {Array.from({ length: offset }).map((_, i) => (
+                <span key={`v${i}`} className="aspect-square" />
+              ))}
+              {Array.from({ length: diasNoMes }).map((_, i) => {
+                const numero = i + 1;
+                const chave = `${pad(numero)}/${pad(mesIndex + 1)}`;
+                const itens = mapaDias.get(chave) ?? [];
+                const temRegistro = itens.length > 0;
+                const emCiclo = selecionado ? selecionado.dias.includes(chave) : false;
+                const apagado =
+                  temRegistro &&
+                  ((selecionado && !emCiclo) || (diasBusca !== null && !diasBusca.has(chave)));
+
+                return (
+                  <div key={chave} className="relative">
+                    {temRegistro && (
+                      <span className="absolute -top-[12%] left-1/2 z-10 flex size-[clamp(0.9375rem,1.9vw,1.625rem)] items-center justify-center rounded-full bg-foreground text-[clamp(0.4375rem,0.85vw,0.6875rem)] font-medium text-background">
+                        +{itens.length}
+                      </span>
+                    )}
+                    <Button
+                      onClick={() => {
+                        if (!temRegistro) return;
+                        setDiaAberto(chave);
+                        setSelecionadoId(itens[0]!.id);
+                      }}
+                      disabled={!temRegistro}
+                      variant="ghost"
+                      aria-label={`Dia ${numero}${temRegistro ? ` — ${itens.length} tratamento(s)` : ""}`}
+                      className={`flex aspect-square h-auto w-full items-center justify-center rounded-full p-0 text-[clamp(0.5625rem,1.1vw,1rem)] transition-opacity disabled:opacity-100 ${
+                        temRegistro
+                          ? emCiclo
                             ? "bg-foreground text-background hover:bg-foreground/90"
-                            : "bg-card text-muted-foreground hover:bg-border"
-                        } ${apagado ? "opacity-40" : ""}`}
-                      >
-                        {dia}
-                      </Button>
-                    </div>
-                  );
-                })}
-                {dias.length === 0 && (
-                  <p className="col-span-full text-[clamp(0.75rem,1.1vw,1rem)] text-muted-foreground">
-                    Nenhum tratamento registrado em {ano}.
-                  </p>
-                )}
-              </div>
-            </>
-          )}
+                            : "bg-card text-foreground hover:bg-border"
+                          : "bg-transparent text-muted-foreground/50"
+                      } ${apagado ? "opacity-40" : ""}`}
+                    >
+                      {numero}
+                    </Button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
     </PageShell>
