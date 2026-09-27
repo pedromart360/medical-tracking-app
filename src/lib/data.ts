@@ -888,3 +888,72 @@ export const tratamentosBase: TratamentoRegistro[] = gerarTratamentos();
 export function tratamentosPorCategoria(categoria: string, ano: number) {
   return tratamentosBase.filter((t) => t.categoria === categoria && t.ano === ano);
 }
+
+/* ---------------- Doenças ---------------- */
+
+export type DoencaRegistro = {
+  id: string;
+  nome: string;
+  data: string;
+  ano: number;
+  percebidaPor: { nome: string; espSlug: string; medicoId: string };
+  tratamentoId: string;
+  documentos: DocumentoConsulta[];
+};
+
+const nomesDoenca = [
+  "Internação",
+  "Gripe",
+  "Infecção urinária",
+  "Fratura no braço",
+  "Gastrointerite",
+  "Asma",
+  "Cólica biliar",
+  "Faringite aguda",
+  "Dengue",
+  "Sinusite",
+  "Anemia ferropriva",
+  "Enxaqueca crônica",
+  "Dermatite atópica",
+  "Refluxo gastroesofágico",
+];
+
+function gerarDoencas(): DoencaRegistro[] {
+  const pad = (v: number) => String(v).padStart(2, "0");
+  const lista: DoencaRegistro[] = [];
+  let n = 5;
+
+  for (const ano of anos) {
+    const total = 7 + (ano % 3);
+    for (let i = 0; i < total; i++) {
+      n += 9;
+      const mes = ((n * 5) % 12) + 1;
+      const dia = ((n * 3) % 27) + 1;
+      const medico = medicosBase[(n * 17 + i) % medicosBase.length]!;
+      const doAno = tratamentosBase.filter((t) => t.ano === ano);
+      const tratamento = doAno[(n + i) % doAno.length]!;
+
+      lista.push({
+        id: `doenca-${ano}-${i}`,
+        nome: nomesDoenca[(i * 3 + ano) % nomesDoenca.length]!,
+        data: `${pad(dia)}/${pad(mes)}/${ano}`,
+        ano,
+        percebidaPor: { nome: medico.nome, espSlug: medico.especialidadeSlug, medicoId: medico.id },
+        tratamentoId: tratamento.id,
+        documentos: [
+          { id: `${ano}-${i}-l`, titulo: "laudo", paginas: 2 + (i % 3) },
+          { id: `${ano}-${i}-d`, titulo: "documento", paginas: 1 + (i % 4) },
+        ],
+      });
+    }
+  }
+
+  return lista;
+}
+
+export const doencasBase: DoencaRegistro[] = gerarDoencas();
+
+export function acharTratamento(id: string) {
+  return tratamentosBase.find((t) => t.id === id);
+}
+
