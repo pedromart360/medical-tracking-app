@@ -859,7 +859,7 @@ function gerarTratamentos(): TratamentoRegistro[] {
 
         lista.push({
           id: `${cat}-${ano}-${i}`,
-          nome: nomes[(i * 3 + ano) % nomes.length]!,
+          nome: nomes[(i * 7 + ano) % nomes.length]!,
           categoria: cat,
           ano,
           dias,
