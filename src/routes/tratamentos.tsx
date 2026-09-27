@@ -56,11 +56,11 @@ function Tratamentos() {
   const dias = useMemo(() => {
     const mapa = new Map<string, TratamentoRegistro[]>();
     for (const t of registros) {
-      const dia = t.dias[0]!;
-      mapa.set(dia, [...(mapa.get(dia) ?? []), t]);
+      for (const dia of t.dias) mapa.set(dia, [...(mapa.get(dia) ?? []), t]);
     }
     return [...mapa.entries()].sort((a, b) => ordemDia(a[0]) - ordemDia(b[0]));
   }, [registros]);
+
 
   const combinam = useMemo(() => {
     const q = busca.trim().toLowerCase();
