@@ -263,7 +263,7 @@ function Tratamentos() {
 
               <div className="mt-[clamp(0.875rem,1.8vw,1.75rem)] grid grid-cols-4 gap-[clamp(0.375rem,1vw,0.875rem)] sm:grid-cols-6">
                 {dias.map(([dia, itens]) => {
-                  const ativo = diasAtivos.has(dia) || itens.some((t) => diasAtivos.has(t.dias[0]!));
+                  const ativo = diasAtivos.has(dia);
                   const emCiclo = selecionado ? selecionado.dias.includes(dia) : false;
                   const apagado =
                     (selecionado && !emCiclo) || (diasBusca !== null && !diasBusca.has(dia));
