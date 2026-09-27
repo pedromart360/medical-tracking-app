@@ -771,3 +771,120 @@ export function acharMedico(espSlug: string, id: string) {
 export function nomeEspecialidadePorSlug(slug: string) {
   return especialidades.find((e) => slugArea(e) === slug);
 }
+
+/* ---- Módulo Tratamentos ---- */
+
+export type TratamentoRegistro = {
+  id: string;
+  nome: string;
+  categoria: string;
+  ano: number;
+  dias: string[];
+  periodo: string;
+  dataCompleta: string;
+  pedidoPor: { nome: string; espSlug: string; medicoId: string };
+  realizadoPor: string;
+  local: string;
+};
+
+const nomesTratamento: Record<string, string[]> = {
+  domiciliar: [
+    "Imunoglobulina",
+    "Fisioterapia respiratória",
+    "Curativo domiciliar",
+    "Hidratação venosa",
+    "Fonoaudiologia",
+    "Aplicação de enoxaparina",
+  ],
+  hospitalar: [
+    "Imunoglobulina",
+    "Transfusão sanguínea",
+    "Antibioticoterapia IV",
+    "Pulsoterapia",
+    "Sessão de diálise",
+    "Quimioterapia",
+  ],
+  medicamentoso: [
+    "Pregabalina",
+    "Omeprazol",
+    "Prednisona",
+    "Amoxicilina",
+    "Sertralina",
+    "Metformina",
+    "Losartana",
+    "Dipirona",
+  ],
+};
+
+const locaisTratamento: Record<string, string[]> = {
+  domiciliar: ["Domiciliar", "Domiciliar — home care", "Domiciliar"],
+  hospitalar: ["Hospital Felício Rocho", "Hospital Santa Cruz", "Hospital Praia Grande"],
+  medicamentoso: ["Domiciliar", "Uso contínuo", "Domiciliar"],
+};
+
+const equipeTratamento = [
+  "Enf. Antonieta Duarte",
+  "Enf. Marina Colasanti",
+  "Fisio. Rubem Braga",
+  "Ana Carolina",
+  "Enf. Adélia Prado",
+];
+
+function gerarTratamentos(): TratamentoRegistro[] {
+  const pad = (v: number) => String(v).padStart(2, "0");
+  const lista: TratamentoRegistro[] = [];
+  let n = 11;
+
+  for (const cat of ["domiciliar", "hospitalar", "medicamentoso"]) {
+    const nomes = nomesTratamento[cat]!;
+    const locais = locaisTratamento[cat]!;
+
+    for (const ano of anos) {
+      const total = cat === "medicamentoso" ? 8 : 12 + (n % 5);
+      let anteriorMes = 1;
+      let anteriorDia = 1;
+      for (let i = 0; i < total; i++) {
+        n += 7;
+        const repetirDia = i > 0 && i % 4 === 0;
+        const mes = repetirDia ? anteriorMes : ((n * 5) % 12) + 1;
+        const diaBase = repetirDia ? anteriorDia : ((n * 3) % 24) + 1;
+        anteriorMes = mes;
+        anteriorDia = diaBase;
+        const duracao = cat === "medicamentoso" ? 3 + ((n + i) % 8) : 1;
+        const dias = Array.from({ length: duracao }, (_, d) => `${pad(diaBase + d)}/${pad(mes)}`);
+
+        const medico = medicosBase[(n * 13 + i) % medicosBase.length]!;
+        const primeiro = dias[0]!;
+        const ultimo = dias[dias.length - 1]!;
+
+        lista.push({
+          id: `${cat}-${ano}-${i}`,
+          nome: nomes[(i * 7 + ano) % nomes.length]!,
+          categoria: cat,
+          ano,
+          dias,
+          periodo: duracao > 1 ? `${primeiro}-${ultimo}` : primeiro,
+          dataCompleta:
+            duracao > 1
+              ? `${diaBase}-${diaBase + duracao - 1}/${pad(mes)}/${ano}`
+              : `${primeiro}/${ano}`,
+          pedidoPor: { nome: medico.nome, espSlug: medico.especialidadeSlug, medicoId: medico.id },
+          realizadoPor:
+            cat === "medicamentoso"
+              ? "Ana Carolina"
+              : equipeTratamento[(i * 2 + ano) % equipeTratamento.length]!,
+          local: locais[(i + ano) % locais.length]!,
+
+        });
+      }
+    }
+  }
+
+  return lista;
+}
+
+export const tratamentosBase: TratamentoRegistro[] = gerarTratamentos();
+
+export function tratamentosPorCategoria(categoria: string, ano: number) {
+  return tratamentosBase.filter((t) => t.categoria === categoria && t.ano === ano);
+}
