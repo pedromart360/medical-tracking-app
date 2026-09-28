@@ -5,7 +5,7 @@ import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
-import body from "@/assets/body.png";
+const body = "/body_front.webp";
 import pasta from "@/assets/pasta.svg.asset.json";
 import { Button } from "@/components/ui/button";
 
