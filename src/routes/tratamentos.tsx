@@ -200,13 +200,17 @@ function Tratamentos() {
                   <div className="flex gap-2">
                     <dt>Pedido por:</dt>
                     <dd>
-                      <Link
-                        to="/medicos/$esp/$doc"
-                        params={{ esp: selecionado.pedidoPor.espSlug, doc: selecionado.pedidoPor.medicoId }}
-                        className="underline underline-offset-2 transition-colors hover:text-foreground"
-                      >
-                        {selecionado.pedidoPor.nome}
-                      </Link>
+                      {selecionado.pedidoPor.medicoId ? (
+                        <Link
+                          to="/medicos/$esp/$doc"
+                          params={{ esp: selecionado.pedidoPor.espSlug, doc: selecionado.pedidoPor.medicoId }}
+                          className="underline underline-offset-2 transition-colors hover:text-foreground"
+                        >
+                          {selecionado.pedidoPor.nome}
+                        </Link>
+                      ) : (
+                        <span>{selecionado.pedidoPor.nome}</span>
+                      )}
                     </dd>
                   </div>
                   <div className="flex gap-2">
