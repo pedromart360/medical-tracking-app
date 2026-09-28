@@ -86,21 +86,30 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
 
   return (
     <div className="flex size-full min-h-[clamp(320px,46vh,640px)] flex-col items-center justify-center gap-3">
-      <div className="flex w-full min-h-0 flex-1 items-center justify-center">
-        <div className="relative aspect-square w-full max-w-[min(100%,58vh)]">
-          <img
-            src={imagens[vista]}
-            alt={
-              vista === "frente"
-                ? "Ilustração anatômica em vista frontal"
-                : "Ilustração anatômica em vista dorsal"
-            }
-            width={1024}
-            height={1024}
-            className="absolute inset-0 size-full object-contain"
-          />
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center">
+        {/* janela recortada na silhueta: mostra só a faixa da ilustração ocupada pela figura */}
+        <div className="relative h-full" style={{ aspectRatio: `${JANELA.w} / ${JANELA.h}` }}>
+          <div
+            className="absolute"
+            style={{
+              width: `${(1024 / JANELA.w) * 100}%`,
+              height: `${(1024 / JANELA.h) * 100}%`,
+              left: `${(-JANELA.x / JANELA.w) * 100}%`,
+              top: `${(-JANELA.y / JANELA.h) * 100}%`,
+            }}
+          >
+            <img
+              src={imagens[vista]}
+              alt={
+                vista === "frente"
+                  ? "Ilustração anatômica em vista frontal"
+                  : "Ilustração anatômica em vista dorsal"
+              }
+              width={1024}
+              height={1024}
+              className="size-full object-contain"
+            />
 
-          <div className="absolute inset-0">
             {visiveis.map((p) => (
               <Marcador
                 key={p.id}
@@ -117,6 +126,7 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
           </div>
         </div>
       </div>
+
 
       <div className="flex shrink-0 items-center gap-1 rounded-full bg-muted p-1">
         {(["frente", "costas"] as Vista[]).map((v) => (
