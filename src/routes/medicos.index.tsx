@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { especialidades, especialidadeSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
-import medicosImg from "@/assets/medicos.jpg";
+import { imgEspecialidade } from "@/lib/imagens";
 
 export const Route = createFileRoute("/medicos/")({
   head: () => ({
@@ -38,7 +38,7 @@ function Medicos() {
                       {medicos.filter((m) => m.especialidadeSlug === especialidadeSlug(e)).length}
                     </span>
                     <img
-                      src={medicosImg}
+                      src={imgEspecialidade(e)}
                       alt=""
                       loading="lazy"
                       className="size-[clamp(2rem,3.4vw,3.25rem)] shrink-0 rounded-full object-cover"

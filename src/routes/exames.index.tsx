@@ -4,7 +4,7 @@ import { Timeline } from "@/components/Timeline";
 import { Avatar, railItems } from "@/components/PageShell";
 import { exameCategorias, tiposPorCategoria } from "@/lib/data";
 import pastaGrande from "@/assets/pasta-grande.svg.asset.json";
-import exames from "@/assets/exames.jpg";
+import { imgCategoriaExame } from "@/lib/imagens";
 
 export const Route = createFileRoute("/exames/")({
   head: () => ({
@@ -30,7 +30,7 @@ function Cards() {
 
             <span className="truncate text-[clamp(0.9375rem,1.55vw,1.375rem)]">{c.nome}</span>
             <img
-              src={exames}
+              src={imgCategoriaExame(c.slug)}
               alt=""
               loading="lazy"
               className="size-[clamp(2.25rem,4.7vw,4rem)] shrink-0 rounded-full object-cover"

@@ -135,7 +135,7 @@ function Home() {
                   {c.nome}
                 </span>
                 <img
-                  src={c.img}
+                  src={c.home}
                   alt={c.nome}
                   loading="lazy"
                   className="relative z-10 mx-[5%] mb-[5%] h-0 min-h-0 w-[90%] flex-1 rounded-[clamp(0.5rem,1.2vw,1rem)] object-cover"
