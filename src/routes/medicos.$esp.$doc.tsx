@@ -5,7 +5,8 @@ import { PageShell } from "@/components/PageShell";
 import { FotoMedico } from "@/components/FotoMedico";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
 import { ExameModal, type ExameDetalhe } from "@/components/ExameModal";
-import { acharMedico, medicosPorEspecialidade, nomeEspecialidadePorSlug, type Consulta } from "@/lib/data";
+import { nomeEspecialidadePorSlug, type Consulta } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/medicos/$esp/$doc")({
@@ -27,7 +28,9 @@ const POR_QUADRO = 10;
 function MedicoDetalhe() {
   const { esp, doc } = Route.useParams();
   const nomeEsp = nomeEspecialidadePorSlug(esp) ?? "Médicos";
-  const medico = acharMedico(esp, doc) ?? medicosPorEspecialidade(esp)[0];
+  const { medicos } = useProntuario();
+  const daEsp = medicos.filter((m) => m.especialidadeSlug === esp);
+  const medico = daEsp.find((m) => m.id === doc) ?? daEsp[0];
 
   const anosDisponiveis = useMemo(
     () => (medico ? [...new Set(medico.consultas.map((c) => c.ano))].sort((a, b) => b - a) : []),
