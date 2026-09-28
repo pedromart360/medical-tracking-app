@@ -78,7 +78,7 @@ function Home() {
               No desktop a figura preenche toda a altura livre da coluna, alinhando a base
               da imagem à base do bloco; a figura está centrada na imagem original (x 315-709). */}
           <div
-            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:h-auto md:min-h-0 md:flex-1"
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:h-auto md:max-h-[calc(100dvh-15rem)] md:min-h-0 md:flex-1"
             style={{ aspectRatio: "394 / 985" }}
           >
             <img
