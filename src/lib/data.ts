@@ -293,8 +293,13 @@ export type PontoCorpo = {
   parte: string;
   /** posição no modelo 3D em metros [x, y, z] */
   pos: [number, number, number];
+  /** posição sobre a ilustração anatômica, em % [x, y] */
+  pos2d: [number, number];
+  /** face da ilustração onde o marcador aparece */
+  vista: "frente" | "costas";
   exames: ExameCorpo[];
 };
+
 
 const ex = (nome: string, data: string, pedidoPor: string, local: string): ExameCorpo => ({
   nome,
