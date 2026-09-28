@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { abrirPerfil, iniciais, usePerfil } from "@/lib/perfil";
 import { ChevronLeft } from "lucide-react";
 import { Timeline } from "@/components/Timeline";
 import pastaGrande from "@/assets/pasta-grande.svg.asset.json";
@@ -15,10 +16,20 @@ export const railItems = [
 ];
 
 export function Avatar({ className = "" }: { className?: string }) {
+  const perfil = usePerfil();
   return (
-    <div
-      className={`size-14 shrink-0 rounded-full bg-gradient-to-br from-muted to-border ring-2 ring-foreground/80 ${className}`}
-    />
+    <button
+      type="button"
+      aria-label="Abrir perfil do paciente"
+      onClick={() => abrirPerfil()}
+      className={`flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-muted to-border text-xs text-muted-foreground ring-2 ring-foreground/80 transition-transform hover:scale-105 ${className}`}
+    >
+      {perfil.foto ? (
+        <img src={perfil.foto} alt="" className="size-full object-cover" />
+      ) : (
+        iniciais(perfil.nome)
+      )}
+    </button>
   );
 }
 
