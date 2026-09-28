@@ -117,6 +117,20 @@ export function iniciais(nome: string) {
   return (primeira + ultima).toUpperCase();
 }
 
+/* ---- ilustração anatômica conforme o sexo do perfil ---- */
+export const SEXO_OPCOES = ["Mulher", "Homem"] as const;
+
+export function ehMasculino(sexo: string) {
+  return /^h/i.test(sexo.trim()) || /^m(asculino)?$/i.test(sexo.trim());
+}
+
+export function imagensCorpo(sexo: string): { frente: string; costas: string } {
+  return ehMasculino(sexo)
+    ? { frente: "/body_front_male.webp", costas: "/body_back_male.webp" }
+    : { frente: "/body_front.webp", costas: "/body_back.webp" };
+}
+
+
 /* ---- abertura da gaveta a partir de qualquer tela ---- */
 const EVENTO = "abrir-perfil";
 

@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { ExameModal } from "@/components/ExameModal";
 import { Button } from "@/components/ui/button";
+import { imagensCorpo, usePerfil } from "@/lib/perfil";
 import type { ExameCorpo, PontoCorpo } from "@/lib/data";
 
 type Vista = "frente" | "costas";
 
-const imagens: Record<Vista, string> = {
-  frente: "/body_front.webp",
-  costas: "/body_back.webp",
-};
 
 /** recorte da ilustração (1024x1024) onde a figura realmente aparece, com folga lateral */
 const JANELA = { x: 315, y: 20, w: 394, h: 985 };
@@ -79,8 +76,11 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
   const [vista, setVista] = useState<Vista>("frente");
   const [aberto, setAberto] = useState<string | null>(null);
   const [exame, setExame] = useState<ExameCorpo | null>(null);
+  const perfil = usePerfil();
+  const imagens = imagensCorpo(perfil.sexo);
 
   const visiveis = pontos.filter((p) => p.vista === vista);
+
 
   const trocar = (v: Vista) => {
     setVista(v);
