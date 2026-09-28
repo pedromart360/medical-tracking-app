@@ -76,8 +76,11 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
   const [vista, setVista] = useState<Vista>("frente");
   const [aberto, setAberto] = useState<string | null>(null);
   const [exame, setExame] = useState<ExameCorpo | null>(null);
+  const perfil = usePerfil();
+  const imagens = imagensCorpo(perfil.sexo);
 
   const visiveis = pontos.filter((p) => p.vista === vista);
+
 
   const trocar = (v: Vista) => {
     setVista(v);
