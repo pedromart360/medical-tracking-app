@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdicionarRouteImport } from './routes/adicionar'
 import { Route as DoencasRouteImport } from './routes/doencas'
 import { Route as TratamentosRouteImport } from './routes/tratamentos'
 import { Route as ExamesIndexRouteImport } from './routes/exames.index'
@@ -23,6 +24,11 @@ import { Route as ExamesSlugAreaAreaRouteImport } from './routes/exames.$slug.ar
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdicionarRoute = AdicionarRouteImport.update({
+  id: '/adicionar',
+  path: '/adicionar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DoencasRoute = DoencasRouteImport.update({
@@ -73,6 +79,7 @@ const ExamesSlugAreaAreaRoute = ExamesSlugAreaAreaRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames/': typeof ExamesIndexRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames': typeof ExamesIndexRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames/': typeof ExamesIndexRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/adicionar'
     | '/doencas'
     | '/tratamentos'
     | '/exames/'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/adicionar'
     | '/doencas'
     | '/tratamentos'
     | '/exames'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/adicionar'
     | '/doencas'
     | '/tratamentos'
     | '/exames/'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdicionarRoute: typeof AdicionarRoute
   DoencasRoute: typeof DoencasRoute
   TratamentosRoute: typeof TratamentosRoute
   ExamesIndexRoute: typeof ExamesIndexRoute
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/adicionar': {
+      id: '/adicionar'
+      path: '/adicionar'
+      fullPath: '/adicionar'
+      preLoaderRoute: typeof AdicionarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/doencas': {
@@ -237,6 +257,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdicionarRoute: AdicionarRoute,
   DoencasRoute: DoencasRoute,
   TratamentosRoute: TratamentosRoute,
   ExamesIndexRoute: ExamesIndexRoute,
