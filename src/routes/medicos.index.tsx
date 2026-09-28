@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { especialidades, especialidadeSlug, medicosPorEspecialidade } from "@/lib/data";
+import { especialidades, especialidadeSlug } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 import medicosImg from "@/assets/medicos.jpg";
 
 export const Route = createFileRoute("/medicos/")({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/medicos/")({
 });
 
 function Medicos() {
+  const { medicos } = useProntuario();
   /* 4 linhas, rolagem lateral: distribui as especialidades em colunas de 4 */
   const colunas: string[][] = [];
   for (let i = 0; i < especialidades.length; i += 4) colunas.push(especialidades.slice(i, i + 4));
@@ -33,7 +35,7 @@ function Medicos() {
                   <div className="flex items-center justify-between gap-2 rounded-[clamp(1.25rem,2vw,2rem)] bg-muted py-[clamp(0.375rem,0.8vw,0.75rem)] pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] transition-colors hover:bg-border">
                     <span className="min-w-0 flex-1 truncate text-[clamp(0.875rem,1.3vw,1.25rem)]">{e}</span>
                     <span className="shrink-0 text-[clamp(0.625rem,0.9vw,0.8125rem)] text-muted-foreground">
-                      {medicosPorEspecialidade(especialidadeSlug(e)).length}
+                      {medicos.filter((m) => m.especialidadeSlug === especialidadeSlug(e)).length}
                     </span>
                     <img
                       src={medicosImg}
