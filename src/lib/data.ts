@@ -293,8 +293,13 @@ export type PontoCorpo = {
   parte: string;
   /** posição no modelo 3D em metros [x, y, z] */
   pos: [number, number, number];
+  /** posição sobre a ilustração anatômica, em % [x, y] */
+  pos2d: [number, number];
+  /** face da ilustração onde o marcador aparece */
+  vista: "frente" | "costas";
   exames: ExameCorpo[];
 };
+
 
 const ex = (nome: string, data: string, pedidoPor: string, local: string): ExameCorpo => ({
   nome,
@@ -310,6 +315,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "cranio",
       parte: "Crânio e face",
       pos: [0.16, 1.66, 0.06],
+      pos2d: [50, 10],
+      vista: "frente",
       exames: [
         ex("RX da face", "04/05/2026", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
         ex("RX da face", "02/11/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
@@ -320,6 +327,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "ombro",
       parte: "Ombro direito",
       pos: [0.24, 1.36, 0.08],
+      pos2d: [41.5, 21],
+      vista: "frente",
       exames: [
         ex("RX do ombro", "22/08/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
         ex("Ressonância do ombro", "09/01/2025", "Dr. Gabriel Garcia", "Clínica Unimed"),
@@ -329,6 +338,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "torax",
       parte: "Tórax",
       pos: [0.0, 1.25, 0.18],
+      pos2d: [50, 27],
+      vista: "frente",
       exames: [
         ex("RX de tórax", "12/06/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
         ex("Tomografia de tórax", "30/09/2024", "Dr. João Cabral", "Hospital Santa Cruz"),
@@ -340,6 +351,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "abdome",
       parte: "Abdome",
       pos: [0.05, 1.0, 0.16],
+      pos2d: [50, 38.5],
+      vista: "frente",
       exames: [
         ex("Ultrassonografia abdominal", "19/07/2025", "Dr. João Cabral", "Clínica Unimed"),
         ex("Tomografia de abdome", "28/03/2025", "Dr. João Cabral", "Hospital Praia Grande"),
@@ -349,6 +362,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "joelho",
       parte: "Joelho esquerdo",
       pos: [-0.11, 0.46, 0.1],
+      pos2d: [55, 67],
+      vista: "frente",
       exames: [
         ex("RX do joelho", "05/12/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
         ex("Ressonância do joelho", "21/05/2025", "Dr. Gabriel Garcia", "Clínica SulAmérica"),
@@ -359,6 +374,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "pe",
       parte: "Pé direito",
       pos: [0.11, 0.06, 0.12],
+      pos2d: [46, 93],
+      vista: "frente",
       exames: [ex("RX do pé", "03/06/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande")],
     },
   ],
@@ -367,6 +384,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "cerebro",
       parte: "Cérebro",
       pos: [0.14, 1.68, 0.05],
+      pos2d: [50, 8],
+      vista: "frente",
       exames: [
         ex("Cintilografia cerebral", "10/04/2026", "Dra. Edith Stein", "Hospital Santa Cruz"),
         ex("PET-CT cerebral", "02/10/2025", "Dra. Edith Stein", "Hospital Santa Cruz"),
@@ -379,6 +398,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "tireoide",
       parte: "Tireoide",
       pos: [0.08, 1.48, 0.1],
+      pos2d: [50, 17.5],
+      vista: "frente",
       exames: [
         ex("Cintilografia da tireoide", "17/05/2025", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
         ex("Captação de iodo", "03/02/2025", "Dr. Jorge Luís Borges", "Clínica SulAmérica"),
@@ -388,6 +409,8 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "coracao",
       parte: "Coração",
       pos: [-0.07, 1.27, 0.17],
+      pos2d: [53.5, 27.5],
+      vista: "frente",
       exames: [
         ex("Cintilografia miocárdica", "22/11/2025", "Dr. Jorge Luís Borges", "Clínica Unimed"),
         ex("Cintilografia miocárdica", "12/03/2025", "Dr. Gabriel Garcia", "Clínica Unimed"),
@@ -397,12 +420,16 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
       id: "rins",
       parte: "Rins",
       pos: [0.09, 1.02, -0.14],
+      pos2d: [50, 38],
+      vista: "costas",
       exames: [ex("Cintilografia renal", "06/08/2025", "Dr. João Cabral", "Hospital Praia Grande")],
     },
     {
       id: "ossos",
       parte: "Esqueleto",
       pos: [-0.1, 0.72, 0.12],
+      pos2d: [50, 34],
+      vista: "costas",
       exames: [
         ex("Cintilografia óssea", "29/07/2025", "Dr. Gabriel Garcia", "Hospital Praia Grande"),
         ex("Cintilografia óssea", "16/12/2024", "Dr. Gabriel Garcia", "Hospital Praia Grande"),

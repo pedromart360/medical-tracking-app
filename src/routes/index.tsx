@@ -5,7 +5,7 @@ import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
-import body from "@/assets/body.png";
+const body = "/body_front.webp";
 import pasta from "@/assets/pasta.svg.asset.json";
 import { Button } from "@/components/ui/button";
 
@@ -76,11 +76,12 @@ function Home() {
 
           <img
             src={body}
-            alt="Ilustração do corpo da paciente"
-            width={768}
-            height={1536}
+            alt="Ilustração anatômica da paciente em vista frontal"
+            width={1024}
+            height={1024}
             className="mx-auto mt-3 h-[clamp(300px,52vw,700px)] w-auto object-contain"
           />
+
         </div>
 
         <div className="flex min-w-0 flex-col gap-[clamp(0.75rem,1.6vw,1.25rem)]">
