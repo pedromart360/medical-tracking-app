@@ -74,13 +74,25 @@ function Home() {
             </div>
           </header>
 
-          <img
-            src={body}
-            alt="Ilustração anatômica da paciente em vista frontal"
-            width={1024}
-            height={1024}
-            className="mx-auto mt-3 h-[clamp(300px,52vw,700px)] w-auto object-contain"
-          />
+          {/* recorte da janela 1024x1024 onde a figura aparece (mesma janela do BodyFigure) */}
+          <div
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] overflow-hidden md:h-[clamp(320px,min(52vw,calc(100dvh-22rem)),700px)]"
+            style={{ aspectRatio: "394 / 985" }}
+          >
+            <img
+              src={body}
+              alt="Ilustração anatômica da paciente em vista frontal"
+              width={1024}
+              height={1024}
+              className="absolute max-w-none"
+              style={{
+                width: `${(1024 / 394) * 100}%`,
+                height: `${(1024 / 985) * 100}%`,
+                left: `${(-315 / 394) * 100}%`,
+                top: `${(-20 / 985) * 100}%`,
+              }}
+            />
+          </div>
 
         </div>
 
