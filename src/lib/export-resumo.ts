@@ -21,7 +21,22 @@ const ordemData = (d: string) => {
   return Number(mes) * 100 + Number(dia);
 };
 
-export async function exportarResumoGeralPDF(perfil: Perfil) {
+export async function exportarResumoGeralPDF(
+  perfil: Perfil,
+  dados?: {
+    arquivos: typeof arquivosExame;
+    medicos: typeof medicosBase;
+    tratamentos: typeof tratamentosBase;
+    doencas: typeof doencasBase;
+  },
+) {
+  const fonteExames = dados?.arquivos ?? arquivosExame;
+  const fonteMedicos = dados?.medicos ?? medicosBase;
+  const fonteTratamentos = dados?.tratamentos ?? tratamentosBase;
+  const fonteDoencas = dados?.doencas ?? doencasBase;
+  const buscarTratamento = (id: string) =>
+    dados ? dados.tratamentos.find((t) => t.id === id) : acharTratamento(id);
+
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
@@ -110,7 +125,7 @@ export async function exportarResumoGeralPDF(perfil: Perfil) {
 
   /* Doenças */
   titulo("Diagnósticos e doenças");
-  const doencas = [...doencasBase].sort((a, b) => b.ano - a.ano || ordemData(b.data) - ordemData(a.data));
+  const doencas = [...fonteDoencas].sort((a, b) => b.ano - a.ano || ordemData(b.data) - ordemData(a.data));
   if (doencas.length === 0) paragrafo("Nenhum diagnóstico registrado.", 0, 130);
   for (const d of doencas.slice(0, 40)) {
     quebrar(44);
@@ -123,7 +138,7 @@ export async function exportarResumoGeralPDF(perfil: Perfil) {
     doc.setTextColor(0);
     y += 13;
     doc.setFontSize(9.5);
-    const trat = acharTratamento(d.tratamentoId);
+    const trat = buscarTratamento(d.tratamentoId);
     paragrafo(
       `Percebida por ${d.percebidaPor.nome}${trat ? ` · Tratamento vinculado: ${trat.nome}` : ""}`,
       8,
@@ -139,7 +154,7 @@ export async function exportarResumoGeralPDF(perfil: Perfil) {
   /* Tratamentos */
   titulo("Tratamentos e medicamentos");
   for (const tipo of tratamentoTipos) {
-    const registros = tratamentosBase
+    const registros = fonteTratamentos
       .filter((t) => t.categoria === tipo.slug)
       .sort((a, b) => b.ano - a.ano || ordemData(b.dias[0]!) - ordemData(a.dias[0]!))
       .slice(0, 20);
@@ -170,7 +185,7 @@ export async function exportarResumoGeralPDF(perfil: Perfil) {
 
   /* Médicos */
   titulo("Equipe médica assistente");
-  const medicos = medicosBase.slice(0, 24);
+  const medicos = fonteMedicos.slice(0, 24);
   for (const m of medicos) {
     quebrar(22);
     paragrafo(
@@ -184,7 +199,7 @@ export async function exportarResumoGeralPDF(perfil: Perfil) {
 
   /* Exames */
   titulo("Exames realizados");
-  const exames = [...arquivosExame]
+  const exames = [...fonteExames]
     .sort((a, b) => b.ano - a.ano || ordemData(b.data) - ordemData(a.data))
     .slice(0, 40);
   for (const e of exames) {

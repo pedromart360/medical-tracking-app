@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { areaSlug, arquivosExame, exameCategorias, pontosCorpo, tiposPorCategoria } from "@/lib/data";
+import { areaSlug, exameCategorias, tiposPorCategoria } from "@/lib/data";
+import { mesclarPontos, useProntuario } from "@/lib/adicionados";
 import { BodyFigure } from "@/components/BodyFigure";
 import exames from "@/assets/exames.jpg";
 import medicos from "@/assets/medicos.jpg";
@@ -42,10 +43,11 @@ function Categoria() {
   const { slug } = Route.useParams();
   const nome = exameCategorias.find((c) => c.slug === slug)?.nome ?? "Exames";
   const tipos = tiposPorCategoria[slug] ?? [];
-  const pontos = pontosCorpo[slug];
+  const { arquivos } = useProntuario();
+  const pontos = mesclarPontos(slug, arquivos);
 
   const areas = Array.from(
-    new Set(arquivosExame.filter((a) => a.categoriaSlug === slug).map((a) => a.areaMedica)),
+    new Set(arquivos.filter((a) => a.categoriaSlug === slug).map((a) => a.areaMedica)),
   );
 
   const secoes = (

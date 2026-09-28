@@ -13,7 +13,10 @@ function resumoSalvo(id: string) {
   }
 }
 
-export async function exportarHistoricoPDF(ano: number) {
+export async function exportarHistoricoPDF(
+  ano: number,
+  fonte: TratamentoRegistro[] = tratamentosBase,
+) {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
@@ -58,7 +61,7 @@ export async function exportarHistoricoPDF(ano: number) {
   let total = 0;
 
   for (const tipo of tratamentoTipos) {
-    const registros: TratamentoRegistro[] = tratamentosBase
+    const registros: TratamentoRegistro[] = fonte
       .filter((t) => t.categoria === tipo.slug && t.ano === ano)
       .sort((a, b) => ordem(a.dias[0]!) - ordem(b.dias[0]!));
 

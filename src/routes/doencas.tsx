@@ -4,7 +4,8 @@ import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
-import { acharTratamento, anos, doencasBase, patient, type DoencaRegistro } from "@/lib/data";
+import { anos, patient, type DoencaRegistro } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/doencas")({
   head: () => ({
@@ -39,6 +40,7 @@ function useObservacao(id: string | undefined) {
 }
 
 function Doencas() {
+  const { doencas, tratamentos } = useProntuario();
   const [anoIdx, setAnoIdx] = useState(0);
   const [busca, setBusca] = useState("");
   const [selId, setSelId] = useState<string | null>(null);
@@ -47,12 +49,13 @@ function Doencas() {
 
   const ano = anos[anoIdx]!;
   const termo = busca.trim().toLowerCase();
+  const acharTratamento = (id: string) => tratamentos.find((t) => t.id === id);
 
   const lista = useMemo(() => {
-    const base = termo ? doencasBase : doencasBase.filter((d) => d.ano === ano);
+    const base = termo ? doencas : doencas.filter((d) => d.ano === ano);
     if (!termo) return base;
     return base.filter((d) => {
-      const trat = acharTratamento(d.tratamentoId);
+      const trat = tratamentos.find((t) => t.id === d.tratamentoId);
       return (
         d.nome.toLowerCase().includes(termo) ||
         d.data.includes(termo) ||
@@ -61,7 +64,7 @@ function Doencas() {
         (trat?.categoria ?? "").toLowerCase().includes(termo)
       );
     });
-  }, [ano, termo]);
+  }, [doencas, tratamentos, ano, termo]);
 
   const colunas: DoencaRegistro[][] = [];
   for (let i = 0; i < lista.length; i += POR_COLUNA) colunas.push(lista.slice(i, i + POR_COLUNA));
@@ -184,13 +187,17 @@ function Doencas() {
                   <div className="flex gap-2">
                     <dt className="shrink-0">Percebida por:</dt>
                     <dd className="min-w-0">
-                      <Link
-                        to="/medicos/$esp/$doc"
-                        params={{ esp: item.percebidaPor.espSlug, doc: item.percebidaPor.medicoId }}
-                        className="truncate text-foreground underline underline-offset-4"
-                      >
-                        {item.percebidaPor.nome}
-                      </Link>
+                      {item.percebidaPor.medicoId ? (
+                        <Link
+                          to="/medicos/$esp/$doc"
+                          params={{ esp: item.percebidaPor.espSlug, doc: item.percebidaPor.medicoId }}
+                          className="truncate text-foreground underline underline-offset-4"
+                        >
+                          {item.percebidaPor.nome}
+                        </Link>
+                      ) : (
+                        <span className="truncate text-foreground">{item.percebidaPor.nome}</span>
+                      )}
                     </dd>
                   </div>
                   <div className="flex gap-2">

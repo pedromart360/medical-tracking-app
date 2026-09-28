@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { FotoMedico } from "@/components/FotoMedico";
-import { medicosPorEspecialidade, nomeEspecialidadePorSlug } from "@/lib/data";
+import { nomeEspecialidadePorSlug } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/medicos/$esp/")({
   head: () => ({
@@ -20,7 +21,8 @@ export const Route = createFileRoute("/medicos/$esp/")({
 function Especialidade() {
   const { esp } = Route.useParams();
   const nome = nomeEspecialidadePorSlug(esp) ?? "Especialidade";
-  const lista = medicosPorEspecialidade(esp);
+  const { medicos } = useProntuario();
+  const lista = medicos.filter((m) => m.especialidadeSlug === esp);
 
   return (
     <PageShell label="Médicos" title={nome} backTo="/medicos">

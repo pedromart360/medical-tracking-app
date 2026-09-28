@@ -438,6 +438,32 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
   ],
 };
 
+/** Regiões do corpo disponíveis ao cadastrar exames de imagem e nucleares */
+export type RegiaoCorpo = {
+  id: string;
+  nome: string;
+  vista: "frente" | "costas";
+  pos2d: [number, number];
+};
+
+export const regioesCorpo: RegiaoCorpo[] = [
+  { id: "cranio", nome: "Crânio e face", vista: "frente", pos2d: [50, 10] },
+  { id: "cerebro", nome: "Cérebro", vista: "frente", pos2d: [50, 8] },
+  { id: "tireoide", nome: "Tireoide e pescoço", vista: "frente", pos2d: [50, 17.5] },
+  { id: "torax", nome: "Tórax e mamas", vista: "frente", pos2d: [50, 27] },
+  { id: "coracao", nome: "Coração", vista: "frente", pos2d: [53.5, 27.5] },
+  { id: "abdome", nome: "Abdome", vista: "frente", pos2d: [50, 38.5] },
+  { id: "ombro", nome: "Ombro direito", vista: "frente", pos2d: [41.5, 21] },
+  { id: "ombro-esquerdo", nome: "Ombro esquerdo", vista: "frente", pos2d: [58.5, 21] },
+  { id: "bracos", nome: "Braços, punhos e mãos", vista: "frente", pos2d: [36, 47] },
+  { id: "pelve", nome: "Pelve e quadril", vista: "frente", pos2d: [50, 47] },
+  { id: "joelho", nome: "Joelho esquerdo", vista: "frente", pos2d: [55, 67] },
+  { id: "joelho-direito", nome: "Joelho direito", vista: "frente", pos2d: [45, 67] },
+  { id: "pe", nome: "Pernas, tornozelos e pés", vista: "frente", pos2d: [46, 93] },
+  { id: "rins", nome: "Rins e região lombar", vista: "costas", pos2d: [50, 38] },
+  { id: "ossos", nome: "Coluna e esqueleto", vista: "costas", pos2d: [50, 34] },
+];
+
 /* ---- Base unificada de arquivos de exames ---- */
 
 export type MidiaExame = "rx" | "grafico" | "laudo" | "microscopia";
@@ -456,6 +482,9 @@ export type ExameArquivo = {
   local: string;
   midia: MidiaExame;
   temLaudo: boolean;
+  /** região do corpo (exames de imagem e nucleares) */
+  regiao?: string;
+  observacoes?: string;
 };
 
 type PerfilTipo = { nomes: string[]; area: string; midia: MidiaExame };
@@ -625,7 +654,7 @@ export type Medico = {
 
 export const especialidadeSlug = slugArea;
 
-const cargoPorEspecialidade: Record<string, string> = {
+export const cargoPorEspecialidade: Record<string, string> = {
   Cardiologia: "Cardiologista",
   Psiquiatria: "Psiquiatra",
   Endocrinologia: "Endocrinologista",

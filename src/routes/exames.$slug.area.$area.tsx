@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { ArquivosExames } from "@/components/ArquivosExames";
-import { areaSlug, areasMedicas, arquivosPorArea } from "@/lib/data";
+import { areaSlug, areasMedicas } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/exames/$slug/area/$area")({
   head: () => ({
@@ -19,8 +20,14 @@ export const Route = createFileRoute("/exames/$slug/area/$area")({
 
 function PorArea() {
   const { slug, area } = Route.useParams();
-  const nome = areasMedicas.find((a) => areaSlug(a) === area) ?? "Área médica";
-  const itens = arquivosPorArea(slug, area);
+  const { arquivos } = useProntuario();
+  const nome =
+    areasMedicas.find((a) => areaSlug(a) === area) ??
+    arquivos.find((a) => areaSlug(a.areaMedica) === area)?.areaMedica ??
+    "Área médica";
+  const itens = arquivos
+    .filter((a) => a.categoriaSlug === slug && areaSlug(a.areaMedica) === area)
+    .sort((a, b) => b.ano - a.ano);
 
   return (
     <PageShell label="Médicos" title={nome} backTo="/exames">
