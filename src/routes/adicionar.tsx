@@ -324,6 +324,7 @@ function Adicionar() {
   const tiposExame = tiposPorCategoria[valores["categoria"] ?? ""] ?? [];
 
   return (
+    <>
     <PageShell label="" title="Adicionar dados" backTo="/">
       <div className="mx-auto flex max-w-[640px] flex-col gap-[clamp(0.875rem,1.6vw,1.5rem)]">
         {/* Seletor de tipo */}
@@ -749,6 +750,13 @@ function Adicionar() {
           </div>
         )}
 
+
+        <p className="text-center text-[clamp(0.6875rem,0.95vw,0.8125rem)] text-muted-foreground">
+          Os dados cadastrados entram no prontuário e passam a aparecer nas listas, no calendário e na
+          linha do tempo. <Link to="/" className="underline underline-offset-4">Voltar para a página inicial</Link>
+        </p>
+      </div>
+    </PageShell>
         <AlertDialog open={!!excluir} onOpenChange={(o) => !o && setExcluir(null)}>
           <AlertDialogContent className="rounded-[1.75rem]">
             <AlertDialogHeader>
@@ -765,12 +773,6 @@ function Adicionar() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
-        <p className="text-center text-[clamp(0.6875rem,0.95vw,0.8125rem)] text-muted-foreground">
-          Os dados cadastrados entram no prontuário e passam a aparecer nas listas, no calendário e na
-          linha do tempo. <Link to="/" className="underline underline-offset-4">Voltar para a página inicial</Link>
-        </p>
-      </div>
-    </PageShell>
+    </>
   );
 }
