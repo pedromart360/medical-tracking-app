@@ -48,6 +48,7 @@ function useResumo(id: string | undefined) {
 }
 
 function Tratamentos() {
+  const { tratamentos } = useProntuario();
   const [categoria, setCategoria] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [anoIndex, setAnoIndex] = useState(0);
@@ -78,10 +79,10 @@ function Tratamentos() {
 
   const registros = useMemo(
     () =>
-      tratamentosBase.filter(
+      tratamentos.filter(
         (t) => t.ano === ano && (categoria === null || t.categoria === categoria),
       ),
-    [ano, categoria],
+    [tratamentos, ano, categoria],
   );
 
   const mapaDias = useMemo(() => {
@@ -112,7 +113,7 @@ function Tratamentos() {
   const exportar = async () => {
     setGerando(true);
     try {
-      await exportarHistoricoPDF(ano);
+      await exportarHistoricoPDF(ano, tratamentos);
     } finally {
       setGerando(false);
     }
