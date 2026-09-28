@@ -55,7 +55,7 @@ function Home() {
         <div className="relative flex min-w-0 flex-col">
           <header className="flex flex-col gap-2 md:contents">
             <div className="flex items-center gap-3">
-              <h1 className="min-w-0 flex-1 truncate text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-none tracking-tight">
+              <h1 className="min-w-0 flex-1 truncate py-[0.08em] text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
                 {perfil.nome || "Paciente"}
               </h1>
               <Avatar className="size-10 md:hidden" />
@@ -105,10 +105,11 @@ function Home() {
           <div className="hidden items-center justify-between gap-4 md:flex">
             <Button
               asChild
-              className="h-[clamp(36px,3.6vw,42px)] rounded-full px-[clamp(1rem,2vw,1.5rem)] text-[clamp(0.8125rem,1.2vw,0.9375rem)] font-normal"
+              className="h-[clamp(40px,4.2vw,48px)] rounded-full px-[clamp(1.25rem,2.2vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)] font-normal"
             >
               <Link to="/adicionar">+ adicionar dados</Link>
             </Button>
+
             <Avatar />
           </div>
 
@@ -152,12 +153,14 @@ function Home() {
           onClick={() => setCalendario(true)}
           action={
             <Button
+              variant="outline"
               onClick={gerarResumo}
               disabled={gerando}
-              className="h-[clamp(40px,4.4vw,48px)] shrink-0 rounded-full px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)]"
+              className="h-[clamp(40px,4.2vw,48px)] shrink-0 rounded-full border-border/70 bg-card px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)] font-normal hover:bg-muted"
             >
               {gerando ? "gerando..." : "resumo geral"}
             </Button>
+
           }
         />
       </div>

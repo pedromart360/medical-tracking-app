@@ -53,6 +53,14 @@ export function Rail() {
   );
 }
 
+/* Estilos padrão dos cards de lista (mesma harmonia em todos os módulos) */
+export const cardLista =
+  "flex h-[clamp(3.25rem,5.2vw,4.5rem)] items-center justify-between gap-[clamp(0.5rem,1vw,0.875rem)] rounded-[clamp(1.25rem,2vw,2rem)] bg-muted pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] transition-colors hover:bg-border";
+export const cardListaTexto =
+  "min-w-0 flex-1 truncate text-[clamp(0.875rem,1.3vw,1.25rem)] leading-[1.3]";
+export const cardListaImg =
+  "size-[clamp(2.25rem,3.6vw,3.5rem)] shrink-0 rounded-full object-cover";
+
 function Titulo({ label, title, backTo }: { label: string; title: string; backTo: string }) {
   return (
     <div className="flex min-w-0 items-center gap-[clamp(0.75rem,2.2vw,1.875rem)]">
@@ -67,13 +75,14 @@ function Titulo({ label, title, backTo }: { label: string; title: string; backTo
         {label && (
           <p className="text-[clamp(0.6875rem,1.1vw,1rem)] leading-tight text-muted-foreground">{label}</p>
         )}
-        <h1 className="truncate text-[clamp(1.75rem,4vw,3.5rem)] font-medium leading-none tracking-tight">
+        <h1 className="truncate py-[0.08em] text-[clamp(1.75rem,4vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
           {title}
         </h1>
       </div>
     </div>
   );
 }
+
 
 export function PageShell({
   label,
@@ -107,7 +116,7 @@ export function PageShell({
             <Titulo label={label} title={title} backTo={backTo} />
             <Rail />
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[7.2%] pb-[4%] pt-[3%]">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[7.2%] pb-[6%] pt-[3%] [scrollbar-width:thin]">{children}</div>
         </div>
       </div>
 

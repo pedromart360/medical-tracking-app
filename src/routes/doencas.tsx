@@ -173,7 +173,7 @@ function Doencas() {
                 >
                   <X className="size-[55%]" />
                 </Button>
-                <p className="min-w-0 flex-1 truncate text-[clamp(1.125rem,1.8vw,1.625rem)] font-medium leading-none">
+                <p className="min-w-0 flex-1 truncate text-[clamp(1.125rem,1.8vw,1.625rem)] font-medium leading-[1.25]">
                   {item.nome}
                 </p>
                 <span className="shrink-0 text-[clamp(0.6875rem,0.95vw,0.875rem)] tabular-nums text-muted-foreground">

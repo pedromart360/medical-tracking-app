@@ -248,19 +248,20 @@ function Tratamentos() {
                   key={t.slug}
                   onClick={() => trocarCategoria(t.slug)}
                   variant="ghost"
-                  className={`h-auto w-full justify-between rounded-[clamp(1.25rem,2vw,2rem)] py-[clamp(0.5rem,1.1vw,1rem)] pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.5rem,1vw,1rem)] text-[clamp(0.875rem,1.5vw,1.375rem)] font-normal ${
+                  className={`h-[clamp(3.25rem,5.2vw,4.5rem)] w-full justify-between gap-[clamp(0.5rem,1vw,0.875rem)] rounded-[clamp(1.25rem,2vw,2rem)] pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] text-[clamp(0.875rem,1.3vw,1.25rem)] font-normal ${
                     categoria === t.slug
                       ? "bg-foreground text-background hover:bg-foreground/90"
                       : "bg-muted hover:bg-border"
                   }`}
                 >
-                  <span>{t.nome}</span>
+                  <span className="min-w-0 flex-1 truncate text-left leading-[1.3]">{t.nome}</span>
                   <img
                     src={imgTratamento(t.slug)}
                     alt=""
                     loading="lazy"
-                    className="size-[clamp(2.25rem,4.2vw,3.75rem)] rounded-full object-cover"
+                    className="size-[clamp(2.25rem,3.6vw,3.5rem)] shrink-0 rounded-full object-cover"
                   />
+
                 </Button>
               ))}
 

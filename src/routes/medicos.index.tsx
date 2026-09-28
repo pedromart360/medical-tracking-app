@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageShell } from "@/components/PageShell";
+import { PageShell, cardLista, cardListaImg, cardListaTexto } from "@/components/PageShell";
 import { especialidades, especialidadeSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 import { imgEspecialidade } from "@/lib/imagens";
@@ -32,18 +32,14 @@ function Medicos() {
             <div key={c} className="flex w-[clamp(15rem,24vw,21rem)] flex-col gap-[clamp(0.625rem,1.2vw,1rem)]">
               {coluna.map((e) => (
                 <Link key={e} to="/medicos/$esp" params={{ esp: especialidadeSlug(e) }}>
-                  <div className="flex items-center justify-between gap-2 rounded-[clamp(1.25rem,2vw,2rem)] bg-muted py-[clamp(0.375rem,0.8vw,0.75rem)] pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] transition-colors hover:bg-border">
-                    <span className="min-w-0 flex-1 truncate text-[clamp(0.875rem,1.3vw,1.25rem)]">{e}</span>
+                  <div className={cardLista}>
+                    <span className={cardListaTexto}>{e}</span>
                     <span className="shrink-0 text-[clamp(0.625rem,0.9vw,0.8125rem)] text-muted-foreground">
                       {medicos.filter((m) => m.especialidadeSlug === especialidadeSlug(e)).length}
                     </span>
-                    <img
-                      src={imgEspecialidade(e)}
-                      alt=""
-                      loading="lazy"
-                      className="size-[clamp(2rem,3.4vw,3.25rem)] shrink-0 rounded-full object-cover"
-                    />
+                    <img src={imgEspecialidade(e)} alt="" loading="lazy" className={cardListaImg} />
                   </div>
+
                 </Link>
               ))}
             </div>
