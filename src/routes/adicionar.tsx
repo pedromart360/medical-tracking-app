@@ -94,7 +94,7 @@ function Campo({
 }: {
   label: string;
   obrigatorio?: boolean;
-  erro?: string;
+  erro?: string | undefined;
   children: React.ReactNode;
 }) {
   return (
@@ -175,7 +175,7 @@ function Adicionar() {
     setSalvo(true);
   };
 
-  const tiposExame = tiposPorCategoria[valores.categoria ?? ""] ?? [];
+  const tiposExame = tiposPorCategoria[valores["categoria"] ?? ""] ?? [];
 
   return (
     <PageShell label="" title="Adicionar dados" backTo="/">
@@ -202,27 +202,27 @@ function Adicionar() {
           <div className="grid gap-4 sm:grid-cols-2">
             {tipo === "exame" && (
               <>
-                <Campo label="Nome do exame" obrigatorio erro={erros.nome}>
+                <Campo label="Nome do exame" obrigatorio erro={erros["nome"]}>
                   <input
-                    value={valores.nome ?? ""}
+                    value={valores["nome"] ?? ""}
                     onChange={(e) => set("nome", e.target.value)}
                     placeholder="Ex.: Hemograma completo"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Data de realização" obrigatorio erro={erros.data}>
+                <Campo label="Data de realização" obrigatorio erro={erros["data"]}>
                   <input
-                    value={valores.data ?? ""}
+                    value={valores["data"] ?? ""}
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Categoria" obrigatorio erro={erros.categoria}>
+                <Campo label="Categoria" obrigatorio erro={erros["categoria"]}>
                   <select
-                    value={valores.categoria ?? ""}
+                    value={valores["categoria"] ?? ""}
                     onChange={(e) => {
                       set("categoria", e.target.value);
                       set("tipo", "");
@@ -237,11 +237,11 @@ function Adicionar() {
                     ))}
                   </select>
                 </Campo>
-                <Campo label="Tipo" obrigatorio erro={erros.tipo}>
+                <Campo label="Tipo" obrigatorio erro={erros["tipo"]}>
                   <select
-                    value={valores.tipo ?? ""}
+                    value={valores["tipo"] ?? ""}
                     onChange={(e) => set("tipo", e.target.value)}
-                    disabled={!valores.categoria}
+                    disabled={!valores["categoria"]}
                     className={selectCls}
                   >
                     <option value="">Selecionar...</option>
@@ -252,9 +252,9 @@ function Adicionar() {
                     ))}
                   </select>
                 </Campo>
-                <Campo label="Área médica" erro={erros.area}>
+                <Campo label="Área médica" erro={erros["area"]}>
                   <select
-                    value={valores.area ?? ""}
+                    value={valores["area"] ?? ""}
                     onChange={(e) => set("area", e.target.value)}
                     className={selectCls}
                   >
@@ -266,27 +266,27 @@ function Adicionar() {
                     ))}
                   </select>
                 </Campo>
-                <Campo label="Local" erro={erros.local}>
+                <Campo label="Local" erro={erros["local"]}>
                   <input
-                    value={valores.local ?? ""}
+                    value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
                     placeholder="Ex.: Laboratório São Lucas"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Médico solicitante" erro={erros.solicitante}>
+                <Campo label="Médico solicitante" erro={erros["solicitante"]}>
                   <input
-                    value={valores.solicitante ?? ""}
+                    value={valores["solicitante"] ?? ""}
                     onChange={(e) => set("solicitante", e.target.value)}
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Realizado por" erro={erros.realizador}>
+                <Campo label="Realizado por" erro={erros["realizador"]}>
                   <input
-                    value={valores.realizador ?? ""}
+                    value={valores["realizador"] ?? ""}
                     onChange={(e) => set("realizador", e.target.value)}
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
@@ -296,21 +296,21 @@ function Adicionar() {
                 <Campo label="Resultado (imagem ou PDF)">
                   <UploadFalso
                     rotulo="Enviar resultado"
-                    nome={valores.arquivo ?? ""}
+                    nome={valores["arquivo"] ?? ""}
                     onChange={(n) => set("arquivo", n)}
                   />
                 </Campo>
                 <Campo label="Laudo (PDF)">
                   <UploadFalso
                     rotulo="Enviar laudo"
-                    nome={valores.laudo ?? ""}
+                    nome={valores["laudo"] ?? ""}
                     onChange={(n) => set("laudo", n)}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
-                  <Campo label="Observações" erro={erros.observacoes}>
+                  <Campo label="Observações" erro={erros["observacoes"]}>
                     <textarea
-                      value={valores.observacoes ?? ""}
+                      value={valores["observacoes"] ?? ""}
                       onChange={(e) => set("observacoes", e.target.value)}
                       placeholder="Anotações sobre o exame..."
                       maxLength={1000}
@@ -323,18 +323,18 @@ function Adicionar() {
 
             {tipo === "medico" && (
               <>
-                <Campo label="Nome do médico" obrigatorio erro={erros.nome}>
+                <Campo label="Nome do médico" obrigatorio erro={erros["nome"]}>
                   <input
-                    value={valores.nome ?? ""}
+                    value={valores["nome"] ?? ""}
                     onChange={(e) => set("nome", e.target.value)}
                     placeholder="Ex.: Dr. Davi Almeida"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Especialidade" obrigatorio erro={erros.especialidade}>
+                <Campo label="Especialidade" obrigatorio erro={erros["especialidade"]}>
                   <select
-                    value={valores.especialidade ?? ""}
+                    value={valores["especialidade"] ?? ""}
                     onChange={(e) => set("especialidade", e.target.value)}
                     className={selectCls}
                   >
@@ -346,9 +346,9 @@ function Adicionar() {
                     ))}
                   </select>
                 </Campo>
-                <Campo label="CRM" erro={erros.crm}>
+                <Campo label="CRM" erro={erros["crm"]}>
                   <input
-                    value={valores.crm ?? ""}
+                    value={valores["crm"] ?? ""}
                     onChange={(e) => set("crm", e.target.value)}
                     placeholder="Ex.: CRM/MG 00000"
                     maxLength={20}
@@ -358,14 +358,14 @@ function Adicionar() {
                 <Campo label="Foto">
                   <UploadFalso
                     rotulo="Enviar foto"
-                    nome={valores.foto ?? ""}
+                    nome={valores["foto"] ?? ""}
                     onChange={(n) => set("foto", n)}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
-                  <Campo label="Apresentação" erro={erros.bio}>
+                  <Campo label="Apresentação" erro={erros["bio"]}>
                     <textarea
-                      value={valores.bio ?? ""}
+                      value={valores["bio"] ?? ""}
                       onChange={(e) => set("bio", e.target.value)}
                       placeholder="Breve biografia do profissional..."
                       maxLength={600}
@@ -378,18 +378,18 @@ function Adicionar() {
 
             {tipo === "tratamento" && (
               <>
-                <Campo label="Nome do tratamento" obrigatorio erro={erros.nome}>
+                <Campo label="Nome do tratamento" obrigatorio erro={erros["nome"]}>
                   <input
-                    value={valores.nome ?? ""}
+                    value={valores["nome"] ?? ""}
                     onChange={(e) => set("nome", e.target.value)}
                     placeholder="Ex.: Pregabalina"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Categoria" obrigatorio erro={erros.categoria}>
+                <Campo label="Categoria" obrigatorio erro={erros["categoria"]}>
                   <select
-                    value={valores.categoria ?? ""}
+                    value={valores["categoria"] ?? ""}
                     onChange={(e) => set("categoria", e.target.value)}
                     className={selectCls}
                   >
@@ -399,45 +399,45 @@ function Adicionar() {
                     <option value="medicamentoso">Medicamentoso</option>
                   </select>
                 </Campo>
-                <Campo label="Data de início" obrigatorio erro={erros.inicio}>
+                <Campo label="Data de início" obrigatorio erro={erros["inicio"]}>
                   <input
-                    value={valores.inicio ?? ""}
+                    value={valores["inicio"] ?? ""}
                     onChange={(e) => set("inicio", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Data de fim" erro={erros.fim}>
+                <Campo label="Data de fim" erro={erros["fim"]}>
                   <input
-                    value={valores.fim ?? ""}
+                    value={valores["fim"] ?? ""}
                     onChange={(e) => set("fim", e.target.value)}
                     placeholder="DD/MM/AAAA (opcional)"
                     inputMode="numeric"
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Pedido por" erro={erros.pedidoPor}>
+                <Campo label="Pedido por" erro={erros["pedidoPor"]}>
                   <input
-                    value={valores.pedidoPor ?? ""}
+                    value={valores["pedidoPor"] ?? ""}
                     onChange={(e) => set("pedidoPor", e.target.value)}
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Realizado por" erro={erros.realizadoPor}>
+                <Campo label="Realizado por" erro={erros["realizadoPor"]}>
                   <input
-                    value={valores.realizadoPor ?? ""}
+                    value={valores["realizadoPor"] ?? ""}
                     onChange={(e) => set("realizadoPor", e.target.value)}
                     placeholder="Ex.: Enf. Antonieta"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Local" erro={erros.local}>
+                <Campo label="Local" erro={erros["local"]}>
                   <input
-                    value={valores.local ?? ""}
+                    value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
                     placeholder="Ex.: Hospital Felício Rocho"
                     maxLength={120}
@@ -445,9 +445,9 @@ function Adicionar() {
                   />
                 </Campo>
                 <div className="sm:col-span-2">
-                  <Campo label="Resumo" erro={erros.resumo}>
+                  <Campo label="Resumo" erro={erros["resumo"]}>
                     <textarea
-                      value={valores.resumo ?? ""}
+                      value={valores["resumo"] ?? ""}
                       onChange={(e) => set("resumo", e.target.value)}
                       placeholder="Anotações sobre o tratamento..."
                       maxLength={1000}
@@ -460,36 +460,36 @@ function Adicionar() {
 
             {tipo === "doenca" && (
               <>
-                <Campo label="Nome da doença" obrigatorio erro={erros.nome}>
+                <Campo label="Nome da doença" obrigatorio erro={erros["nome"]}>
                   <input
-                    value={valores.nome ?? ""}
+                    value={valores["nome"] ?? ""}
                     onChange={(e) => set("nome", e.target.value)}
                     placeholder="Ex.: Gripe"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Data da descoberta" obrigatorio erro={erros.data}>
+                <Campo label="Data da descoberta" obrigatorio erro={erros["data"]}>
                   <input
-                    value={valores.data ?? ""}
+                    value={valores["data"] ?? ""}
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Percebida por" erro={erros.percebidaPor}>
+                <Campo label="Percebida por" erro={erros["percebidaPor"]}>
                   <input
-                    value={valores.percebidaPor ?? ""}
+                    value={valores["percebidaPor"] ?? ""}
                     onChange={(e) => set("percebidaPor", e.target.value)}
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
                     className={inputCls}
                   />
                 </Campo>
-                <Campo label="Tratamento vinculado" erro={erros.tratamento}>
+                <Campo label="Tratamento vinculado" erro={erros["tratamento"]}>
                   <input
-                    value={valores.tratamento ?? ""}
+                    value={valores["tratamento"] ?? ""}
                     onChange={(e) => set("tratamento", e.target.value)}
                     placeholder="Ex.: Dipirona"
                     maxLength={120}
@@ -500,15 +500,15 @@ function Adicionar() {
                   <Campo label="Laudo ou documento">
                     <UploadFalso
                       rotulo="Enviar documento"
-                      nome={valores.documento ?? ""}
+                      nome={valores["documento"] ?? ""}
                       onChange={(n) => set("documento", n)}
                     />
                   </Campo>
                 </div>
                 <div className="sm:col-span-2">
-                  <Campo label="Observações" erro={erros.observacoes}>
+                  <Campo label="Observações" erro={erros["observacoes"]}>
                     <textarea
-                      value={valores.observacoes ?? ""}
+                      value={valores["observacoes"] ?? ""}
                       onChange={(e) => set("observacoes", e.target.value)}
                       placeholder="Anotações sobre a doença..."
                       maxLength={1000}
