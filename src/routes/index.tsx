@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { patient } from "@/lib/data";
+import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
@@ -32,6 +32,18 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [calendario, setCalendario] = useState(false);
+  const [gerando, setGerando] = useState(false);
+  const perfil = usePerfil();
+
+  const gerarResumo = async () => {
+    setGerando(true);
+    try {
+      const { exportarResumoGeralPDF } = await import("@/lib/export-resumo");
+      await exportarResumoGeralPDF(perfil);
+    } finally {
+      setGerando(false);
+    }
+  };
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
@@ -122,10 +134,11 @@ function Home() {
           onClick={() => setCalendario(true)}
           action={
             <Button
-              onClick={() => setCalendario(true)}
+              onClick={gerarResumo}
+              disabled={gerando}
               className="h-[clamp(40px,4.4vw,48px)] shrink-0 rounded-full px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)]"
             >
-              resumo geral
+              {gerando ? "gerando..." : "resumo geral"}
             </Button>
           }
         />
