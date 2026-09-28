@@ -4,7 +4,8 @@ import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
-import { acharTratamento, anos, doencasBase, patient, type DoencaRegistro } from "@/lib/data";
+import { anos, patient, type DoencaRegistro } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/doencas")({
   head: () => ({
