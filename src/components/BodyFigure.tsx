@@ -10,6 +10,10 @@ const imagens: Record<Vista, string> = {
   costas: "/body_back.webp",
 };
 
+/** recorte da ilustração (1024x1024) onde a figura realmente aparece, com folga lateral */
+const JANELA = { x: 315, y: 20, w: 394, h: 985 };
+
+
 function Marcador({
   ponto,
   aberto,
