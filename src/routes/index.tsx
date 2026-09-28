@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
+import { useProntuario } from "@/lib/adicionados";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
@@ -34,12 +35,13 @@ function Home() {
   const [calendario, setCalendario] = useState(false);
   const [gerando, setGerando] = useState(false);
   const perfil = usePerfil();
+  const prontuario = useProntuario();
 
   const gerarResumo = async () => {
     setGerando(true);
     try {
       const { exportarResumoGeralPDF } = await import("@/lib/export-resumo");
-      await exportarResumoGeralPDF(perfil);
+      await exportarResumoGeralPDF(perfil, prontuario);
     } finally {
       setGerando(false);
     }
