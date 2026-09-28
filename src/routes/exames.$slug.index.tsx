@@ -83,7 +83,7 @@ function Categoria() {
     <PageShell label="Exames" title={nome} backTo="/exames">
       {pontos ? (
         <div className="grid h-full gap-[clamp(1rem,2.4vw,2rem)] lg:grid-cols-[minmax(0,34%)_minmax(0,1fr)]">
-          <BodyViewer pontos={pontos} />
+          <BodyFigure pontos={pontos} />
           {secoes}
         </div>
       ) : (
