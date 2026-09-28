@@ -35,7 +35,9 @@ function Home() {
   const [calendario, setCalendario] = useState(false);
   const [gerando, setGerando] = useState(false);
   const perfil = usePerfil();
+  const body = imagensCorpo(perfil.sexo).frente;
   const prontuario = useProntuario();
+
 
   const gerarResumo = async () => {
     setGerando(true);
