@@ -6,9 +6,9 @@ import {
   anos,
   meses,
   tratamentoTipos,
-  tratamentosBase,
   type TratamentoRegistro,
 } from "@/lib/data";
+import { useProntuario } from "@/lib/adicionados";
 import { exportarHistoricoPDF } from "@/lib/export-tratamentos";
 import tratamentosImg from "@/assets/tratamentos.jpg";
 import { Button } from "@/components/ui/button";
