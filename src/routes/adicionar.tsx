@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Pencil, Trash2, Upload, X } from "lucide-react";
+import { Check, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { z } from "zod";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,23 @@ import {
   especialidades,
   exameCategorias,
   medicosBase,
+  regioesCorpo,
   tiposPorCategoria,
   tratamentosBase,
 } from "@/lib/data";
+import {
+  lerRegistros,
+  salvarRegistros,
+  useProntuario,
+  type RegistroSalvo,
+  type TipoAdicionado,
+} from "@/lib/adicionados";
 
 export const Route = createFileRoute("/adicionar")({
   head: () => ({
     meta: [
       { title: "Adicionar dados — Ana Carolina" },
-      { name: "description", content: "Cadastre novos exames, médicos, tratamentos e doenças no prontuário." },
+      { name: "description", content: "Cadastre novos exames, médicos, consultas, tratamentos e doenças no prontuário." },
       { property: "og:title", content: "Adicionar dados — Ana Carolina" },
       { property: "og:description", content: "Cadastre novos dados no prontuário." },
       { property: "og:type", content: "website" },
@@ -39,6 +47,7 @@ export const Route = createFileRoute("/adicionar")({
 });
 
 type Tipo = "exame" | "medico" | "tratamento" | "doenca";
+type Modo = "medico" | "consulta";
 
 const tipos: { id: Tipo; nome: string }[] = [
   { id: "exame", nome: "Exame" },
@@ -46,6 +55,16 @@ const tipos: { id: Tipo; nome: string }[] = [
   { id: "tratamento", nome: "Tratamento" },
   { id: "doenca", nome: "Doença" },
 ];
+
+const midias = [
+  { valor: "rx", nome: "Imagem / Raio-X" },
+  { valor: "grafico", nome: "Gráfico" },
+  { valor: "laudo", nome: "Laudo descritivo" },
+  { valor: "microscopia", nome: "Microscopia" },
+];
+
+/** categorias em que a região do corpo é obrigatória */
+const COM_REGIAO = new Set(["de-imagem", "nucleares"]);
 
 const dataSchema = z
   .string()
@@ -61,6 +80,8 @@ const exameSchema = z.object({
   categoria: z.string().min(1, "Escolha a categoria"),
   tipo: z.string().min(1, "Escolha o tipo"),
   data: dataSchema,
+  regiao: z.string().max(40).optional(),
+  midia: z.string().max(20).optional(),
   area: z.string().max(80).optional(),
   solicitante: z.string().trim().max(120).optional(),
   realizador: z.string().trim().max(120).optional(),
@@ -75,11 +96,19 @@ const medicoSchema = z.object({
   bio: z.string().trim().max(600).optional(),
 });
 
+const consultaSchema = z.object({
+  medicoRef: z.string().min(1, "Escolha o médico atendente"),
+  data: dataSchema,
+  local: z.string().trim().max(120).optional(),
+  resumo: z.string().trim().max(2000).optional(),
+});
+
 const tratamentoSchema = z.object({
   nome: z.string().trim().min(1, "Informe o nome do tratamento").max(120),
   categoria: z.string().min(1, "Escolha a categoria"),
   inicio: dataSchema,
   fim: z.string().optional(),
+  continuo: z.string().optional(),
   pedidoPor: z.string().trim().max(120).optional(),
   realizadoPor: z.string().trim().max(120).optional(),
   local: z.string().trim().max(120).optional(),
@@ -98,6 +127,8 @@ const inputCls =
   "h-11 w-full rounded-full bg-card px-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground";
 const selectCls = `${inputCls} appearance-none pr-9`;
 const labelCls = "mb-1.5 block text-[clamp(0.6875rem,0.95vw,0.8125rem)] text-muted-foreground";
+const areaCls =
+  "h-24 w-full resize-none rounded-[1.25rem] bg-card p-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground";
 
 function Campo({
   label,
@@ -140,6 +171,77 @@ function UploadFalso({ rotulo, nome, onChange }: { rotulo: string; nome: string;
   );
 }
 
+/** lista editável de textos curtos (prescrições, exames pedidos) */
+function ListaRapida({
+  itens,
+  valor,
+  onValor,
+  onAdicionar,
+  onRemover,
+  placeholder,
+  lista,
+}: {
+  itens: string[];
+  valor: string;
+  onValor: (v: string) => void;
+  onAdicionar: () => void;
+  onRemover: (i: number) => void;
+  placeholder: string;
+  lista?: string;
+}) {
+  return (
+    <div>
+      <div className="flex gap-2">
+        <input
+          value={valor}
+          onChange={(e) => onValor(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              onAdicionar();
+            }
+          }}
+          {...(lista ? { list: lista } : {})}
+          autoComplete="off"
+          placeholder={placeholder}
+          maxLength={120}
+          className={inputCls}
+        />
+        <Button
+          type="button"
+          onClick={onAdicionar}
+          aria-label="Adicionar item"
+          className="size-11 shrink-0 rounded-full bg-foreground p-0 text-background hover:bg-foreground/85"
+        >
+          <Plus className="size-4" />
+        </Button>
+      </div>
+      {itens.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {itens.map((item, i) => (
+            <span
+              key={`${item}-${i}`}
+              className="flex items-center gap-2 rounded-full bg-card py-1.5 pl-4 pr-1.5 text-[clamp(0.6875rem,0.95vw,0.8125rem)]"
+            >
+              {item}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={`Remover ${item}`}
+                onClick={() => onRemover(i)}
+                className="size-6 rounded-full text-muted-foreground hover:bg-border"
+              >
+                <X className="size-3.5" />
+              </Button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const CAMPOS_DATA = new Set(["data", "inicio", "fim"]);
 
 function mascaraData(v: string) {
@@ -152,11 +254,13 @@ function mascaraData(v: string) {
 const normalizar = (s: string) =>
   s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-type Registro = Record<string, string> & { id: string };
+type Registro = RegistroSalvo;
 
-function lerRegistros(t: Tipo): Registro[] {
+function listaJson(valor: string | undefined): string[] {
+  if (!valor) return [];
   try {
-    return JSON.parse(localStorage.getItem(`adicionados-${t}`) ?? "[]") as Registro[];
+    const v = JSON.parse(valor) as unknown;
+    return Array.isArray(v) ? v.map(String) : [];
   } catch {
     return [];
   }
@@ -182,14 +286,25 @@ function inferirCategoria(nome: string): { categoria: string; tipo: string } | n
   return null;
 }
 
-function resumoRegistro(t: Tipo, r: Registro) {
-  if (t === "medico") return r["especialidade"] ?? "";
-  if (t === "tratamento") return [r["inicio"], r["fim"]].filter(Boolean).join(" – ");
+function resumoRegistro(chave: TipoAdicionado, r: Registro) {
+  if (chave === "medico") return r["especialidade"] ?? "";
+  if (chave === "consulta") return `${r["medico"] ?? ""} · ${r["data"] ?? ""}`;
+  if (chave === "tratamento") return [r["inicio"], r["continuo"] === "sim" ? "uso contínuo" : r["fim"]].filter(Boolean).join(" – ");
   return r["data"] ?? "";
 }
 
+const rotuloLista: Record<TipoAdicionado, string> = {
+  exame: "Exames cadastrados",
+  medico: "Médicos cadastrados",
+  consulta: "Consultas registradas",
+  tratamento: "Tratamentos cadastrados",
+  doenca: "Doenças cadastradas",
+};
+
 function Adicionar() {
+  const { medicos } = useProntuario();
   const [tipo, setTipo] = useState<Tipo>("exame");
+  const [modo, setModo] = useState<Modo>("medico");
   const [valores, setValores] = useState<Record<string, string>>({});
   const [erros, setErros] = useState<Record<string, string>>({});
   const [salvo, setSalvo] = useState<string | false>(false);
@@ -198,10 +313,16 @@ function Adicionar() {
   const [registros, setRegistros] = useState<Registro[]>([]);
   const [excluir, setExcluir] = useState<Registro | null>(null);
   const [versao, setVersao] = useState(0);
+  const [prescricoes, setPrescricoes] = useState<string[]>([]);
+  const [examesPedidos, setExamesPedidos] = useState<string[]>([]);
+  const [novaPrescricao, setNovaPrescricao] = useState("");
+  const [novoExame, setNovoExame] = useState("");
+
+  const chave: TipoAdicionado = tipo === "medico" ? modo : tipo;
 
   useEffect(() => {
-    setRegistros(lerRegistros(tipo));
-  }, [tipo, versao]);
+    setRegistros(lerRegistros(chave));
+  }, [chave, versao]);
 
   const set = (k: string, v: string) => {
     const valor = CAMPOS_DATA.has(k) ? mascaraData(v) : v;
@@ -225,6 +346,10 @@ function Adicionar() {
     setErros({});
     setEditandoId(null);
     setCategoriaManual(false);
+    setPrescricoes([]);
+    setExamesPedidos([]);
+    setNovaPrescricao("");
+    setNovoExame("");
   };
 
   const trocarTipo = (t: Tipo) => {
@@ -233,16 +358,24 @@ function Adicionar() {
     setSalvo(false);
   };
 
+  const trocarModo = (m: Modo) => {
+    setModo(m);
+    limpar();
+    setSalvo(false);
+  };
+
   const schema = useMemo(
     () =>
-      tipo === "exame"
+      chave === "exame"
         ? exameSchema
-        : tipo === "medico"
+        : chave === "medico"
           ? medicoSchema
-          : tipo === "tratamento"
-            ? tratamentoSchema
-            : doencaSchema,
-    [tipo],
+          : chave === "consulta"
+            ? consultaSchema
+            : chave === "tratamento"
+              ? tratamentoSchema
+              : doencaSchema,
+    [chave],
   );
 
   const salvar = () => {
@@ -253,22 +386,33 @@ function Adicionar() {
       setErros(novos);
       return;
     }
-    if (valores["fim"] && !dataSchema.safeParse(valores["fim"]).success) {
+    if (chave === "exame" && COM_REGIAO.has(valores["categoria"] ?? "") && !valores["regiao"]) {
+      setErros({ regiao: "Escolha a região do corpo" });
+      return;
+    }
+    if (chave === "tratamento" && valores["continuo"] !== "sim" && valores["fim"] && !dataSchema.safeParse(valores["fim"]).success) {
       setErros({ fim: "Use o formato DD/MM/AAAA" });
       return;
     }
     const extras: Record<string, string> = {};
-    for (const k of ["arquivo", "laudo", "foto", "documento"]) if (valores[k]) extras[k] = valores[k]!;
-    const lista = lerRegistros(tipo);
+    for (const k of ["arquivo", "laudo", "foto", "documento", "continuo"]) if (valores[k]) extras[k] = valores[k]!;
+    if (chave === "consulta") {
+      extras["prescricoes"] = JSON.stringify(prescricoes);
+      extras["exames"] = JSON.stringify(examesPedidos);
+      const alvo = medicos.find((m) => `${m.especialidadeSlug}|${m.id}` === valores["medicoRef"]);
+      extras["medico"] = alvo?.nome ?? "";
+      extras["nome"] = alvo ? `Consulta com ${alvo.nome}` : "Consulta";
+    }
+    const lista = lerRegistros(chave);
     const dados = { ...(r.data as Record<string, string>), ...extras };
     if (editandoId) {
       const i = lista.findIndex((x) => x.id === editandoId);
       if (i >= 0) lista[i] = { ...dados, id: editandoId };
     } else {
-      lista.push({ ...dados, id: `${tipo}-${Date.now()}` });
+      lista.push({ ...dados, id: `${chave}-${Date.now()}` });
     }
-    localStorage.setItem(`adicionados-${tipo}`, JSON.stringify(lista));
-    setSalvo(editandoId ? "Alterações salvas." : "Salvo! Você pode adicionar outro.");
+    salvarRegistros(chave, lista);
+    setSalvo(editandoId ? "Alterações salvas." : "Salvo! Já aparece nas telas do prontuário.");
     limpar();
     setVersao((v) => v + 1);
   };
@@ -279,13 +423,15 @@ function Adicionar() {
     setErros({});
     setEditandoId(id);
     setCategoriaManual(true);
+    setPrescricoes(listaJson(r["prescricoes"]));
+    setExamesPedidos(listaJson(r["exames"]));
     setSalvo(false);
   };
 
   const confirmarExclusao = () => {
     if (!excluir) return;
-    const lista = lerRegistros(tipo).filter((x) => x.id !== excluir.id);
-    localStorage.setItem(`adicionados-${tipo}`, JSON.stringify(lista));
+    const lista = lerRegistros(chave).filter((x) => x.id !== excluir.id);
+    salvarRegistros(chave, lista);
     if (editandoId === excluir.id) limpar();
     setExcluir(null);
     setVersao((v) => v + 1);
@@ -293,12 +439,12 @@ function Adicionar() {
 
   // Sugestões a partir da base do app + tudo que o paciente já cadastrou
   const sugestoes = useMemo(() => {
-    const todos = (["exame", "medico", "tratamento", "doenca"] as Tipo[]).flatMap(lerRegistros);
+    const todos = (["exame", "medico", "consulta", "tratamento", "doenca"] as TipoAdicionado[]).flatMap(lerRegistros);
     const uniq = (xs: (string | undefined)[]) =>
       [...new Set(xs.filter((x): x is string => !!x && x.trim().length > 0))].sort((a, b) =>
         a.localeCompare(b, "pt-BR"),
       );
-    const medicos = uniq([
+    const nomesMedicos = uniq([
       ...medicosBase.map((m) => m.nome),
       ...lerRegistros("medico").map((r) => r["nome"]),
       ...todos.flatMap((r) => [r["solicitante"], r["pedidoPor"], r["percebidaPor"]]),
@@ -309,7 +455,7 @@ function Adicionar() {
       ...todos.map((r) => r["local"]),
     ]);
     const pessoas = uniq([
-      ...medicos,
+      ...nomesMedicos,
       ...arquivosExame.map((a) => a.realizadoPor),
       ...tratamentosBase.map((t) => t.realizadoPor),
       ...todos.flatMap((r) => [r["realizador"], r["realizadoPor"]]),
@@ -318,10 +464,12 @@ function Adicionar() {
       ...tratamentosBase.map((t) => t.nome),
       ...lerRegistros("tratamento").map((r) => r["nome"]),
     ]);
-    return { medicos, locais, pessoas, trats };
+    const nomesExames = uniq(arquivosExame.map((a) => a.nome));
+    return { medicos: nomesMedicos, locais, pessoas, trats, exames: nomesExames };
   }, [versao]);
 
   const tiposExame = tiposPorCategoria[valores["categoria"] ?? ""] ?? [];
+  const exigeRegiao = COM_REGIAO.has(valores["categoria"] ?? "");
 
   return (
     <>
@@ -345,14 +493,36 @@ function Adicionar() {
           ))}
         </div>
 
+        {tipo === "medico" && (
+          <div className="flex gap-2 rounded-full bg-muted p-1">
+            {([
+              { id: "medico", nome: "Cadastrar médico" },
+              { id: "consulta", nome: "Registrar consulta" },
+            ] as { id: Modo; nome: string }[]).map((m) => (
+              <Button
+                key={m.id}
+                variant="ghost"
+                onClick={() => trocarModo(m.id)}
+                className={`h-10 flex-1 rounded-full text-[clamp(0.6875rem,0.95vw,0.875rem)] font-normal ${
+                  modo === m.id ? "bg-card hover:bg-card" : "text-muted-foreground hover:bg-border"
+                }`}
+              >
+                {m.nome}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <div className="rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)]">
           <div className="grid gap-4 sm:grid-cols-2">
-            {tipo === "exame" && (
+            {chave === "exame" && (
               <>
                 <Campo label="Nome do exame" obrigatorio erro={erros["nome"]}>
                   <input
                     value={valores["nome"] ?? ""}
                     onChange={(e) => setNomeExame(e.target.value)}
+                    list="dl-exames"
+                    autoComplete="off"
                     placeholder="Ex.: Hemograma completo"
                     maxLength={120}
                     className={inputCls}
@@ -375,6 +545,7 @@ function Adicionar() {
                       setCategoriaManual(true);
                       set("categoria", e.target.value);
                       set("tipo", "");
+                      set("regiao", "");
                     }}
                     className={selectCls}
                   >
@@ -400,6 +571,36 @@ function Adicionar() {
                     {tiposExame.map((t) => (
                       <option key={t.slug} value={t.slug}>
                         {t.nome}
+                      </option>
+                    ))}
+                  </select>
+                </Campo>
+                {exigeRegiao && (
+                  <Campo label="Região do corpo" obrigatorio erro={erros["regiao"]}>
+                    <select
+                      value={valores["regiao"] ?? ""}
+                      onChange={(e) => set("regiao", e.target.value)}
+                      className={selectCls}
+                    >
+                      <option value="">Selecionar...</option>
+                      {regioesCorpo.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.nome} ({r.vista})
+                        </option>
+                      ))}
+                    </select>
+                  </Campo>
+                )}
+                <Campo label="Tipo de resultado" erro={erros["midia"]}>
+                  <select
+                    value={valores["midia"] ?? ""}
+                    onChange={(e) => set("midia", e.target.value)}
+                    className={selectCls}
+                  >
+                    <option value="">Laudo descritivo</option>
+                    {midias.map((m) => (
+                      <option key={m.valor} value={m.valor}>
+                        {m.nome}
                       </option>
                     ))}
                   </select>
@@ -472,14 +673,14 @@ function Adicionar() {
                       onChange={(e) => set("observacoes", e.target.value)}
                       placeholder="Anotações sobre o exame..."
                       maxLength={1000}
-                      className="h-24 w-full resize-none rounded-[1.25rem] bg-card p-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground"
+                      className={areaCls}
                     />
                   </Campo>
                 </div>
               </>
             )}
 
-            {tipo === "medico" && (
+            {chave === "medico" && (
               <>
                 <Campo label="Nome do médico" obrigatorio erro={erros["nome"]}>
                   <input
@@ -527,14 +728,111 @@ function Adicionar() {
                       onChange={(e) => set("bio", e.target.value)}
                       placeholder="Breve biografia do profissional..."
                       maxLength={600}
-                      className="h-24 w-full resize-none rounded-[1.25rem] bg-card p-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground"
+                      className={areaCls}
                     />
                   </Campo>
                 </div>
               </>
             )}
 
-            {tipo === "tratamento" && (
+            {chave === "consulta" && (
+              <>
+                <Campo label="Médico atendente" obrigatorio erro={erros["medicoRef"]}>
+                  <select
+                    value={valores["medicoRef"] ?? ""}
+                    onChange={(e) => set("medicoRef", e.target.value)}
+                    className={selectCls}
+                  >
+                    <option value="">Selecionar...</option>
+                    {medicos.map((m) => (
+                      <option key={`${m.especialidadeSlug}|${m.id}`} value={`${m.especialidadeSlug}|${m.id}`}>
+                        {m.nome} — {m.especialidade}
+                      </option>
+                    ))}
+                  </select>
+                </Campo>
+                <Campo label="Data da consulta" obrigatorio erro={erros["data"]}>
+                  <input
+                    value={valores["data"] ?? ""}
+                    onChange={(e) => set("data", e.target.value)}
+                    placeholder="DD/MM/AAAA"
+                    inputMode="numeric"
+                    maxLength={10}
+                    className={inputCls}
+                  />
+                </Campo>
+                <div className="sm:col-span-2">
+                  <Campo label="Local da consulta" erro={erros["local"]}>
+                    <input
+                      value={valores["local"] ?? ""}
+                      onChange={(e) => set("local", e.target.value)}
+                      list="dl-locais"
+                      autoComplete="off"
+                      placeholder="Ex.: Hospital Felício Rocho"
+                      maxLength={120}
+                      className={inputCls}
+                    />
+                  </Campo>
+                </div>
+                <div className="sm:col-span-2">
+                  <Campo label="Resumo / parecer clínico" erro={erros["resumo"]}>
+                    <textarea
+                      value={valores["resumo"] ?? ""}
+                      onChange={(e) => set("resumo", e.target.value)}
+                      placeholder="O que foi conversado, avaliado e diagnosticado..."
+                      maxLength={2000}
+                      className={areaCls}
+                    />
+                  </Campo>
+                </div>
+                <div className="sm:col-span-2">
+                  <Campo label="Prescrições (medicamento e dosagem)">
+                    <ListaRapida
+                      itens={prescricoes}
+                      valor={novaPrescricao}
+                      onValor={setNovaPrescricao}
+                      onAdicionar={() => {
+                        const v = novaPrescricao.trim();
+                        if (!v) return;
+                        setPrescricoes((s) => [...s, v]);
+                        setNovaPrescricao("");
+                      }}
+                      onRemover={(i) => setPrescricoes((s) => s.filter((_, j) => j !== i))}
+                      placeholder="Ex.: Losartana 50mg 1x ao dia"
+                    />
+                  </Campo>
+                </div>
+                <div className="sm:col-span-2">
+                  <Campo label="Exames solicitados na consulta">
+                    <ListaRapida
+                      itens={examesPedidos}
+                      valor={novoExame}
+                      onValor={setNovoExame}
+                      onAdicionar={() => {
+                        const v = novoExame.trim();
+                        if (!v) return;
+                        setExamesPedidos((s) => [...s, v]);
+                        setNovoExame("");
+                      }}
+                      onRemover={(i) => setExamesPedidos((s) => s.filter((_, j) => j !== i))}
+                      placeholder="Ex.: Hemograma completo"
+                      lista="dl-exames"
+                    />
+                  </Campo>
+                </div>
+                <div className="sm:col-span-2">
+                  <Campo label="Documento (receita, atestado ou prontuário em PDF)">
+                    <UploadFalso
+                      rotulo="Enviar documento"
+                      nome={valores["documento"] ?? ""}
+                      onChange={(n) => set("documento", n)}
+                    />
+                  </Campo>
+                </div>
+              </>
+            )}
+
+            {chave === "tratamento" && (
               <>
                 <Campo label="Nome do tratamento" obrigatorio erro={erros["nome"]}>
                   <input
@@ -571,12 +869,27 @@ function Adicionar() {
                   <input
                     value={valores["fim"] ?? ""}
                     onChange={(e) => set("fim", e.target.value)}
+                    disabled={valores["continuo"] === "sim"}
                     placeholder="DD/MM/AAAA (opcional)"
                     inputMode="numeric"
                     maxLength={10}
-                    className={inputCls}
+                    className={`${inputCls} disabled:opacity-50`}
                   />
                 </Campo>
+                <div className="sm:col-span-2">
+                  <label className="flex cursor-pointer items-center gap-3 rounded-full bg-card px-4 py-3 text-[clamp(0.75rem,1vw,0.875rem)]">
+                    <input
+                      type="checkbox"
+                      checked={valores["continuo"] === "sim"}
+                      onChange={(e) => {
+                        set("continuo", e.target.checked ? "sim" : "");
+                        if (e.target.checked) set("fim", "");
+                      }}
+                      className="size-4 accent-current"
+                    />
+                    Medicamento ou tratamento de uso contínuo
+                  </label>
+                </div>
                 <Campo label="Pedido por" erro={erros["pedidoPor"]}>
                   <input
                     value={valores["pedidoPor"] ?? ""}
@@ -617,14 +930,14 @@ function Adicionar() {
                       onChange={(e) => set("resumo", e.target.value)}
                       placeholder="Anotações sobre o tratamento..."
                       maxLength={1000}
-                      className="h-24 w-full resize-none rounded-[1.25rem] bg-card p-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground"
+                      className={areaCls}
                     />
                   </Campo>
                 </div>
               </>
             )}
 
-            {tipo === "doenca" && (
+            {chave === "doenca" && (
               <>
                 <Campo label="Nome da doença" obrigatorio erro={erros["nome"]}>
                   <input
@@ -668,7 +981,7 @@ function Adicionar() {
                   />
                 </Campo>
                 <div className="sm:col-span-2">
-                  <Campo label="Laudo ou documento">
+                  <Campo label="Laudo ou documento comprobatório">
                     <UploadFalso
                       rotulo="Enviar documento"
                       nome={valores["documento"] ?? ""}
@@ -683,7 +996,7 @@ function Adicionar() {
                       onChange={(e) => set("observacoes", e.target.value)}
                       placeholder="Anotações sobre a doença..."
                       maxLength={1000}
-                      className="h-24 w-full resize-none rounded-[1.25rem] bg-card p-4 text-[clamp(0.75rem,1vw,0.875rem)] outline-none placeholder:text-muted-foreground"
+                      className={areaCls}
                     />
                   </Campo>
                 </div>
@@ -696,7 +1009,11 @@ function Adicionar() {
               onClick={salvar}
               className="h-11 rounded-full bg-foreground px-8 text-[clamp(0.75rem,1vw,0.9375rem)] font-normal text-background hover:bg-foreground/85"
             >
-              {editandoId ? "Salvar alterações" : `Salvar ${tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}`}
+              {editandoId
+                ? "Salvar alterações"
+                : chave === "consulta"
+                  ? "Salvar consulta"
+                  : `Salvar ${tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}`}
             </Button>
             {editandoId && (
               <Button variant="ghost" onClick={limpar} className="h-11 rounded-full px-6 font-normal">
@@ -722,11 +1039,12 @@ function Adicionar() {
         <datalist id="dl-locais">{sugestoes.locais.map((v) => <option key={v} value={v} />)}</datalist>
         <datalist id="dl-pessoas">{sugestoes.pessoas.map((v) => <option key={v} value={v} />)}</datalist>
         <datalist id="dl-trats">{sugestoes.trats.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-exames">{sugestoes.exames.map((v) => <option key={v} value={v} />)}</datalist>
 
         {registros.length > 0 && (
           <div className="rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)]">
             <p className={labelCls}>
-              {tipos.find((t) => t.id === tipo)?.nome}s cadastrados ({registros.length})
+              {rotuloLista[chave]} ({registros.length})
             </p>
             <ul className="flex flex-col gap-2">
               {[...registros].reverse().map((r) => (
@@ -736,7 +1054,7 @@ function Adicionar() {
                 >
                   <span className="min-w-0 flex-1 truncate text-[clamp(0.75rem,1vw,0.875rem)]">
                     {r["nome"]}
-                    <span className="ml-2 text-muted-foreground">{resumoRegistro(tipo, r)}</span>
+                    <span className="ml-2 text-muted-foreground">{resumoRegistro(chave, r)}</span>
                   </span>
                   <Button variant="ghost" size="icon" aria-label={`Editar ${r["nome"]}`} onClick={() => editar(r)} className="size-8 rounded-full">
                     <Pencil className="size-4" />
@@ -759,8 +1077,8 @@ function Adicionar() {
     </PageShell>
         <AlertDialog open={!!excluir} onOpenChange={(o) => !o && setExcluir(null)}>
           <AlertDialogContent className="rounded-[1.75rem]">
+            <AlertDialogTitle>Excluir “{excluir?.["nome"]}”?</AlertDialogTitle>
             <AlertDialogHeader>
-              <AlertDialogTitle>Excluir “{excluir?.["nome"]}”?</AlertDialogTitle>
               <AlertDialogDescription>
                 Este registro será removido do prontuário. Essa ação não pode ser desfeita.
               </AlertDialogDescription>
