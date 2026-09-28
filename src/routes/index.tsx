@@ -55,7 +55,7 @@ function Home() {
         <div className="relative flex min-w-0 flex-col">
           <header className="flex flex-col gap-2 md:contents">
             <div className="flex items-center gap-3">
-              <h1 className="min-w-0 flex-1 truncate text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-none tracking-tight">
+              <h1 className="min-w-0 flex-1 truncate py-[0.08em] text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
                 {perfil.nome || "Paciente"}
               </h1>
               <Avatar className="size-10 md:hidden" />
