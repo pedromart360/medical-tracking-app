@@ -55,7 +55,7 @@ export function ExameModal({ exame, onClose }: { exame: ExameDetalhe; onClose: (
           />
 
           <div className="flex min-w-0 flex-col gap-[clamp(0.375rem,0.8vw,0.625rem)]">
-            <h2 className="text-[clamp(1.5rem,3.4vw,3rem)] font-medium leading-none tracking-tight">{exame.nome}</h2>
+            <h2 className="py-[0.08em] text-[clamp(1.5rem,3.4vw,3rem)] font-medium leading-[1.18] tracking-tight">{exame.nome}</h2>
             <div className="mt-[clamp(0.5rem,1.2vw,1rem)] flex flex-col gap-[clamp(0.25rem,0.6vw,0.5rem)]">
               <Linha rotulo="Pedido por:" valor={exame.pedidoPor} />
               <Linha rotulo="Realizado na data:" valor={exame.data} />

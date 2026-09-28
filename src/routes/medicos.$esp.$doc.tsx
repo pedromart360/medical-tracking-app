@@ -70,7 +70,7 @@ function MedicoDetalhe() {
                 <X className="size-[55%]" />
               </button>
               <div className="min-w-0">
-                <p className="text-[clamp(1.125rem,1.8vw,1.625rem)] font-medium leading-none">{consulta.data}</p>
+                <p className="text-[clamp(1.125rem,1.8vw,1.625rem)] font-medium leading-[1.25]">{consulta.data}</p>
                 <p className="truncate text-[clamp(0.625rem,0.9vw,0.8125rem)] text-muted-foreground">
                   {medico.nome} · {consulta.local}
                 </p>
