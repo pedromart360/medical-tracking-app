@@ -27,7 +27,7 @@ const chipImg = "size-[clamp(2.625rem,5.9vw,5rem)] shrink-0 rounded-full object-
 function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-[clamp(1.375rem,2.9vw,2.5rem)] font-medium leading-none tracking-tight">{titulo}</h2>
+      <h2 className="py-[0.08em] text-[clamp(1.375rem,2.9vw,2.5rem)] font-medium leading-[1.18] tracking-tight">{titulo}</h2>
       <div className="mt-[clamp(1rem,2.9vw,2.5rem)] flex flex-nowrap gap-[clamp(0.625rem,1.5vw,1.25rem)] overflow-x-auto pb-[clamp(0.5rem,1vw,0.75rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {children}
       </div>
