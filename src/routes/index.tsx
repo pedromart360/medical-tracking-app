@@ -74,9 +74,11 @@ function Home() {
             </div>
           </header>
 
-          {/* recorte da janela 1024x1024 onde a figura aparece (mesma janela do BodyFigure) */}
+          {/* recorte da janela 1024x1024 onde a figura aparece (mesma janela do BodyFigure).
+              No desktop a figura preenche toda a altura livre da coluna, alinhando a base
+              da imagem à base do bloco; a figura está centrada na imagem original (x 315-709). */}
           <div
-            className="relative mx-auto mt-3 h-[min(78vw,420px)] overflow-hidden md:h-[clamp(320px,min(52vw,calc(100dvh-22rem)),700px)]"
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:h-auto md:min-h-0 md:flex-1"
             style={{ aspectRatio: "394 / 985" }}
           >
             <img
@@ -84,12 +86,11 @@ function Home() {
               alt="Ilustração anatômica da paciente em vista frontal"
               width={1024}
               height={1024}
-              className="absolute max-w-none"
+              className="absolute left-1/2 top-0 max-w-none"
               style={{
-                width: `${(1024 / 394) * 100}%`,
+                width: "auto",
                 height: `${(1024 / 985) * 100}%`,
-                left: `${(-315 / 394) * 100}%`,
-                top: `${(-20 / 985) * 100}%`,
+                transform: `translate(-50%, ${(-20 / 1024) * 100}%)`,
               }}
             />
           </div>
