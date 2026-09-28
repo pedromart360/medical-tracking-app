@@ -10,7 +10,7 @@ import {
 } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 import { exportarHistoricoPDF } from "@/lib/export-tratamentos";
-import tratamentosImg from "@/assets/tratamentos.jpg";
+import { imgTratamento } from "@/lib/imagens";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/tratamentos")({
@@ -256,7 +256,7 @@ function Tratamentos() {
                 >
                   <span>{t.nome}</span>
                   <img
-                    src={tratamentosImg}
+                    src={imgTratamento(t.slug)}
                     alt=""
                     loading="lazy"
                     className="size-[clamp(2.25rem,4.2vw,3.75rem)] rounded-full object-cover"
