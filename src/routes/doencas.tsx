@@ -187,13 +187,17 @@ function Doencas() {
                   <div className="flex gap-2">
                     <dt className="shrink-0">Percebida por:</dt>
                     <dd className="min-w-0">
-                      <Link
-                        to="/medicos/$esp/$doc"
-                        params={{ esp: item.percebidaPor.espSlug, doc: item.percebidaPor.medicoId }}
-                        className="truncate text-foreground underline underline-offset-4"
-                      >
-                        {item.percebidaPor.nome}
-                      </Link>
+                      {item.percebidaPor.medicoId ? (
+                        <Link
+                          to="/medicos/$esp/$doc"
+                          params={{ esp: item.percebidaPor.espSlug, doc: item.percebidaPor.medicoId }}
+                          className="truncate text-foreground underline underline-offset-4"
+                        >
+                          {item.percebidaPor.nome}
+                        </Link>
+                      ) : (
+                        <span className="truncate text-foreground">{item.percebidaPor.nome}</span>
+                      )}
                     </dd>
                   </div>
                   <div className="flex gap-2">
