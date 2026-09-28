@@ -179,14 +179,28 @@ export function PerfilDrawer() {
               </div>
             </Campo>
           </div>
-          <Campo label="Sexo / identidade de gênero">
-            <input
-              className={inputCls}
-              value={form.sexo}
-              placeholder="Mulher, Homem, ..."
-              onChange={(e) => set("sexo")(e.target.value)}
-            />
+          <Campo label="Sexo (define a ilustração do corpo)">
+            <div className="flex gap-2">
+              {SEXO_OPCOES.map((op) => {
+                const ativo = form.sexo === op;
+                return (
+                  <button
+                    key={op}
+                    type="button"
+                    onClick={() => set("sexo")(op)}
+                    className={`h-10 flex-1 rounded-full text-sm transition-colors ${
+                      ativo
+                        ? "bg-foreground text-background"
+                        : "bg-card text-muted-foreground hover:bg-border"
+                    }`}
+                  >
+                    {op}
+                  </button>
+                );
+              })}
+            </div>
           </Campo>
+
         </section>
 
         <section className="flex flex-col gap-3">
