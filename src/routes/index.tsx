@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { patient } from "@/lib/data";
+import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
@@ -32,6 +32,18 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const [calendario, setCalendario] = useState(false);
+  const [gerando, setGerando] = useState(false);
+  const perfil = usePerfil();
+
+  const gerarResumo = async () => {
+    setGerando(true);
+    try {
+      const { exportarResumoGeralPDF } = await import("@/lib/export-resumo");
+      await exportarResumoGeralPDF(perfil);
+    } finally {
+      setGerando(false);
+    }
+  };
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
@@ -40,18 +52,18 @@ function Home() {
           <header className="flex flex-col gap-2 md:contents">
             <div className="flex items-center gap-3">
               <h1 className="min-w-0 flex-1 truncate text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-none tracking-tight">
-                {patient.nome}
+                {perfil.nome || "Paciente"}
               </h1>
               <Avatar className="size-10 md:hidden" />
             </div>
 
             <div className="flex items-center justify-between gap-3 md:mt-2 md:max-w-[380px] md:justify-between">
               <div className="flex min-w-0 items-center gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
-                <span className="truncate">{patient.sexo}</span>
+                <span className="truncate">{perfil.sexo}</span>
                 <span className="md:hidden" aria-hidden>
                   ·
                 </span>
-                <span>{patient.idade}</span>
+                <span>{idadeDoPerfil(perfil)}</span>
               </div>
               <Button
                 asChild
@@ -122,10 +134,11 @@ function Home() {
           onClick={() => setCalendario(true)}
           action={
             <Button
-              onClick={() => setCalendario(true)}
+              onClick={gerarResumo}
+              disabled={gerando}
               className="h-[clamp(40px,4.4vw,48px)] shrink-0 rounded-full px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)]"
             >
-              resumo geral
+              {gerando ? "gerando..." : "resumo geral"}
             </Button>
           }
         />
