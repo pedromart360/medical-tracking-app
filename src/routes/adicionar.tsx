@@ -1,14 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Check, Upload, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, Pencil, Trash2, Upload, X } from "lucide-react";
 import { z } from "zod";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   areasMedicas,
+  arquivosExame,
   especialidades,
   exameCategorias,
+  medicosBase,
   tiposPorCategoria,
+  tratamentosBase,
 } from "@/lib/data";
 
 export const Route = createFileRoute("/adicionar")({
@@ -127,22 +140,96 @@ function UploadFalso({ rotulo, nome, onChange }: { rotulo: string; nome: string;
   );
 }
 
+const CAMPOS_DATA = new Set(["data", "inicio", "fim"]);
+
+function mascaraData(v: string) {
+  const d = v.replace(/\D/g, "").slice(0, 8);
+  if (d.length <= 2) return d;
+  if (d.length <= 4) return `${d.slice(0, 2)}/${d.slice(2)}`;
+  return `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
+}
+
+const normalizar = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+type Registro = Record<string, string> & { id: string };
+
+function lerRegistros(t: Tipo): Registro[] {
+  try {
+    return JSON.parse(localStorage.getItem(`adicionados-${t}`) ?? "[]") as Registro[];
+  } catch {
+    return [];
+  }
+}
+
+// Índice nome do exame → categoria/tipo, a partir da base e dos exames cadastrados
+function inferirCategoria(nome: string): { categoria: string; tipo: string } | null {
+  const n = normalizar(nome);
+  if (n.length < 3) return null;
+  const base = [
+    ...lerRegistros("exame").map((r) => ({ nome: r["nome"] ?? "", categoria: r["categoria"] ?? "", tipo: r["tipo"] ?? "" })),
+    ...arquivosExame.map((a) => ({ nome: a.nome, categoria: a.categoriaSlug, tipo: a.tipoSlug })),
+  ];
+  const achado =
+    base.find((b) => normalizar(b.nome) === n) ??
+    base.find((b) => normalizar(b.nome).startsWith(n)) ??
+    base.find((b) => normalizar(b.nome).includes(n) || n.includes(normalizar(b.nome)));
+  if (achado) return { categoria: achado.categoria, tipo: achado.tipo };
+  for (const [cat, tipos] of Object.entries(tiposPorCategoria)) {
+    const t = tipos.find((x) => n.includes(normalizar(x.nome)) || normalizar(x.nome).startsWith(n));
+    if (t) return { categoria: cat, tipo: t.slug };
+  }
+  return null;
+}
+
+function resumoRegistro(t: Tipo, r: Registro) {
+  if (t === "medico") return r["especialidade"] ?? "";
+  if (t === "tratamento") return [r["inicio"], r["fim"]].filter(Boolean).join(" – ");
+  return r["data"] ?? "";
+}
+
 function Adicionar() {
   const [tipo, setTipo] = useState<Tipo>("exame");
   const [valores, setValores] = useState<Record<string, string>>({});
   const [erros, setErros] = useState<Record<string, string>>({});
-  const [salvo, setSalvo] = useState(false);
+  const [salvo, setSalvo] = useState<string | false>(false);
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [categoriaManual, setCategoriaManual] = useState(false);
+  const [registros, setRegistros] = useState<Registro[]>([]);
+  const [excluir, setExcluir] = useState<Registro | null>(null);
+  const [versao, setVersao] = useState(0);
+
+  useEffect(() => {
+    setRegistros(lerRegistros(tipo));
+  }, [tipo, versao]);
 
   const set = (k: string, v: string) => {
-    setValores((s) => ({ ...s, [k]: v }));
-    setErros((s) => ({ ...s, [k]: "" }));
+    const valor = CAMPOS_DATA.has(k) ? mascaraData(v) : v;
+    setValores((s) => ({ ...s, [k]: valor }));
+    setErros((s) => {
+      const { [k]: _, ...resto } = s;
+      return resto;
+    });
     setSalvo(false);
+  };
+
+  const setNomeExame = (v: string) => {
+    set("nome", v);
+    if (categoriaManual) return;
+    const inf = inferirCategoria(v);
+    if (inf) setValores((s) => ({ ...s, nome: v, categoria: inf.categoria, tipo: inf.tipo }));
+  };
+
+  const limpar = () => {
+    setValores({});
+    setErros({});
+    setEditandoId(null);
+    setCategoriaManual(false);
   };
 
   const trocarTipo = (t: Tipo) => {
     setTipo(t);
-    setValores({});
-    setErros({});
+    limpar();
     setSalvo(false);
   };
 
@@ -166,18 +253,78 @@ function Adicionar() {
       setErros(novos);
       return;
     }
-    const chave = `adicionados-${tipo}`;
-    const lista = JSON.parse(localStorage.getItem(chave) ?? "[]") as unknown[];
-    lista.push({ id: `${tipo}-${Date.now()}`, ...r.data });
-    localStorage.setItem(chave, JSON.stringify(lista));
-    setValores({});
-    setErros({});
-    setSalvo(true);
+    if (valores["fim"] && !dataSchema.safeParse(valores["fim"]).success) {
+      setErros({ fim: "Use o formato DD/MM/AAAA" });
+      return;
+    }
+    const extras: Record<string, string> = {};
+    for (const k of ["arquivo", "laudo", "foto", "documento"]) if (valores[k]) extras[k] = valores[k]!;
+    const lista = lerRegistros(tipo);
+    const dados = { ...(r.data as Record<string, string>), ...extras };
+    if (editandoId) {
+      const i = lista.findIndex((x) => x.id === editandoId);
+      if (i >= 0) lista[i] = { ...dados, id: editandoId };
+    } else {
+      lista.push({ ...dados, id: `${tipo}-${Date.now()}` });
+    }
+    localStorage.setItem(`adicionados-${tipo}`, JSON.stringify(lista));
+    setSalvo(editandoId ? "Alterações salvas." : "Salvo! Você pode adicionar outro.");
+    limpar();
+    setVersao((v) => v + 1);
   };
+
+  const editar = (r: Registro) => {
+    const { id, ...resto } = r;
+    setValores(resto);
+    setErros({});
+    setEditandoId(id);
+    setCategoriaManual(true);
+    setSalvo(false);
+  };
+
+  const confirmarExclusao = () => {
+    if (!excluir) return;
+    const lista = lerRegistros(tipo).filter((x) => x.id !== excluir.id);
+    localStorage.setItem(`adicionados-${tipo}`, JSON.stringify(lista));
+    if (editandoId === excluir.id) limpar();
+    setExcluir(null);
+    setVersao((v) => v + 1);
+  };
+
+  // Sugestões a partir da base do app + tudo que o paciente já cadastrou
+  const sugestoes = useMemo(() => {
+    const todos = (["exame", "medico", "tratamento", "doenca"] as Tipo[]).flatMap(lerRegistros);
+    const uniq = (xs: (string | undefined)[]) =>
+      [...new Set(xs.filter((x): x is string => !!x && x.trim().length > 0))].sort((a, b) =>
+        a.localeCompare(b, "pt-BR"),
+      );
+    const medicos = uniq([
+      ...medicosBase.map((m) => m.nome),
+      ...lerRegistros("medico").map((r) => r["nome"]),
+      ...todos.flatMap((r) => [r["solicitante"], r["pedidoPor"], r["percebidaPor"]]),
+    ]);
+    const locais = uniq([
+      ...arquivosExame.map((a) => a.local),
+      ...tratamentosBase.map((t) => t.local),
+      ...todos.map((r) => r["local"]),
+    ]);
+    const pessoas = uniq([
+      ...medicos,
+      ...arquivosExame.map((a) => a.realizadoPor),
+      ...tratamentosBase.map((t) => t.realizadoPor),
+      ...todos.flatMap((r) => [r["realizador"], r["realizadoPor"]]),
+    ]);
+    const trats = uniq([
+      ...tratamentosBase.map((t) => t.nome),
+      ...lerRegistros("tratamento").map((r) => r["nome"]),
+    ]);
+    return { medicos, locais, pessoas, trats };
+  }, [versao]);
 
   const tiposExame = tiposPorCategoria[valores["categoria"] ?? ""] ?? [];
 
   return (
+    <>
     <PageShell label="" title="Adicionar dados" backTo="/">
       <div className="mx-auto flex max-w-[640px] flex-col gap-[clamp(0.875rem,1.6vw,1.5rem)]">
         {/* Seletor de tipo */}
@@ -205,7 +352,7 @@ function Adicionar() {
                 <Campo label="Nome do exame" obrigatorio erro={erros["nome"]}>
                   <input
                     value={valores["nome"] ?? ""}
-                    onChange={(e) => set("nome", e.target.value)}
+                    onChange={(e) => setNomeExame(e.target.value)}
                     placeholder="Ex.: Hemograma completo"
                     maxLength={120}
                     className={inputCls}
@@ -217,6 +364,7 @@ function Adicionar() {
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -224,6 +372,7 @@ function Adicionar() {
                   <select
                     value={valores["categoria"] ?? ""}
                     onChange={(e) => {
+                      setCategoriaManual(true);
                       set("categoria", e.target.value);
                       set("tipo", "");
                     }}
@@ -240,7 +389,10 @@ function Adicionar() {
                 <Campo label="Tipo" obrigatorio erro={erros["tipo"]}>
                   <select
                     value={valores["tipo"] ?? ""}
-                    onChange={(e) => set("tipo", e.target.value)}
+                    onChange={(e) => {
+                      setCategoriaManual(true);
+                      set("tipo", e.target.value);
+                    }}
                     disabled={!valores["categoria"]}
                     className={selectCls}
                   >
@@ -270,6 +422,8 @@ function Adicionar() {
                   <input
                     value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
+                    list="dl-locais"
+                    autoComplete="off"
                     placeholder="Ex.: Laboratório São Lucas"
                     maxLength={120}
                     className={inputCls}
@@ -279,6 +433,8 @@ function Adicionar() {
                   <input
                     value={valores["solicitante"] ?? ""}
                     onChange={(e) => set("solicitante", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
@@ -288,6 +444,8 @@ function Adicionar() {
                   <input
                     value={valores["realizador"] ?? ""}
                     onChange={(e) => set("realizador", e.target.value)}
+                    list="dl-pessoas"
+                    autoComplete="off"
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -405,6 +563,7 @@ function Adicionar() {
                     onChange={(e) => set("inicio", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -414,6 +573,7 @@ function Adicionar() {
                     onChange={(e) => set("fim", e.target.value)}
                     placeholder="DD/MM/AAAA (opcional)"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -421,6 +581,8 @@ function Adicionar() {
                   <input
                     value={valores["pedidoPor"] ?? ""}
                     onChange={(e) => set("pedidoPor", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
@@ -430,6 +592,8 @@ function Adicionar() {
                   <input
                     value={valores["realizadoPor"] ?? ""}
                     onChange={(e) => set("realizadoPor", e.target.value)}
+                    list="dl-pessoas"
+                    autoComplete="off"
                     placeholder="Ex.: Enf. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -439,6 +603,8 @@ function Adicionar() {
                   <input
                     value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
+                    list="dl-locais"
+                    autoComplete="off"
                     placeholder="Ex.: Hospital Felício Rocho"
                     maxLength={120}
                     className={inputCls}
@@ -475,6 +641,7 @@ function Adicionar() {
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -482,6 +649,8 @@ function Adicionar() {
                   <input
                     value={valores["percebidaPor"] ?? ""}
                     onChange={(e) => set("percebidaPor", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -491,6 +660,8 @@ function Adicionar() {
                   <input
                     value={valores["tratamento"] ?? ""}
                     onChange={(e) => set("tratamento", e.target.value)}
+                    list="dl-trats"
+                    autoComplete="off"
                     placeholder="Ex.: Dipirona"
                     maxLength={120}
                     className={inputCls}
@@ -525,15 +696,20 @@ function Adicionar() {
               onClick={salvar}
               className="h-11 rounded-full bg-foreground px-8 text-[clamp(0.75rem,1vw,0.9375rem)] font-normal text-background hover:bg-foreground/85"
             >
-              Salvar {tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}
+              {editandoId ? "Salvar alterações" : `Salvar ${tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}`}
             </Button>
+            {editandoId && (
+              <Button variant="ghost" onClick={limpar} className="h-11 rounded-full px-6 font-normal">
+                Cancelar edição
+              </Button>
+            )}
             {salvo && (
               <span className="flex items-center gap-1.5 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
                 <Check className="size-4" />
-                Salvo! Você pode adicionar outro.
+                {salvo}
               </span>
             )}
-            {Object.keys(erros).length > 0 && (
+            {Object.values(erros).some(Boolean) && (
               <span className="flex items-center gap-1.5 text-[clamp(0.75rem,1vw,0.875rem)] text-destructive">
                 <X className="size-4" />
                 Verifique os campos destacados.
@@ -542,11 +718,61 @@ function Adicionar() {
           </div>
         </div>
 
+        <datalist id="dl-medicos">{sugestoes.medicos.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-locais">{sugestoes.locais.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-pessoas">{sugestoes.pessoas.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-trats">{sugestoes.trats.map((v) => <option key={v} value={v} />)}</datalist>
+
+        {registros.length > 0 && (
+          <div className="rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)]">
+            <p className={labelCls}>
+              {tipos.find((t) => t.id === tipo)?.nome}s cadastrados ({registros.length})
+            </p>
+            <ul className="flex flex-col gap-2">
+              {[...registros].reverse().map((r) => (
+                <li
+                  key={r.id}
+                  className={`flex items-center gap-3 rounded-full bg-card py-1.5 pl-4 pr-1.5 ${editandoId === r.id ? "ring-1 ring-foreground" : ""}`}
+                >
+                  <span className="min-w-0 flex-1 truncate text-[clamp(0.75rem,1vw,0.875rem)]">
+                    {r["nome"]}
+                    <span className="ml-2 text-muted-foreground">{resumoRegistro(tipo, r)}</span>
+                  </span>
+                  <Button variant="ghost" size="icon" aria-label={`Editar ${r["nome"]}`} onClick={() => editar(r)} className="size-8 rounded-full">
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" aria-label={`Excluir ${r["nome"]}`} onClick={() => setExcluir(r)} className="size-8 rounded-full text-destructive hover:text-destructive">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+
         <p className="text-center text-[clamp(0.6875rem,0.95vw,0.8125rem)] text-muted-foreground">
           Os dados cadastrados entram no prontuário e passam a aparecer nas listas, no calendário e na
           linha do tempo. <Link to="/" className="underline underline-offset-4">Voltar para a página inicial</Link>
         </p>
       </div>
     </PageShell>
+        <AlertDialog open={!!excluir} onOpenChange={(o) => !o && setExcluir(null)}>
+          <AlertDialogContent className="rounded-[1.75rem]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir “{excluir?.["nome"]}”?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Este registro será removido do prontuário. Essa ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-full">Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmarExclusao} className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+    </>
   );
 }
