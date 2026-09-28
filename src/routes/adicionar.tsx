@@ -351,7 +351,7 @@ function Adicionar() {
                 <Campo label="Nome do exame" obrigatorio erro={erros["nome"]}>
                   <input
                     value={valores["nome"] ?? ""}
-                    onChange={(e) => set("nome", e.target.value)}
+                    onChange={(e) => setNomeExame(e.target.value)}
                     placeholder="Ex.: Hemograma completo"
                     maxLength={120}
                     className={inputCls}
@@ -363,6 +363,7 @@ function Adicionar() {
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -370,6 +371,7 @@ function Adicionar() {
                   <select
                     value={valores["categoria"] ?? ""}
                     onChange={(e) => {
+                      setCategoriaManual(true);
                       set("categoria", e.target.value);
                       set("tipo", "");
                     }}
@@ -386,7 +388,10 @@ function Adicionar() {
                 <Campo label="Tipo" obrigatorio erro={erros["tipo"]}>
                   <select
                     value={valores["tipo"] ?? ""}
-                    onChange={(e) => set("tipo", e.target.value)}
+                    onChange={(e) => {
+                      setCategoriaManual(true);
+                      set("tipo", e.target.value);
+                    }}
                     disabled={!valores["categoria"]}
                     className={selectCls}
                   >
@@ -416,6 +421,8 @@ function Adicionar() {
                   <input
                     value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
+                    list="dl-locais"
+                    autoComplete="off"
                     placeholder="Ex.: Laboratório São Lucas"
                     maxLength={120}
                     className={inputCls}
@@ -425,6 +432,8 @@ function Adicionar() {
                   <input
                     value={valores["solicitante"] ?? ""}
                     onChange={(e) => set("solicitante", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
@@ -434,6 +443,8 @@ function Adicionar() {
                   <input
                     value={valores["realizador"] ?? ""}
                     onChange={(e) => set("realizador", e.target.value)}
+                    list="dl-pessoas"
+                    autoComplete="off"
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -551,6 +562,7 @@ function Adicionar() {
                     onChange={(e) => set("inicio", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -560,6 +572,7 @@ function Adicionar() {
                     onChange={(e) => set("fim", e.target.value)}
                     placeholder="DD/MM/AAAA (opcional)"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -567,6 +580,8 @@ function Adicionar() {
                   <input
                     value={valores["pedidoPor"] ?? ""}
                     onChange={(e) => set("pedidoPor", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dr. Davi"
                     maxLength={120}
                     className={inputCls}
@@ -576,6 +591,8 @@ function Adicionar() {
                   <input
                     value={valores["realizadoPor"] ?? ""}
                     onChange={(e) => set("realizadoPor", e.target.value)}
+                    list="dl-pessoas"
+                    autoComplete="off"
                     placeholder="Ex.: Enf. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -585,6 +602,8 @@ function Adicionar() {
                   <input
                     value={valores["local"] ?? ""}
                     onChange={(e) => set("local", e.target.value)}
+                    list="dl-locais"
+                    autoComplete="off"
                     placeholder="Ex.: Hospital Felício Rocho"
                     maxLength={120}
                     className={inputCls}
@@ -621,6 +640,7 @@ function Adicionar() {
                     onChange={(e) => set("data", e.target.value)}
                     placeholder="DD/MM/AAAA"
                     inputMode="numeric"
+                    maxLength={10}
                     className={inputCls}
                   />
                 </Campo>
@@ -628,6 +648,8 @@ function Adicionar() {
                   <input
                     value={valores["percebidaPor"] ?? ""}
                     onChange={(e) => set("percebidaPor", e.target.value)}
+                    list="dl-medicos"
+                    autoComplete="off"
                     placeholder="Ex.: Dra. Antonieta"
                     maxLength={120}
                     className={inputCls}
@@ -637,6 +659,8 @@ function Adicionar() {
                   <input
                     value={valores["tratamento"] ?? ""}
                     onChange={(e) => set("tratamento", e.target.value)}
+                    list="dl-trats"
+                    autoComplete="off"
                     placeholder="Ex.: Dipirona"
                     maxLength={120}
                     className={inputCls}
@@ -671,15 +695,20 @@ function Adicionar() {
               onClick={salvar}
               className="h-11 rounded-full bg-foreground px-8 text-[clamp(0.75rem,1vw,0.9375rem)] font-normal text-background hover:bg-foreground/85"
             >
-              Salvar {tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}
+              {editandoId ? "Salvar alterações" : `Salvar ${tipos.find((t) => t.id === tipo)?.nome.toLowerCase()}`}
             </Button>
+            {editandoId && (
+              <Button variant="ghost" onClick={limpar} className="h-11 rounded-full px-6 font-normal">
+                Cancelar edição
+              </Button>
+            )}
             {salvo && (
               <span className="flex items-center gap-1.5 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
                 <Check className="size-4" />
-                Salvo! Você pode adicionar outro.
+                {salvo}
               </span>
             )}
-            {Object.keys(erros).length > 0 && (
+            {Object.values(erros).some(Boolean) && (
               <span className="flex items-center gap-1.5 text-[clamp(0.75rem,1vw,0.875rem)] text-destructive">
                 <X className="size-4" />
                 Verifique os campos destacados.
@@ -687,6 +716,55 @@ function Adicionar() {
             )}
           </div>
         </div>
+
+        <datalist id="dl-medicos">{sugestoes.medicos.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-locais">{sugestoes.locais.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-pessoas">{sugestoes.pessoas.map((v) => <option key={v} value={v} />)}</datalist>
+        <datalist id="dl-trats">{sugestoes.trats.map((v) => <option key={v} value={v} />)}</datalist>
+
+        {registros.length > 0 && (
+          <div className="rounded-[clamp(1.25rem,2vw,1.75rem)] bg-muted p-[clamp(1rem,2vw,1.75rem)]">
+            <p className={labelCls}>
+              {tipos.find((t) => t.id === tipo)?.nome}s cadastrados ({registros.length})
+            </p>
+            <ul className="flex flex-col gap-2">
+              {[...registros].reverse().map((r) => (
+                <li
+                  key={r.id}
+                  className={`flex items-center gap-3 rounded-full bg-card py-1.5 pl-4 pr-1.5 ${editandoId === r.id ? "ring-1 ring-foreground" : ""}`}
+                >
+                  <span className="min-w-0 flex-1 truncate text-[clamp(0.75rem,1vw,0.875rem)]">
+                    {r["nome"]}
+                    <span className="ml-2 text-muted-foreground">{resumoRegistro(tipo, r)}</span>
+                  </span>
+                  <Button variant="ghost" size="icon" aria-label={`Editar ${r["nome"]}`} onClick={() => editar(r)} className="size-8 rounded-full">
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" aria-label={`Excluir ${r["nome"]}`} onClick={() => setExcluir(r)} className="size-8 rounded-full text-destructive hover:text-destructive">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <AlertDialog open={!!excluir} onOpenChange={(o) => !o && setExcluir(null)}>
+          <AlertDialogContent className="rounded-[1.75rem]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir “{excluir?.["nome"]}”?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Este registro será removido do prontuário. Essa ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-full">Cancelar</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmarExclusao} className="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <p className="text-center text-[clamp(0.6875rem,0.95vw,0.8125rem)] text-muted-foreground">
           Os dados cadastrados entram no prontuário e passam a aparecer nas listas, no calendário e na
