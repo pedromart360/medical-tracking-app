@@ -654,7 +654,7 @@ export type Medico = {
 
 export const especialidadeSlug = slugArea;
 
-const cargoPorEspecialidade: Record<string, string> = {
+export const cargoPorEspecialidade: Record<string, string> = {
   Cardiologia: "Cardiologista",
   Psiquiatria: "Psiquiatra",
   Endocrinologia: "Endocrinologista",
