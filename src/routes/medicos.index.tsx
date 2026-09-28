@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PageShell } from "@/components/PageShell";
+import { PageShell, cardLista, cardListaImg, cardListaTexto } from "@/components/PageShell";
 import { especialidades, especialidadeSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 import { imgEspecialidade } from "@/lib/imagens";
