@@ -21,7 +21,22 @@ const ordemData = (d: string) => {
   return Number(mes) * 100 + Number(dia);
 };
 
-export async function exportarResumoGeralPDF(perfil: Perfil) {
+export async function exportarResumoGeralPDF(
+  perfil: Perfil,
+  dados?: {
+    arquivos: typeof arquivosExame;
+    medicos: typeof medicosBase;
+    tratamentos: typeof tratamentosBase;
+    doencas: typeof doencasBase;
+  },
+) {
+  const fonteExames = dados?.arquivos ?? arquivosExame;
+  const fonteMedicos = dados?.medicos ?? medicosBase;
+  const fonteTratamentos = dados?.tratamentos ?? tratamentosBase;
+  const fonteDoencas = dados?.doencas ?? doencasBase;
+  const buscarTratamento = (id: string) =>
+    dados ? dados.tratamentos.find((t) => t.id === id) : acharTratamento(id);
+
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ unit: "pt", format: "a4" });
 
