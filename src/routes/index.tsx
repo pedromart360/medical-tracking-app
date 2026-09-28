@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { idadeDoPerfil, usePerfil } from "@/lib/perfil";
+import { idadeDoPerfil, imagensCorpo, usePerfil } from "@/lib/perfil";
 import { useProntuario } from "@/lib/adicionados";
 import { Timeline } from "@/components/Timeline";
 import { CalendarOverlay } from "@/components/Calendar";
 import { Avatar, railItems } from "@/components/PageShell";
-const body = "/body_front.webp";
+
 import pasta from "@/assets/pasta.svg.asset.json";
 import { Button } from "@/components/ui/button";
 
