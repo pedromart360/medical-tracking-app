@@ -88,6 +88,7 @@ function Home() {
               height={1024}
               className="absolute left-1/2 top-0 max-w-none"
               style={{
+                width: "auto",
                 height: `${(1024 / 985) * 100}%`,
                 transform: `translate(-50%, ${(-20 / 1024) * 100}%)`,
               }}
