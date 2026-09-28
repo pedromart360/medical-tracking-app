@@ -1,0 +1,124 @@
+import { useSyncExternalStore } from "react";
+import { patient } from "@/lib/data";
+
+export type Perfil = {
+  nome: string;
+  nascimento: string; // DD/MM/AAAA
+  sexo: string;
+  foto: string; // dataURL
+  tipoSanguineo: string;
+  alergias: string;
+  condicoes: string;
+  altura: string;
+  peso: string;
+  contatoNome: string;
+  contatoTelefone: string;
+  plano: string;
+  carteirinha: string;
+};
+
+export const perfilVazio: Perfil = {
+  nome: "",
+  nascimento: "",
+  sexo: "",
+  foto: "",
+  tipoSanguineo: "",
+  alergias: "",
+  condicoes: "",
+  altura: "",
+  peso: "",
+  contatoNome: "",
+  contatoTelefone: "",
+  plano: "",
+  carteirinha: "",
+};
+
+export const perfilPadrao: Perfil = {
+  ...perfilVazio,
+  nome: patient.nome,
+  sexo: patient.sexo,
+  nascimento: "14/06/2002",
+};
+
+const CHAVE = "perfil-paciente";
+
+let cache: Perfil | null = null;
+const ouvintes = new Set<() => void>();
+
+function ler(): Perfil {
+  if (cache) return cache;
+  if (typeof window === "undefined") return perfilPadrao;
+  try {
+    const bruto = localStorage.getItem(CHAVE);
+    cache = bruto ? { ...perfilPadrao, ...(JSON.parse(bruto) as Partial<Perfil>) } : perfilPadrao;
+  } catch {
+    cache = perfilPadrao;
+  }
+  return cache;
+}
+
+export function temPerfilSalvo() {
+  if (typeof window === "undefined") return true;
+  try {
+    return localStorage.getItem(CHAVE) !== null;
+  } catch {
+    return true;
+  }
+}
+
+export function salvarPerfil(p: Perfil) {
+  cache = p;
+  try {
+    localStorage.setItem(CHAVE, JSON.stringify(p));
+  } catch {
+    /* ignora */
+  }
+  ouvintes.forEach((l) => l());
+}
+
+function inscrever(l: () => void) {
+  ouvintes.add(l);
+  return () => {
+    ouvintes.delete(l);
+  };
+}
+
+export function usePerfil(): Perfil {
+  return useSyncExternalStore(inscrever, ler, () => perfilPadrao);
+}
+
+/** Idade em anos no formato "24A", calculada a partir da data de nascimento. */
+export function idadeDoPerfil(p: Perfil): string {
+  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(p.nascimento.trim());
+  if (!m) return patient.idade;
+  const dia = Number(m[1]);
+  const mes = Number(m[2]);
+  const ano = Number(m[3]);
+  const hoje = new Date();
+  let idade = hoje.getFullYear() - ano;
+  const aniversarioPassou =
+    hoje.getMonth() + 1 > mes || (hoje.getMonth() + 1 === mes && hoje.getDate() >= dia);
+  if (!aniversarioPassou) idade -= 1;
+  if (idade < 0 || idade > 130) return patient.idade;
+  return `${idade}A`;
+}
+
+export function iniciais(nome: string) {
+  const partes = nome.trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0) return "";
+  const primeira = partes[0]![0] ?? "";
+  const ultima = partes.length > 1 ? (partes[partes.length - 1]![0] ?? "") : "";
+  return (primeira + ultima).toUpperCase();
+}
+
+/* ---- abertura da gaveta a partir de qualquer tela ---- */
+const EVENTO = "abrir-perfil";
+
+export function abrirPerfil() {
+  window.dispatchEvent(new CustomEvent(EVENTO));
+}
+
+export function aoAbrirPerfil(handler: () => void) {
+  window.addEventListener(EVENTO, handler);
+  return () => window.removeEventListener(EVENTO, handler);
+}
