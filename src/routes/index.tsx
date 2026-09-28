@@ -52,18 +52,18 @@ function Home() {
           <header className="flex flex-col gap-2 md:contents">
             <div className="flex items-center gap-3">
               <h1 className="min-w-0 flex-1 truncate text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-none tracking-tight">
-                {patient.nome}
+                {perfil.nome || "Paciente"}
               </h1>
               <Avatar className="size-10 md:hidden" />
             </div>
 
             <div className="flex items-center justify-between gap-3 md:mt-2 md:max-w-[380px] md:justify-between">
               <div className="flex min-w-0 items-center gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
-                <span className="truncate">{patient.sexo}</span>
+                <span className="truncate">{perfil.sexo}</span>
                 <span className="md:hidden" aria-hidden>
                   ·
                 </span>
-                <span>{patient.idade}</span>
+                <span>{idadeDoPerfil(perfil)}</span>
               </div>
               <Button
                 asChild
