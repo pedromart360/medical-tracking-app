@@ -8,10 +8,12 @@ import {
   perfilPadrao,
   perfilVazio,
   salvarPerfil,
+  SEXO_OPCOES,
   temPerfilSalvo,
   usePerfil,
   type Perfil,
 } from "@/lib/perfil";
+
 
 const inputCls =
   "h-10 w-full rounded-full bg-card px-4 text-sm outline-none ring-foreground/10 placeholder:text-muted-foreground focus:ring-2";
