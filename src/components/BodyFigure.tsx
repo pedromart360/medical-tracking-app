@@ -85,9 +85,9 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
   };
 
   return (
-    <div className="flex size-full min-h-[clamp(320px,46vh,640px)] flex-col items-center gap-3">
-      <div className="relative w-full flex-1">
-        <div className="relative mx-auto h-full w-auto">
+    <div className="flex size-full min-h-[clamp(320px,46vh,640px)] flex-col items-center justify-center gap-3">
+      <div className="flex w-full min-h-0 flex-1 items-center justify-center">
+        <div className="relative aspect-square w-full max-w-[min(100%,58vh)]">
           <img
             src={imagens[vista]}
             alt={
@@ -97,8 +97,9 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
             }
             width={1024}
             height={1024}
-            className="mx-auto h-full w-auto max-w-full object-contain"
+            className="absolute inset-0 size-full object-contain"
           />
+
           <div className="absolute inset-0">
             {visiveis.map((p) => (
               <Marcador
