@@ -74,6 +74,7 @@ export const areasMedicas = [
   "Coloproctologia",
   "Angiologia",
   "Alergia e Imunologia",
+  "Oncologia",
 ];
 
 export const tiposPorCategoria: Record<string, { nome: string; slug: string }[]> = {
@@ -102,6 +103,7 @@ export const tiposPorCategoria: Record<string, { nome: string; slug: string }[]>
     { nome: "Auditivos", slug: "auditivos" },
     { nome: "Vasculares", slug: "vasculares" },
     { nome: "Urológicos", slug: "urologicos" },
+    { nome: "Neuromusculares", slug: "neuromusculares" },
   ],
   endoscopicos: [
     { nome: "Digestivos", slug: "digestivos" },
@@ -110,6 +112,7 @@ export const tiposPorCategoria: Record<string, { nome: string; slug: string }[]>
     { nome: "Ginecológicos", slug: "ginecologicos" },
     { nome: "Cirúrgicos", slug: "cirurgicos" },
     { nome: "Ortopédicos", slug: "ortopedicos" },
+    { nome: "Urológicos", slug: "urologicos" },
   ],
   citologicos: [
     { nome: "Ginecológicos", slug: "ginecologicos" },
@@ -204,6 +207,7 @@ export const especialidades = [
   "Coloproctologia",
   "Angiologia",
   "Alergia e Imunologia",
+  "Oncologia",
 ];
 
 export const medicos = [
