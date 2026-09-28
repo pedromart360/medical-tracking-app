@@ -19,5 +19,5 @@
 - [x] Pasta e cabeçalho estáticos com conteúdo rolando por dentro na ficha médica
 - [x] Lista de exames abre a ficha do exame; remédios filtrados por consulta e lista atenuada ao selecionar data
 - [ ] Calendário contextual filtrado por módulo (exames, médicos, tratamentos)
-- [ ] Tela "+ adicionar dados"
+- [x] Tela "+ adicionar dados" (página /adicionar com formulários de exame, médico, tratamento e doença)
 - [ ] Polimento fino da responsividade mobile
