@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import { patient } from "@/lib/data";
 
 export type Perfil = {
@@ -84,7 +84,13 @@ function inscrever(l: () => void) {
 }
 
 export function usePerfil(): Perfil {
-  return useSyncExternalStore(inscrever, ler, () => perfilPadrao);
+  // Após a hidratação passamos a ler o que está salvo no navegador.
+  const [p, setP] = useState<Perfil>(perfilPadrao);
+  useEffect(() => {
+    setP(ler());
+    return inscrever(() => setP(ler()));
+  }, []);
+  return p;
 }
 
 /** Idade em anos no formato "24A", calculada a partir da data de nascimento. */
