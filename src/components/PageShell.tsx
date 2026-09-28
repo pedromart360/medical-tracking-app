@@ -3,16 +3,18 @@ import { abrirPerfil, iniciais, usePerfil } from "@/lib/perfil";
 import { ChevronLeft } from "lucide-react";
 import { Timeline } from "@/components/Timeline";
 import pastaGrande from "@/assets/pasta-grande.svg.asset.json";
-import exames from "@/assets/exames.jpg";
-import medicos from "@/assets/medicos.jpg";
-import tratamentos from "@/assets/tratamentos.jpg";
-import doencas from "@/assets/doencas.jpg";
+import { imgHome, imgIconeCategoria } from "@/lib/imagens";
 
 export const railItems = [
-  { to: "/exames", img: exames, nome: "Exames" },
-  { to: "/medicos", img: medicos, nome: "Médicos" },
-  { to: "/tratamentos", img: tratamentos, nome: "Tratamentos" },
-  { to: "/doencas", img: doencas, nome: "Doenças" },
+  { to: "/exames", img: imgIconeCategoria("Exames"), home: imgHome("Exames"), nome: "Exames" },
+  { to: "/medicos", img: imgIconeCategoria("Médicos"), home: imgHome("Médicos"), nome: "Médicos" },
+  {
+    to: "/tratamentos",
+    img: imgIconeCategoria("Tratamentos"),
+    home: imgHome("Tratamentos"),
+    nome: "Tratamentos",
+  },
+  { to: "/doencas", img: imgIconeCategoria("Doenças"), home: imgHome("Doenças"), nome: "Doenças" },
 ];
 
 export function Avatar({ className = "" }: { className?: string }) {

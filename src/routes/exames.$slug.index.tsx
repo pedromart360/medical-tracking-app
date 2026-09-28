@@ -3,8 +3,7 @@ import { PageShell } from "@/components/PageShell";
 import { areaSlug, exameCategorias, tiposPorCategoria } from "@/lib/data";
 import { mesclarPontos, useProntuario } from "@/lib/adicionados";
 import { BodyFigure } from "@/components/BodyFigure";
-import exames from "@/assets/exames.jpg";
-import medicos from "@/assets/medicos.jpg";
+import { imgEspecialidade, imgTipoExame } from "@/lib/imagens";
 
 export const Route = createFileRoute("/exames/$slug/")({
   head: () => ({
@@ -61,7 +60,7 @@ function Categoria() {
             className="shrink-0"
           >
             <span className={`${chipClass} hover:bg-border`}>
-              <img src={medicos} alt="" loading="lazy" className={chipImg} />
+              <img src={imgEspecialidade(a)} alt="" loading="lazy" className={chipImg} />
               {a}
             </span>
           </Link>
@@ -72,7 +71,7 @@ function Categoria() {
         {tipos.map((t) => (
           <Link key={t.slug} to="/exames/$slug/$tipo" params={{ slug, tipo: t.slug }} className="shrink-0">
             <span className={`${chipClass} hover:bg-border`}>
-              <img src={exames} alt="" loading="lazy" className={chipImg} />
+              <img src={imgTipoExame(slug, t.slug)} alt="" loading="lazy" className={chipImg} />
               {t.nome}
             </span>
           </Link>
