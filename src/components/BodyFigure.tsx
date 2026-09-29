@@ -36,7 +36,7 @@ function Marcador({
         <button
           onClick={onToggle}
           aria-label={`${ponto.parte}: ${ponto.exames.length} exames`}
-          className={`flex size-[clamp(1.75rem,3.4vw,2.25rem)] shrink-0 items-center justify-center rounded-full text-[clamp(0.625rem,1.1vw,0.75rem)] shadow-sm ring-1 ring-border transition-colors ${
+          className={`flex size-[clamp(1.125rem,2.1vw,1.5rem)] shrink-0 items-center justify-center rounded-full text-[clamp(0.5rem,0.8vw,0.625rem)] shadow-sm ring-1 ring-border transition-colors ${
             aberto ? "bg-foreground text-background" : "bg-card/95 text-muted-foreground hover:bg-card"
           }`}
         >
@@ -89,7 +89,7 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
   };
 
   return (
-    <div className="flex size-full min-h-[clamp(320px,46vh,640px)] flex-col items-center justify-center gap-3">
+    <div className="flex size-full min-h-[clamp(340px,62vh,820px)] flex-col items-center justify-center gap-3">
       <div className="flex min-h-0 w-full flex-1 items-center justify-center">
         {/* janela recortada na silhueta: mostra só a faixa da ilustração ocupada pela figura */}
         <div className="relative h-full" style={{ aspectRatio: `${JANELA.w} / ${JANELA.h}` }}>

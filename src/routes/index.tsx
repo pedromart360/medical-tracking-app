@@ -51,18 +51,18 @@ function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
-      <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
+      <div className="grid gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
           <header className="flex flex-col gap-2 md:contents">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 md:h-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)]">
               <h1 className="min-w-0 flex-1 truncate py-[0.08em] text-[clamp(1.75rem,7vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
                 {perfil.nome || "Paciente"}
               </h1>
               <Avatar className="size-10 md:hidden" />
             </div>
 
-            <div className="flex items-center justify-between gap-3 md:mt-2 md:max-w-[380px] md:justify-between">
-              <div className="flex min-w-0 items-center gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
+            <div className="flex items-center justify-between gap-3 md:absolute md:left-0 md:top-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)] md:mt-1 md:w-[min(100%,320px)] md:justify-between">
+              <div className="flex min-w-0 items-baseline gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
                 <span className="truncate">{perfil.sexo}</span>
                 <span className="md:hidden" aria-hidden>
                   ·
@@ -79,10 +79,10 @@ function Home() {
           </header>
 
           {/* recorte da janela 1024x1024 onde a figura aparece (mesma janela do BodyFigure).
-              No desktop a figura preenche toda a altura livre da coluna, alinhando a base
-              da imagem à base do bloco; a figura está centrada na imagem original (x 315-709). */}
+              O topo da figura acompanha o topo da barra de pesquisa e a base acompanha a
+              base dos cards de módulo; a figura está centrada na imagem original (x 315-709). */}
           <div
-            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:h-auto md:max-h-[calc(100dvh-12.5rem)] md:min-h-0 md:flex-1"
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:mt-[clamp(0.75rem,1.6vw,1.25rem)] md:h-0 md:min-h-0 md:max-h-none md:flex-1 md:![aspect-ratio:auto]"
             style={{ aspectRatio: "394 / 985" }}
           >
             <img
@@ -99,10 +99,11 @@ function Home() {
             />
           </div>
 
+
         </div>
 
         <div className="flex min-w-0 flex-col gap-[clamp(0.75rem,1.6vw,1.25rem)]">
-          <div className="hidden items-center justify-between gap-4 md:flex">
+          <div className="hidden items-center justify-between gap-4 md:flex md:h-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)]">
             <Button
               asChild
               className="h-[clamp(40px,4.2vw,48px)] rounded-full px-[clamp(1.25rem,2.2vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)] font-normal"
@@ -148,15 +149,14 @@ function Home() {
       </div>
 
 
-      <div className="pt-[clamp(1rem,2.5vw,1.5rem)]">
+      <div className="pt-[clamp(0.375rem,0.9vw,0.75rem)]">
         <Timeline
           onClick={() => setCalendario(true)}
           action={
             <Button
-              variant="outline"
               onClick={gerarResumo}
               disabled={gerando}
-              className="h-[clamp(40px,4.2vw,48px)] shrink-0 rounded-full border-border/70 bg-card px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)] font-normal hover:bg-muted"
+              className="h-[clamp(40px,4.2vw,48px)] shrink-0 rounded-full px-[clamp(1rem,2.4vw,1.75rem)] text-[clamp(0.8125rem,1.2vw,1rem)] font-normal"
             >
               {gerando ? "gerando..." : "resumo geral"}
             </Button>

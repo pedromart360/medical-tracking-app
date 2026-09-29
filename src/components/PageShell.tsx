@@ -37,29 +37,29 @@ export function Avatar({ className = "" }: { className?: string }) {
 
 export function Rail() {
   return (
-    <nav aria-label="Categorias" className="flex items-center gap-[clamp(0.5rem,1.5vw,1.25rem)]">
+    <nav aria-label="Categorias" className="flex items-center gap-[clamp(0.375rem,1.1vw,0.9rem)]">
       {railItems.map((r) => (
         <Link key={r.to} to={r.to} title={r.nome}>
           <img
             src={r.img}
             alt={r.nome}
             loading="lazy"
-            className="size-[clamp(2.5rem,6.7vw,5.75rem)] rounded-full object-cover transition-transform hover:scale-105"
+            className="size-[clamp(1.875rem,4.8vw,4.15rem)] rounded-full object-cover transition-transform hover:scale-105"
           />
         </Link>
       ))}
-      <Avatar className="size-[clamp(2.5rem,6.7vw,5.75rem)]" />
+      <Avatar className="size-[clamp(1.875rem,4.8vw,4.15rem)]" />
     </nav>
   );
 }
 
 /* Estilos padrão dos cards de lista (mesma harmonia em todos os módulos) */
 export const cardLista =
-  "flex h-[clamp(3.25rem,5.2vw,4.5rem)] items-center justify-between gap-[clamp(0.5rem,1vw,0.875rem)] rounded-[clamp(1.25rem,2vw,2rem)] bg-muted pl-[clamp(1rem,1.8vw,1.75rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] transition-colors hover:bg-border";
+  "flex h-[clamp(3.75rem,6.1vw,5.25rem)] items-center justify-between gap-[clamp(0.5rem,1.1vw,1rem)] rounded-[clamp(1.5rem,2.4vw,2.5rem)] bg-muted pl-[clamp(1.125rem,2vw,2rem)] pr-[clamp(0.375rem,0.7vw,0.625rem)] transition-colors hover:bg-border";
 export const cardListaTexto =
-  "min-w-0 flex-1 truncate text-[clamp(0.875rem,1.3vw,1.25rem)] leading-[1.3]";
+  "min-w-0 flex-1 truncate text-[clamp(0.9375rem,1.45vw,1.375rem)] leading-[1.3]";
 export const cardListaImg =
-  "size-[clamp(2.25rem,3.6vw,3.5rem)] shrink-0 rounded-full object-cover";
+  "size-[clamp(2.75rem,4.6vw,4.375rem)] shrink-0 rounded-full object-cover";
 
 function Titulo({ label, title, backTo }: { label: string; title: string; backTo: string }) {
   return (
@@ -73,7 +73,9 @@ function Titulo({ label, title, backTo }: { label: string; title: string; backTo
       </Link>
       <div className="min-w-0">
         {label && (
-          <p className="text-[clamp(0.6875rem,1.1vw,1rem)] leading-tight text-muted-foreground">{label}</p>
+          <p className="mb-[-0.15em] text-[clamp(0.6875rem,1.1vw,1rem)] leading-[1.05] text-muted-foreground">
+            {label}
+          </p>
         )}
         <h1 className="truncate py-[0.08em] text-[clamp(1.75rem,4vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
           {title}
