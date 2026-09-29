@@ -2,7 +2,14 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { criarConta, entrar, temConta, sessaoAtiva, validarEmail } from "@/lib/conta";
+import {
+  criarConta,
+  entrar,
+  temConta,
+  sessaoAtiva,
+  validarEmail,
+  redefinirSenha,
+} from "@/lib/conta";
 import {
   iniciais,
   perfilVazio,
@@ -54,7 +61,7 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
 
 function Entrar() {
   const router = useRouter();
-  const [modo, setModo] = useState<"cadastro" | "login">("cadastro");
+  const [modo, setModo] = useState<"cadastro" | "login" | "recuperar">("cadastro");
   const [passo, setPasso] = useState<1 | 2>(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +71,8 @@ function Entrar() {
   const [sexo, setSexo] = useState<string>("");
   const [foto, setFoto] = useState("");
   const [erro, setErro] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [aviso, setAviso] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
