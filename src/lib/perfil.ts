@@ -57,6 +57,11 @@ function ler(): Perfil {
   return cache;
 }
 
+/** Perfil guardado neste aparelho. */
+export function lerPerfilLocal(): Perfil {
+  return ler();
+}
+
 export function temPerfilSalvo() {
   if (typeof window === "undefined") return true;
   try {

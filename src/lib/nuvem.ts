@@ -1,6 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
-import { perfilVazio, aplicarPerfilDaNuvem, type Perfil } from "./perfil";
-import { TIPOS_REGISTRO, aplicarRegistrosDaNuvem, type RegistroSalvo, type TipoAdicionado } from "./adicionados";
+import { perfilVazio, aplicarPerfilDaNuvem, lerPerfilLocal, type Perfil } from "./perfil";
+import {
+  TIPOS_REGISTRO,
+  aplicarRegistrosDaNuvem,
+  lerRegistros,
+  type RegistroSalvo,
+  type TipoAdicionado,
+} from "./adicionados";
 
 /** Converte a linha do banco para o formato usado no app. */
 function paraPerfil(linha: Record<string, unknown>): Perfil {
