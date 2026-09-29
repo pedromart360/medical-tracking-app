@@ -277,7 +277,10 @@ function Entrar() {
                 </Campo>
               </div>
 
-              <Campo label="Modelo do corpo usado nas ilustrações">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-muted-foreground">
+                  Modelo do corpo usado nas ilustrações
+                </span>
                 <div className="flex gap-2">
                   {SEXO_OPCOES.map((op) => {
                     const ativo = sexo === op;
