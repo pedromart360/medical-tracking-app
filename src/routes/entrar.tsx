@@ -184,27 +184,52 @@ function Entrar() {
             )}
             <div>
               <p className="text-xs text-muted-foreground">
-                {modo === "login"
-                  ? "Bem-vindo de volta"
-                  : modo === "recuperar"
-                    ? "Confirme seus dados"
-                    : passo === 1
-                      ? "Passo 1 de 2"
-                      : "Passo 2 de 2"}
+                {modo === "confirmar"
+                  ? "Último passo"
+                  : modo === "login"
+                    ? "Bem-vindo de volta"
+                    : modo === "recuperar"
+                      ? "Confirme seus dados"
+                      : passo === 1
+                        ? "Passo 1 de 2"
+                        : "Passo 2 de 2"}
               </p>
               <h2 className="text-2xl font-medium leading-tight tracking-tight">
-                {modo === "login"
-                  ? "Entrar"
-                  : modo === "recuperar"
-                    ? "Redefinir senha"
-                    : passo === 1
-                      ? "Crie seu espaço"
-                      : "Personalize seu espaço"}
+                {modo === "confirmar"
+                  ? "Confirme seu e-mail"
+                  : modo === "login"
+                    ? "Entrar"
+                    : modo === "recuperar"
+                      ? "Redefinir senha"
+                      : passo === 1
+                        ? "Crie seu espaço"
+                        : "Personalize seu espaço"}
               </h2>
             </div>
           </div>
 
-          {modo === "recuperar" ? (
+          {modo === "confirmar" ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Enviamos um código de 6 dígitos para <span className="text-foreground">{email}</span>.
+                Digite-o abaixo para ativar sua conta.
+              </p>
+              <div className="rounded-2xl border border-dashed border-border bg-card px-4 py-3 text-xs text-muted-foreground">
+                Simulação do e-mail recebido — seu código é{" "}
+                <span className="font-mono text-sm tracking-[0.3em] text-foreground">{codigoEnviado}</span>
+              </div>
+              <Campo label="Código de confirmação">
+                <input
+                  className={`${inputCls} text-center font-mono tracking-[0.4em]`}
+                  value={codigo}
+                  inputMode="numeric"
+                  placeholder="000000"
+                  onChange={(e) => setCodigo(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onKeyDown={(e) => e.key === "Enter" && confirmar_()}
+                />
+              </Campo>
+            </div>
+          ) : modo === "recuperar" ? (
             <div className="flex flex-col gap-3">
               <p className="text-xs leading-relaxed text-muted-foreground">
                 Para sua segurança, confirme o e-mail e a data de nascimento cadastrados e escolha
@@ -402,37 +427,69 @@ function Entrar() {
           <Button
             className="h-12 w-full rounded-full text-sm font-normal"
             onClick={
-              modo === "login"
-                ? fazerLogin
-                : modo === "recuperar"
-                  ? recuperar
-                  : passo === 1
-                    ? continuar
-                    : concluir
+              modo === "confirmar"
+                ? confirmar_
+                : modo === "login"
+                  ? fazerLogin
+                  : modo === "recuperar"
+                    ? recuperar
+                    : passo === 1
+                      ? continuar
+                      : concluir
             }
           >
-            {modo === "login"
-              ? "Entrar"
-              : modo === "recuperar"
-                ? "Redefinir senha"
-                : passo === 1
-                  ? "Continuar"
-                  : "Concluir e entrar"}
+            {modo === "confirmar"
+              ? "Confirmar e entrar"
+              : modo === "login"
+                ? "Entrar"
+                : modo === "recuperar"
+                  ? "Redefinir senha"
+                  : passo === 1
+                    ? "Continuar"
+                    : "Concluir cadastro"}
           </Button>
 
-          {modo === "login" && (
+          {modo === "confirmar" && (
             <button
               type="button"
               className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
               onClick={() => {
+                const c = reenviarCodigo();
+                if (c) setCodigoEnviado(c);
                 setErro("");
-                setAviso("");
-                setSenha("");
-                setModo("recuperar");
+                setAviso("Enviamos um novo código.");
               }}
             >
-              Esqueceu a senha?
+              Não recebeu? Reenviar código
             </button>
+          )}
+
+          {modo === "login" && (
+            <>
+              <button
+                type="button"
+                className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+                onClick={() => {
+                  setErro("");
+                  setAviso("");
+                  setSenha("");
+                  setModo("recuperar");
+                }}
+              >
+                Esqueceu a senha?
+              </button>
+              <button
+                type="button"
+                className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+                onClick={() => {
+                  setEmail(CONTA_TESTE.email);
+                  setSenha(CONTA_TESTE.senha);
+                  setErro("");
+                }}
+              >
+                Preencher com a conta de teste
+              </button>
+            </>
           )}
 
           <button
