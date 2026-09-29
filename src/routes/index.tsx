@@ -51,7 +51,7 @@ function Home() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1286px] flex-col px-[clamp(1rem,3vw,2.5rem)] py-[clamp(1rem,2.5vw,2.5rem)]">
-      <div className="grid flex-1 gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
+      <div className="grid gap-[clamp(1rem,2.5vw,1.875rem)] md:grid-cols-[minmax(0,31%)_minmax(0,1fr)]">
         <div className="relative flex min-w-0 flex-col">
           <header className="flex flex-col gap-2 md:contents">
             <div className="flex items-center gap-3 md:h-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)]">
@@ -61,7 +61,7 @@ function Home() {
               <Avatar className="size-10 md:hidden" />
             </div>
 
-            <div className="flex items-center justify-between gap-3 md:absolute md:left-0 md:top-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)] md:mt-1 md:max-w-[380px] md:justify-between">
+            <div className="flex items-center justify-between gap-3 md:absolute md:left-0 md:top-[calc(clamp(1.75rem,7vw,3.5rem)*1.34)] md:mt-1 md:w-[min(100%,320px)] md:justify-between">
               <div className="flex min-w-0 items-baseline gap-2 text-[clamp(0.75rem,3.2vw,0.875rem)] text-muted-foreground md:w-full md:justify-between md:gap-0">
                 <span className="truncate">{perfil.sexo}</span>
                 <span className="md:hidden" aria-hidden>
@@ -82,7 +82,7 @@ function Home() {
               O topo da figura acompanha o topo da barra de pesquisa e a base acompanha a
               base dos cards de módulo; a figura está centrada na imagem original (x 315-709). */}
           <div
-            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:mt-[clamp(0.75rem,1.6vw,1.25rem)] md:h-auto md:min-h-0 md:max-h-none md:flex-1"
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:mt-[clamp(0.75rem,1.6vw,1.25rem)] md:h-0 md:min-h-0 md:max-h-none md:flex-1 md:[aspect-ratio:auto]"
             style={{ aspectRatio: "394 / 985" }}
           >
             <img
