@@ -1,7 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useState } from "react";
 import { abrirPerfil, iniciais, usePerfil } from "@/lib/perfil";
 import { ChevronLeft } from "lucide-react";
 import { Timeline } from "@/components/Timeline";
+import { CalendarOverlay } from "@/components/Calendar";
+import type { ModuloEvento } from "@/lib/eventos";
 import pastaGrande from "@/assets/pasta-grande.svg.asset.json";
 import { imgHome, imgIconeCategoria } from "@/lib/imagens";
 
