@@ -47,12 +47,12 @@ const ouvintes = new Set<() => void>();
 
 function ler(): Perfil {
   if (cache) return cache;
-  if (typeof window === "undefined") return perfilPadrao;
+  if (typeof window === "undefined") return perfilVazio;
   try {
     const bruto = localStorage.getItem(CHAVE);
-    cache = bruto ? { ...perfilPadrao, ...(JSON.parse(bruto) as Partial<Perfil>) } : perfilPadrao;
+    cache = bruto ? { ...perfilVazio, ...(JSON.parse(bruto) as Partial<Perfil>) } : perfilVazio;
   } catch {
-    cache = perfilPadrao;
+    cache = perfilVazio;
   }
   return cache;
 }
@@ -66,10 +66,32 @@ export function temPerfilSalvo() {
   }
 }
 
-export function salvarPerfil(p: Perfil) {
+function guardar(p: Perfil) {
   cache = p;
   try {
     localStorage.setItem(CHAVE, JSON.stringify(p));
+  } catch {
+    /* ignora */
+  }
+  ouvintes.forEach((l) => l());
+}
+
+/** Salva no aparelho e envia para a conta na nuvem. */
+export function salvarPerfil(p: Perfil) {
+  guardar(p);
+  void import("./nuvem").then((n) => n.enviarPerfil(p));
+}
+
+/** Aplica o perfil vindo da nuvem, sem reenviá-lo. */
+export function aplicarPerfilDaNuvem(p: Perfil) {
+  guardar(p);
+}
+
+/** Limpa os dados guardados neste aparelho (usado ao sair da conta). */
+export function limparDadosLocais() {
+  cache = null;
+  try {
+    localStorage.removeItem(CHAVE);
   } catch {
     /* ignora */
   }
@@ -85,7 +107,7 @@ function inscrever(l: () => void) {
 
 export function usePerfil(): Perfil {
   // Após a hidratação passamos a ler o que está salvo no navegador.
-  const [p, setP] = useState<Perfil>(perfilPadrao);
+  const [p, setP] = useState<Perfil>(perfilVazio);
   useEffect(() => {
     setP(ler());
     return inscrever(() => setP(ler()));
