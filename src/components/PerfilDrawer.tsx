@@ -148,7 +148,7 @@ export function PerfilDrawer() {
             <input
               className={inputCls}
               value={form.nome}
-              placeholder="Nome do paciente"
+              placeholder="Nome completo ou social"
               onChange={(e) => set("nome")(e.target.value)}
             />
           </Campo>
@@ -288,8 +288,6 @@ export function PerfilDrawer() {
               <>
                 <Check className="mr-2 size-4" /> Salvo
               </>
-            ) : cadastro ? (
-              "Concluir cadastro"
             ) : (
               "Salvar perfil"
             )}
