@@ -180,7 +180,7 @@ export function CalendarOverlay({
                     <span className="text-[0.45em] tracking-wide text-muted-foreground">{ano}</span>
                   </h2>
 
-                  <div className="mx-auto mt-[clamp(0.875rem,2vw,1.75rem)] w-full max-w-[min(100%,54vh)]">
+                  <div className="mx-auto mt-[clamp(0.875rem,2vw,1.75rem)] w-full max-w-[min(100%,42vh)]">
                     <div className="grid grid-cols-7 gap-[2.5%] px-[1%] text-center text-[clamp(0.4375rem,1.5vw,0.8125rem)] uppercase tracking-[0.08em] text-muted-foreground">
                       {semana.map((d) => (
                         <span key={d}>{d}</span>
