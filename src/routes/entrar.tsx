@@ -77,7 +77,11 @@ function Entrar() {
 
   useEffect(() => {
     if (sessaoAtiva()) router.navigate({ to: "/", replace: true });
-    else if (temConta()) setModo("login");
+    else if (contaPendente()) {
+      setEmail(lerConta()?.email ?? "");
+      setCodigoEnviado(codigoAtual());
+      setModo("confirmar");
+    } else if (temConta()) setModo("login");
   }, [router]);
 
   const perfilPreview: Perfil = { ...perfilVazio, nome, nascimento, sexo, foto };
@@ -95,12 +99,26 @@ function Entrar() {
     if (!sexo) return setErro("Escolha o modelo do corpo para a ilustração.");
     setErro("");
     salvarPerfil({ ...perfilVazio, nome: nome.trim(), nascimento, sexo, foto });
-    criarConta({ email: email.trim(), senha });
-    router.navigate({ to: "/", replace: true });
+    setCodigoEnviado(criarConta({ email: email.trim(), senha }));
+    setCodigo("");
+    setModo("confirmar");
   };
 
   const fazerLogin = () => {
     const msg = entrar(email, senha);
+    if (msg === "pendente") {
+      setErro("");
+      setCodigoEnviado(codigoAtual());
+      setModo("confirmar");
+      return;
+    }
+    if (msg) return setErro(msg);
+    setErro("");
+    router.navigate({ to: "/", replace: true });
+  };
+
+  const confirmar_ = () => {
+    const msg = confirmarEmail(codigo);
     if (msg) return setErro(msg);
     setErro("");
     router.navigate({ to: "/", replace: true });
