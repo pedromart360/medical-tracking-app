@@ -120,7 +120,7 @@ export function PageShell({
         <div className="absolute inset-0 flex flex-col">
           <div className="grid h-[16%] shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pl-[3.5%] pr-[1.5%]">
             <Titulo label={label} title={title} backTo={backTo} />
-            <Rail />
+            <Rail className="-translate-y-[5px]" />
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-[7.2%] pb-[6%] pt-[3%] [scrollbar-width:thin]">{children}</div>
         </div>
