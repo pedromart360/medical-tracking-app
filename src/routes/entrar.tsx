@@ -156,7 +156,7 @@ function Entrar() {
     <main className="flex min-h-screen w-full items-center justify-center bg-background px-[clamp(1rem,4vw,2.5rem)] py-10">
       <div className="grid w-full max-w-[980px] items-center gap-[clamp(1.5rem,4vw,3.5rem)] md:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
         <section className="hidden flex-col gap-4 md:flex">
-          <p className="text-sm text-muted-foreground">Seu espaço de saúde</p>
+          <p className="text-sm text-muted-foreground">Lyna, o seu espaço de saúde</p>
           <h1 className="text-[clamp(2rem,4.4vw,3.25rem)] font-medium leading-[1.12] tracking-tight">
             Seu histórico de saúde, visual e organizado.
           </h1>
