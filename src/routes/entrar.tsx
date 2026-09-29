@@ -9,6 +9,12 @@ import {
   sessaoAtiva,
   validarEmail,
   redefinirSenha,
+  contaPendente,
+  lerConta,
+  codigoAtual,
+  confirmarEmail,
+  reenviarCodigo,
+  CONTA_TESTE,
 } from "@/lib/conta";
 import {
   iniciais,
@@ -61,7 +67,9 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
 
 function Entrar() {
   const router = useRouter();
-  const [modo, setModo] = useState<"cadastro" | "login" | "recuperar">("cadastro");
+  const [modo, setModo] = useState<"cadastro" | "login" | "recuperar" | "confirmar">("cadastro");
+  const [codigo, setCodigo] = useState("");
+  const [codigoEnviado, setCodigoEnviado] = useState("");
   const [passo, setPasso] = useState<1 | 2>(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
