@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 export type Conta = {
   email: string;
   senha: string;
+  /** false enquanto o e-mail não foi confirmado (contas antigas contam como confirmadas). */
+  confirmado?: boolean;
+  codigo?: string;
 };
 
 const CHAVE_CONTA = "conta-usuario";
@@ -29,27 +32,100 @@ export function lerConta(): Conta | null {
   }
 }
 
+function gravarConta(c: Conta) {
+  try {
+    localStorage.setItem(CHAVE_CONTA, JSON.stringify(c));
+  } catch {
+    /* ignora */
+  }
+}
+
 export function temConta() {
   return lerConta() !== null;
 }
 
-export function criarConta(conta: Conta) {
+export function contaPendente() {
+  return lerConta()?.confirmado === false;
+}
+
+function novoCodigo() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+
+/** Cria a conta ainda não confirmada e devolve o código "enviado" por e-mail. */
+export function criarConta(conta: { email: string; senha: string }): string {
+  const codigo = novoCodigo();
+  gravarConta({ ...conta, confirmado: false, codigo });
   try {
-    localStorage.setItem(CHAVE_CONTA, JSON.stringify(conta));
+    localStorage.removeItem(CHAVE_SESSAO);
+  } catch {
+    /* ignora */
+  }
+  avisar();
+  return codigo;
+}
+
+/** Gera um novo código para a conta pendente. */
+export function reenviarCodigo(): string | null {
+  const conta = lerConta();
+  if (!conta) return null;
+  const codigo = novoCodigo();
+  gravarConta({ ...conta, codigo });
+  return codigo;
+}
+
+export function codigoAtual() {
+  return lerConta()?.codigo ?? "";
+}
+
+/** Confirma o e-mail e inicia a sessão. Retorna null ou mensagem de erro. */
+export function confirmarEmail(codigo: string): string | null {
+  const conta = lerConta();
+  if (!conta) return "Ainda não existe uma conta neste dispositivo.";
+  if (conta.codigo !== codigo.trim()) return "Código incorreto. Confira e tente de novo.";
+  gravarConta({ email: conta.email, senha: conta.senha, confirmado: true });
+  try {
     localStorage.setItem(CHAVE_SESSAO, "1");
   } catch {
     /* ignora */
   }
   avisar();
+  return null;
 }
 
-/** Retorna null quando entrou, ou uma mensagem de erro. */
+export const CONTA_TESTE = { email: "teste@prontuario.app", senha: "teste123" };
+
+/** Cria (ou recria) a conta de teste já confirmada, sem entrar. */
+export function criarContaTeste() {
+  gravarConta({ ...CONTA_TESTE, confirmado: true });
+  try {
+    const perfil = JSON.parse(localStorage.getItem("perfil-paciente") || "null");
+    if (!perfil?.nascimento) {
+      localStorage.setItem(
+        "perfil-paciente",
+        JSON.stringify({ ...(perfil ?? {}), nome: "Ana Carolina", nascimento: "12/04/1990", sexo: "Mulher" }),
+      );
+    }
+  } catch {
+    /* ignora */
+  }
+}
+
+/** Retorna null quando entrou, "pendente" se falta confirmar, ou uma mensagem de erro. */
 export function entrar(email: string, senha: string): string | null {
+  if (
+    email.trim().toLowerCase() === CONTA_TESTE.email &&
+    senha === CONTA_TESTE.senha &&
+    lerConta()?.email.toLowerCase() !== CONTA_TESTE.email
+  ) {
+    criarContaTeste();
+  }
   const conta = lerConta();
   if (!conta) return "Ainda não existe uma conta neste dispositivo.";
   if (conta.email.trim().toLowerCase() !== email.trim().toLowerCase())
     return "E-mail não encontrado.";
   if (conta.senha !== senha) return "Senha incorreta.";
+  if (conta.confirmado === false) return "pendente";
   try {
     localStorage.setItem(CHAVE_SESSAO, "1");
   } catch {
