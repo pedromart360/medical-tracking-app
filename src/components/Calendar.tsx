@@ -6,6 +6,7 @@ import {
   MODULOS,
   corModulo,
   nomeModulo,
+  pontoModulo,
   useEventos,
   type EventoCalendario,
   type ModuloEvento,
