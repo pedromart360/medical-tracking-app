@@ -17,9 +17,11 @@ function traduzir(msg: string): string {
   if (m.includes("email not confirmed")) return "pendente";
   if (m.includes("already registered") || m.includes("already been registered"))
     return "Já existe uma conta com esse e-mail. Tente entrar.";
-  if (m.includes("password")) return "A senha precisa de pelo menos 6 caracteres.";
+  if (m.includes("email") && m.includes("invalid"))
+    return "Esse e-mail não é aceito. Use um endereço de e-mail válido.";
   if (m.includes("rate limit") || m.includes("too many"))
     return "Muitas tentativas. Aguarde um instante e tente de novo.";
+  if (m.includes("password")) return "A senha precisa de pelo menos 6 caracteres.";
   return msg;
 }
 
