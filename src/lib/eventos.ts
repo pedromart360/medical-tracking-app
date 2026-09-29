@@ -26,6 +26,14 @@ export const corModulo: Record<ModuloEvento, string> = {
   doencas: "bg-rose-500/15 text-rose-700",
 };
 
+/** cor sólida do ponto indicador de cada módulo na grade do calendário */
+export const pontoModulo: Record<ModuloEvento, string> = {
+  consultas: "bg-sky-500",
+  exames: "bg-amber-500",
+  tratamentos: "bg-emerald-500",
+  doencas: "bg-rose-500",
+};
+
 export const nomeModulo: Record<ModuloEvento, string> = {
   consultas: "Consultas",
   exames: "Exames",
