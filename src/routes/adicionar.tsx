@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { Check, FileText, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { abrirArquivo, enviarArquivo } from "@/lib/arquivos";
 import { z } from "zod";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
@@ -1076,6 +1077,22 @@ function Adicionar() {
                     {r["nome"]}
                     <span className="ml-2 text-muted-foreground">{resumoRegistro(chave, r)}</span>
                   </span>
+                  {["arquivoPath", "laudoPath", "fotoPath", "documentoPath"]
+                    .map((k) => r[k])
+                    .filter((c): c is string => !!c)
+                    .slice(0, 1)
+                    .map((caminho) => (
+                      <Button
+                        key={caminho}
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Abrir arquivo de ${r["nome"]}`}
+                        onClick={() => void abrirArquivo(caminho)}
+                        className="size-8 rounded-full"
+                      >
+                        <FileText className="size-4" />
+                      </Button>
+                    ))}
                   <Button variant="ghost" size="icon" aria-label={`Editar ${r["nome"]}`} onClick={() => editar(r)} className="size-8 rounded-full">
                     <Pencil className="size-4" />
                   </Button>
