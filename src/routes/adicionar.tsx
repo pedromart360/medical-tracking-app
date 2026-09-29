@@ -153,21 +153,41 @@ function Campo({
   );
 }
 
-function UploadFalso({ rotulo, nome, onChange }: { rotulo: string; nome: string; onChange: (n: string) => void }) {
+function UploadArquivo({
+  rotulo,
+  nome,
+  onChange,
+}: {
+  rotulo: string;
+  nome: string;
+  onChange: (nome: string, caminho: string) => void;
+}) {
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState("");
   return (
-    <label className="flex h-11 cursor-pointer items-center gap-2 rounded-full border border-dashed border-muted-foreground/40 px-4 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground transition-colors hover:bg-card">
-      <Upload className="size-4 shrink-0" />
-      <span className="truncate">{nome || rotulo}</span>
-      <input
-        type="file"
-        accept=".pdf,image/jpeg,image/png"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f && f.size <= 10 * 1024 * 1024) onChange(f.name);
-        }}
-      />
-    </label>
+    <div>
+      <label className="flex h-11 cursor-pointer items-center gap-2 rounded-full border border-dashed border-muted-foreground/40 px-4 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground transition-colors hover:bg-card">
+        <Upload className="size-4 shrink-0" />
+        <span className="truncate">{enviando ? "Enviando..." : nome || rotulo}</span>
+        <input
+          type="file"
+          accept=".pdf,image/jpeg,image/png"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            setErro("");
+            setEnviando(true);
+            void enviarArquivo(f).then((r) => {
+              setEnviando(false);
+              if ("erro" in r) setErro(r.erro);
+              else onChange(f.name, r.caminho);
+            });
+          }}
+        />
+      </label>
+      {erro && <p className="mt-1 text-[0.75rem] text-destructive">{erro}</p>}
+    </div>
   );
 }
 
