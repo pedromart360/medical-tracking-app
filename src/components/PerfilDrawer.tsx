@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Upload, Check } from "lucide-react";
+import { X, Upload, Check, LogOut } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { sair } from "@/lib/conta";
 import {
   aoAbrirPerfil,
   idadeDoPerfil,
   iniciais,
-  perfilPadrao,
-  perfilVazio,
   salvarPerfil,
   SEXO_OPCOES,
-  temPerfilSalvo,
   usePerfil,
   type Perfil,
 } from "@/lib/perfil";
@@ -42,8 +41,8 @@ function Campo({
 
 export function PerfilDrawer() {
   const perfil = usePerfil();
+  const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [cadastro, setCadastro] = useState(false);
   const [form, setForm] = useState<Perfil>(perfil);
   const [salvo, setSalvo] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -51,19 +50,10 @@ export function PerfilDrawer() {
   useEffect(() => {
     return aoAbrirPerfil(() => {
       setForm(perfil);
-      setCadastro(false);
       setSalvo(false);
       setAberto(true);
     });
   }, [perfil]);
-
-  useEffect(() => {
-    if (!temPerfilSalvo()) {
-      setForm(perfilPadrao);
-      setCadastro(true);
-      setAberto(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (!aberto) return;
@@ -79,7 +69,6 @@ export function PerfilDrawer() {
   const salvar = () => {
     salvarPerfil(form);
     setSalvo(true);
-    setCadastro(false);
     setTimeout(() => setSalvo(false), 2500);
   };
 
@@ -99,11 +88,9 @@ export function PerfilDrawer() {
       <aside className="relative flex h-full w-full max-w-[26rem] flex-col gap-5 overflow-y-auto bg-background p-5 shadow-2xl sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs text-muted-foreground">
-              {cadastro ? "Bem-vinda" : "Perfil do paciente"}
-            </p>
+            <p className="text-xs text-muted-foreground">Seu perfil</p>
             <h2 className="text-2xl font-medium leading-tight tracking-tight">
-              {cadastro ? "Cadastro" : form.nome || "Paciente"}
+              {form.nome || "Seu perfil"}
             </h2>
           </div>
           <Button
@@ -161,7 +148,7 @@ export function PerfilDrawer() {
             <input
               className={inputCls}
               value={form.nome}
-              placeholder="Nome do paciente"
+              placeholder="Nome completo ou social"
               onChange={(e) => set("nome")(e.target.value)}
             />
           </Campo>
@@ -301,24 +288,21 @@ export function PerfilDrawer() {
               <>
                 <Check className="mr-2 size-4" /> Salvo
               </>
-            ) : cadastro ? (
-              "Concluir cadastro"
             ) : (
               "Salvar perfil"
             )}
           </Button>
-          {!cadastro && (
-            <Button
-              variant="ghost"
-              className="h-10 rounded-full text-xs font-normal text-muted-foreground"
-              onClick={() => {
-                setForm(perfilVazio);
-                setCadastro(true);
-              }}
-            >
-              novo paciente
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="h-10 rounded-full text-xs font-normal text-muted-foreground"
+            onClick={() => {
+              sair();
+              setAberto(false);
+              router.navigate({ to: "/entrar", replace: true });
+            }}
+          >
+            <LogOut className="mr-2 size-3.5" /> Sair da conta
+          </Button>
         </div>
       </aside>
     </div>
