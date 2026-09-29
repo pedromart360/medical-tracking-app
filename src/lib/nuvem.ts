@@ -66,7 +66,10 @@ export async function enviarRegistros(tipo: TipoAdicionado, lista: RegistroSalvo
     .insert(lista.map((dados) => ({ user_id: user.id, tipo, dados })));
 }
 
-/** Baixa perfil e registros do usuário logado para dentro do app. */
+/**
+ * Baixa perfil e registros do usuário logado.
+ * Na primeira entrada, envia para a nuvem o que já existia neste aparelho.
+ */
 export async function baixarTudo() {
   const user = await usuarioAtual();
   if (!user) return;
@@ -77,14 +80,18 @@ export async function baixarTudo() {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (perfilLinha) {
-    aplicarPerfilDaNuvem(paraPerfil(perfilLinha as Record<string, unknown>));
+  const local = lerPerfilLocal();
+  const nuvem = perfilLinha ? paraPerfil(perfilLinha as Record<string, unknown>) : null;
+
+  if (nuvem && (nuvem.nome || nuvem.nascimento || nuvem.sexo)) {
+    aplicarPerfilDaNuvem(nuvem);
   } else {
     const nome =
-      (user.user_metadata?.["nome"] as string | undefined) ??
-      (user.user_metadata?.["full_name"] as string | undefined) ??
+      local.nome ||
+      (user.user_metadata?.["nome"] as string | undefined) ||
+      (user.user_metadata?.["full_name"] as string | undefined) ||
       "";
-    const novo: Perfil = { ...perfilVazio, nome };
+    const novo: Perfil = { ...perfilVazio, ...local, nome };
     aplicarPerfilDaNuvem(novo);
     await supabase.from("perfis").upsert(paraLinha(novo, user.id));
   }
@@ -106,5 +113,18 @@ export async function baixarTudo() {
     const tipo = l.tipo as TipoAdicionado;
     if (TIPOS_REGISTRO.includes(tipo)) porTipo[tipo].push(l.dados as RegistroSalvo);
   }
+
+  if ((linhas ?? []).length === 0) {
+    // primeira entrada: leva para a nuvem o que já estava neste aparelho
+    for (const t of TIPOS_REGISTRO) {
+      const locais = lerRegistros(t);
+      if (locais.length > 0) {
+        porTipo[t] = locais;
+        await enviarRegistros(t, locais);
+      }
+    }
+  }
+
   aplicarRegistrosDaNuvem(porTipo);
 }
+
