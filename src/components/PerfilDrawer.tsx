@@ -69,7 +69,6 @@ export function PerfilDrawer() {
   const salvar = () => {
     salvarPerfil(form);
     setSalvo(true);
-    setCadastro(false);
     setTimeout(() => setSalvo(false), 2500);
   };
 
