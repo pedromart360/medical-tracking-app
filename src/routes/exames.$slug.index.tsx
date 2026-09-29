@@ -4,6 +4,7 @@ import { areaSlug, exameCategorias, tiposPorCategoria } from "@/lib/data";
 import { mesclarPontos, useProntuario } from "@/lib/adicionados";
 import { BodyFigure } from "@/components/BodyFigure";
 import { imgEspecialidade, imgTipoExame } from "@/lib/imagens";
+import { HorizontalScroll } from "@/components/HorizontalScroll";
 
 export const Route = createFileRoute("/exames/$slug/")({
   head: () => ({
@@ -26,14 +27,11 @@ const chipImg = "size-[clamp(2.625rem,5.9vw,5rem)] shrink-0 rounded-full object-
 
 function Secao({ titulo, children }: { titulo: string; children: React.ReactNode }) {
   return (
-    <section>
+    <section className="min-w-0">
       <h2 className="py-[0.08em] text-[clamp(1.375rem,2.9vw,2.5rem)] font-medium leading-[1.18] tracking-tight">{titulo}</h2>
-      <div className="mt-[clamp(1rem,2.9vw,2.5rem)] flex flex-nowrap gap-[clamp(0.625rem,1.5vw,1.25rem)] overflow-x-auto pb-[clamp(0.5rem,1vw,0.75rem)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {children}
-      </div>
-      <div className="relative h-px w-full bg-border">
-        <span className="absolute left-0 top-0 h-px w-[12%] bg-muted-foreground/60" />
-      </div>
+      <HorizontalScroll indicator className="mt-[clamp(1rem,2.9vw,2.5rem)] pb-[clamp(0.5rem,1vw,0.75rem)]">
+        <div className="flex w-max min-w-full flex-nowrap gap-[clamp(0.625rem,1.5vw,1.25rem)] pr-2">{children}</div>
+      </HorizontalScroll>
     </section>
   );
 }

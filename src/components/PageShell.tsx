@@ -37,18 +37,18 @@ export function Avatar({ className = "" }: { className?: string }) {
 
 export function Rail() {
   return (
-    <nav aria-label="Categorias" className="flex items-center gap-[clamp(0.375rem,1.1vw,0.9rem)]">
+    <nav aria-label="Categorias" className="flex shrink-0 items-center gap-[clamp(0.375rem,1vw,0.875rem)]">
       {railItems.map((r) => (
         <Link key={r.to} to={r.to} title={r.nome}>
           <img
             src={r.img}
             alt={r.nome}
             loading="lazy"
-            className="size-[clamp(1.875rem,4.8vw,4.15rem)] rounded-full object-cover transition-transform hover:scale-105"
+            className="size-[clamp(2.5rem,min(5.5vw,9vh),4.75rem)] shrink-0 rounded-full object-cover transition-transform hover:scale-105"
           />
         </Link>
       ))}
-      <Avatar className="size-[clamp(1.875rem,4.8vw,4.15rem)]" />
+      <Avatar className="size-[clamp(2.5rem,min(5.5vw,9vh),4.75rem)]" />
     </nav>
   );
 }
@@ -73,11 +73,11 @@ function Titulo({ label, title, backTo }: { label: string; title: string; backTo
       </Link>
       <div className="min-w-0">
         {label && (
-          <p className="mb-[-0.15em] text-[clamp(0.6875rem,1.1vw,1rem)] leading-[1.05] text-muted-foreground">
+          <p className="mb-1 text-[clamp(0.6875rem,1.1vw,1rem)] leading-normal text-muted-foreground">
             {label}
           </p>
         )}
-        <h1 className="truncate py-[0.08em] text-[clamp(1.75rem,4vw,3.5rem)] font-medium leading-[1.18] tracking-tight">
+        <h1 className="truncate py-[0.04em] text-[clamp(1.75rem,min(4vw,6.5vh),3.5rem)] font-medium leading-[1.18] tracking-tight">
           {title}
         </h1>
       </div>
@@ -114,7 +114,7 @@ export function PageShell({
         style={{ backgroundImage: `url(${pastaGrande.url})` }}
       >
         <div className="absolute inset-0 flex flex-col">
-          <div className="flex h-[11.3%] items-center justify-between pl-[3.5%] pr-[1.5%]">
+          <div className="grid h-[16%] shrink-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 pl-[3.5%] pr-[1.5%]">
             <Titulo label={label} title={title} backTo={backTo} />
             <Rail />
           </div>

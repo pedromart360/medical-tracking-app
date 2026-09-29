@@ -3,6 +3,7 @@ import { PageShell, cardLista, cardListaImg, cardListaTexto } from "@/components
 import { especialidades, especialidadeSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 import { imgEspecialidade } from "@/lib/imagens";
+import { HorizontalScroll } from "@/components/HorizontalScroll";
 
 export const Route = createFileRoute("/medicos/")({
   head: () => ({
@@ -26,7 +27,7 @@ function Medicos() {
 
   return (
     <PageShell label="" title="Médicos" backTo="/">
-      <div className="-mx-1 overflow-x-auto px-1 pb-2">
+      <HorizontalScroll className="pb-2">
         <div className="flex w-max gap-[clamp(0.75rem,1.4vw,1.25rem)]">
           {colunas.map((coluna, c) => (
             <div key={c} className="flex w-[clamp(15rem,24vw,21.25rem)] flex-col gap-[clamp(0.625rem,1.3vw,1.125rem)]">
@@ -45,7 +46,7 @@ function Medicos() {
             </div>
           ))}
         </div>
-      </div>
+      </HorizontalScroll>
     </PageShell>
   );
 }
