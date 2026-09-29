@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790724042957,
+      "tag": "0000_perfis_e_registros",
+      "breakpoints": true
+    }
+  ]
 }
