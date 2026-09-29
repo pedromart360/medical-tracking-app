@@ -15,6 +15,13 @@
       "when": 1790724059024,
       "tag": "0001_remover_trigger_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790724518123,
+      "tag": "0002_politicas_documentos",
+      "breakpoints": true
     }
   ]
 }
