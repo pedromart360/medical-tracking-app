@@ -2,19 +2,15 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 import {
   criarConta,
   entrar,
-  temConta,
-  sessaoAtiva,
+  entrarComGoogle,
+  enviarLinkDeSenha,
+  definirNovaSenha,
+  reenviarConfirmacao,
   validarEmail,
-  redefinirSenha,
-  contaPendente,
-  lerConta,
-  codigoAtual,
-  confirmarEmail,
-  reenviarCodigo,
-  CONTA_TESTE,
 } from "@/lib/conta";
 import {
   iniciais,
@@ -28,13 +24,13 @@ import {
 export const Route = createFileRoute("/entrar")({
   head: () => ({
     meta: [
-      { title: "Criar conta — Prontuário digital" },
+      { title: "Criar conta — Lyna, seu espaço de saúde" },
       {
         name: "description",
         content:
           "Crie seu espaço e organize exames, consultas, tratamentos e diagnósticos em uma linha do tempo.",
       },
-      { property: "og:title", content: "Criar conta — Prontuário digital" },
+      { property: "og:title", content: "Criar conta — Lyna, seu espaço de saúde" },
       {
         property: "og:description",
         content: "Seu histórico de saúde, visual e organizado em um só lugar.",
@@ -65,31 +61,44 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+type Modo = "cadastro" | "login" | "recuperar" | "nova-senha" | "confirmar";
+
 function Entrar() {
   const router = useRouter();
-  const [modo, setModo] = useState<"cadastro" | "login" | "recuperar" | "confirmar">("cadastro");
-  const [codigo, setCodigo] = useState("");
-  const [codigoEnviado, setCodigoEnviado] = useState("");
+  const [modo, setModo] = useState<Modo>("login");
   const [passo, setPasso] = useState<1 | 2>(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [confirmar, setConfirmar] = useState("");
   const [verSenha, setVerSenha] = useState(false);
   const [nascimento, setNascimento] = useState("");
   const [sexo, setSexo] = useState<string>("");
   const [foto, setFoto] = useState("");
   const [erro, setErro] = useState("");
-  const [confirmar, setConfirmar] = useState("");
   const [aviso, setAviso] = useState("");
+  const [ocupado, setOcupado] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (sessaoAtiva()) router.navigate({ to: "/", replace: true });
-    else if (contaPendente()) {
-      setEmail(lerConta()?.email ?? "");
-      setCodigoEnviado(codigoAtual());
-      setModo("confirmar");
-    } else if (temConta()) setModo("login");
+    const { data: sub } = supabase.auth.onAuthStateChange((evento, sessao) => {
+      if (evento === "PASSWORD_RECOVERY") {
+        setModo("nova-senha");
+        setAviso("Escolha sua nova senha.");
+        return;
+      }
+      if (sessao && evento === "SIGNED_IN") router.navigate({ to: "/", replace: true });
+    });
+    void supabase.auth.getSession().then(({ data }) => {
+      const recuperando = window.location.hash.includes("type=recovery");
+      if (recuperando) {
+        setModo("nova-senha");
+        setAviso("Escolha sua nova senha.");
+      } else if (data.session) {
+        router.navigate({ to: "/", replace: true });
+      }
+    });
+    return () => sub.subscription.unsubscribe();
   }, [router]);
 
   const perfilPreview: Perfil = { ...perfilVazio, nome, nascimento, sexo, foto };
@@ -102,21 +111,30 @@ function Entrar() {
     setPasso(2);
   };
 
-  const concluir = () => {
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) return setErro("Informe a data no formato DD/MM/AAAA.");
+  const concluir = async () => {
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento))
+      return setErro("Informe a data no formato DD/MM/AAAA.");
     if (!sexo) return setErro("Escolha o modelo do corpo para a ilustração.");
     setErro("");
+    setOcupado(true);
     salvarPerfil({ ...perfilVazio, nome: nome.trim(), nascimento, sexo, foto });
-    setCodigoEnviado(criarConta({ email: email.trim(), senha }));
-    setCodigo("");
-    setModo("confirmar");
+    const msg = await criarConta(email, senha, nome);
+    setOcupado(false);
+    if (msg === "pendente") {
+      setAviso("");
+      setModo("confirmar");
+      return;
+    }
+    if (msg) return setErro(msg);
+    router.navigate({ to: "/", replace: true });
   };
 
-  const fazerLogin = () => {
-    const msg = entrar(email, senha);
+  const fazerLogin = async () => {
+    setOcupado(true);
+    const msg = await entrar(email, senha);
+    setOcupado(false);
     if (msg === "pendente") {
       setErro("");
-      setCodigoEnviado(codigoAtual());
       setModo("confirmar");
       return;
     }
@@ -125,25 +143,30 @@ function Entrar() {
     router.navigate({ to: "/", replace: true });
   };
 
-  const confirmar_ = () => {
-    const msg = confirmarEmail(codigo);
+  const comGoogle = async () => {
+    setOcupado(true);
+    const msg = await entrarComGoogle();
+    setOcupado(false);
+    if (msg) setErro(msg);
+  };
+
+  const pedirLink = async () => {
+    setOcupado(true);
+    const msg = await enviarLinkDeSenha(email);
+    setOcupado(false);
+    if (msg) return setErro(msg);
+    setErro("");
+    setAviso("Enviamos um link para o seu e-mail. Abra-o para criar a nova senha.");
+  };
+
+  const salvarNovaSenha = async () => {
+    if (senha !== confirmar) return setErro("As senhas não são iguais.");
+    setOcupado(true);
+    const msg = await definirNovaSenha(senha);
+    setOcupado(false);
     if (msg) return setErro(msg);
     setErro("");
     router.navigate({ to: "/", replace: true });
-  };
-
-  const recuperar = () => {
-    if (!validarEmail(email)) return setErro("Digite um e-mail válido.");
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) return setErro("Informe a data no formato DD/MM/AAAA.");
-    if (senha !== confirmar) return setErro("As senhas não são iguais.");
-    const msg = redefinirSenha(email, nascimento, senha);
-    if (msg) return setErro(msg);
-    setErro("");
-    setSenha("");
-    setConfirmar("");
-    setNascimento("");
-    setAviso("Senha redefinida. Entre com a nova senha.");
-    setModo("login");
   };
 
   const lerFoto = (arquivo: File) => {
@@ -151,6 +174,27 @@ function Entrar() {
     leitor.onload = () => setFoto(String(leitor.result));
     leitor.readAsDataURL(arquivo);
   };
+
+  const acaoPrincipal = () => {
+    if (modo === "confirmar") return void reenviarConfirmacao(email).then(() => setAviso("Enviamos o e-mail de novo."));
+    if (modo === "nova-senha") return void salvarNovaSenha();
+    if (modo === "recuperar") return void pedirLink();
+    if (modo === "login") return void fazerLogin();
+    return passo === 1 ? continuar() : void concluir();
+  };
+
+  const rotuloPrincipal =
+    modo === "confirmar"
+      ? "Reenviar e-mail de confirmação"
+      : modo === "nova-senha"
+        ? "Salvar nova senha"
+        : modo === "recuperar"
+          ? "Enviar link por e-mail"
+          : modo === "login"
+            ? "Entrar"
+            : passo === 1
+              ? "Continuar"
+              : "Criar conta";
 
   return (
     <main className="flex min-h-screen w-full items-center justify-center bg-background px-[clamp(1rem,4vw,2.5rem)] py-10">
@@ -185,74 +229,40 @@ function Entrar() {
             <div>
               <p className="text-xs text-muted-foreground">
                 {modo === "confirmar"
-                  ? "Último passo"
-                  : modo === "login"
-                    ? "Bem-vindo de volta"
-                    : modo === "recuperar"
-                      ? "Confirme seus dados"
-                      : passo === 1
-                        ? "Passo 1 de 2"
-                        : "Passo 2 de 2"}
+                  ? "Falta pouco"
+                  : modo === "nova-senha"
+                    ? "Segurança"
+                    : modo === "login"
+                      ? "Bem-vindo de volta"
+                      : modo === "recuperar"
+                        ? "Recuperar acesso"
+                        : passo === 1
+                          ? "Passo 1 de 2"
+                          : "Passo 2 de 2"}
               </p>
               <h2 className="text-2xl font-medium leading-tight tracking-tight">
                 {modo === "confirmar"
                   ? "Confirme seu e-mail"
-                  : modo === "login"
-                    ? "Entrar"
-                    : modo === "recuperar"
-                      ? "Redefinir senha"
-                      : passo === 1
-                        ? "Crie seu espaço"
-                        : "Personalize seu espaço"}
+                  : modo === "nova-senha"
+                    ? "Nova senha"
+                    : modo === "login"
+                      ? "Entrar"
+                      : modo === "recuperar"
+                        ? "Esqueceu a senha?"
+                        : passo === 1
+                          ? "Crie seu espaço"
+                          : "Personalize seu espaço"}
               </h2>
             </div>
           </div>
 
           {modo === "confirmar" ? (
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              Enviamos um e-mail para <span className="text-foreground">{email}</span>. Abra a
+              mensagem e toque no link para ativar sua conta. Depois é só entrar.
+            </p>
+          ) : modo === "nova-senha" ? (
             <div className="flex flex-col gap-3">
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Enviamos um código de 6 dígitos para <span className="text-foreground">{email}</span>.
-                Digite-o abaixo para ativar sua conta.
-              </p>
-              <div className="rounded-2xl border border-dashed border-border bg-card px-4 py-3 text-xs text-muted-foreground">
-                Simulação do e-mail recebido — seu código é{" "}
-                <span className="font-mono text-sm tracking-[0.3em] text-foreground">{codigoEnviado}</span>
-              </div>
-              <Campo label="Código de confirmação">
-                <input
-                  className={`${inputCls} text-center font-mono tracking-[0.4em]`}
-                  value={codigo}
-                  inputMode="numeric"
-                  placeholder="000000"
-                  onChange={(e) => setCodigo(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  onKeyDown={(e) => e.key === "Enter" && confirmar_()}
-                />
-              </Campo>
-            </div>
-          ) : modo === "recuperar" ? (
-            <div className="flex flex-col gap-3">
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Para sua segurança, confirme o e-mail e a data de nascimento cadastrados e escolha
-                uma nova senha.
-              </p>
-              <Campo label="Seu e-mail">
-                <input
-                  className={inputCls}
-                  type="email"
-                  value={email}
-                  placeholder="voce@email.com"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </Campo>
-              <Campo label="Sua data de nascimento">
-                <input
-                  className={inputCls}
-                  value={nascimento}
-                  placeholder="DD/MM/AAAA"
-                  inputMode="numeric"
-                  onChange={(e) => setNascimento(mascaraData(e.target.value))}
-                />
-              </Campo>
               <Campo label="Nova senha">
                 <input
                   className={inputCls}
@@ -269,7 +279,23 @@ function Entrar() {
                   value={confirmar}
                   placeholder="Repita a nova senha"
                   onChange={(e) => setConfirmar(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && recuperar()}
+                  onKeyDown={(e) => e.key === "Enter" && void salvarNovaSenha()}
+                />
+              </Campo>
+            </div>
+          ) : modo === "recuperar" ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.
+              </p>
+              <Campo label="Seu e-mail">
+                <input
+                  className={inputCls}
+                  type="email"
+                  value={email}
+                  placeholder="voce@email.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && void pedirLink()}
                 />
               </Campo>
             </div>
@@ -292,7 +318,7 @@ function Entrar() {
                     value={senha}
                     placeholder="••••••"
                     onChange={(e) => setSenha(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && fazerLogin()}
+                    onKeyDown={(e) => e.key === "Enter" && void fazerLogin()}
                   />
                   <button
                     type="button"
@@ -349,11 +375,7 @@ function Entrar() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-muted to-border text-lg text-muted-foreground ring-2 ring-foreground/80">
-                  {foto ? (
-                    <img src={foto} alt="" className="size-full object-cover" />
-                  ) : (
-                    iniciais(nome)
-                  )}
+                  {foto ? <img src={foto} alt="" className="size-full object-cover" /> : iniciais(nome)}
                 </div>
                 <div className="flex flex-col gap-2">
                   <input
@@ -426,88 +448,63 @@ function Entrar() {
 
           <Button
             className="h-12 w-full rounded-full text-sm font-normal"
-            onClick={
-              modo === "confirmar"
-                ? confirmar_
-                : modo === "login"
-                  ? fazerLogin
-                  : modo === "recuperar"
-                    ? recuperar
-                    : passo === 1
-                      ? continuar
-                      : concluir
-            }
+            disabled={ocupado}
+            onClick={acaoPrincipal}
           >
-            {modo === "confirmar"
-              ? "Confirmar e entrar"
-              : modo === "login"
-                ? "Entrar"
-                : modo === "recuperar"
-                  ? "Redefinir senha"
-                  : passo === 1
-                    ? "Continuar"
-                    : "Concluir cadastro"}
+            {ocupado ? "Aguarde…" : rotuloPrincipal}
           </Button>
 
-          {modo === "confirmar" && (
+          {(modo === "login" || modo === "cadastro") && (
+            <>
+              <div className="flex items-center gap-3 text-[0.7rem] text-muted-foreground">
+                <span className="h-px flex-1 bg-border" />
+                ou
+                <span className="h-px flex-1 bg-border" />
+              </div>
+              <Button
+                variant="outline"
+                className="h-12 w-full rounded-full text-sm font-normal"
+                disabled={ocupado}
+                onClick={() => void comGoogle()}
+              >
+                Continuar com o Google
+              </Button>
+            </>
+          )}
+
+          {modo === "login" && (
             <button
               type="button"
               className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
               onClick={() => {
-                const c = reenviarCodigo();
-                if (c) setCodigoEnviado(c);
                 setErro("");
-                setAviso("Enviamos um novo código.");
+                setAviso("");
+                setSenha("");
+                setModo("recuperar");
               }}
             >
-              Não recebeu? Reenviar código
+              Esqueceu a senha?
             </button>
           )}
 
-          {modo === "login" && (
-            <>
-              <button
-                type="button"
-                className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
-                onClick={() => {
-                  setErro("");
-                  setAviso("");
-                  setSenha("");
-                  setModo("recuperar");
-                }}
-              >
-                Esqueceu a senha?
-              </button>
-              <button
-                type="button"
-                className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
-                onClick={() => {
-                  setEmail(CONTA_TESTE.email);
-                  setSenha(CONTA_TESTE.senha);
-                  setErro("");
-                }}
-              >
-                Preencher com a conta de teste
-              </button>
-            </>
+          {modo !== "nova-senha" && (
+            <button
+              type="button"
+              className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+              onClick={() => {
+                setErro("");
+                setAviso("");
+                setPasso(1);
+                setModo((m) => (m === "login" ? "cadastro" : "login"));
+              }}
+            >
+              {modo === "login"
+                ? "Ainda não tem conta? Criar agora"
+                : modo === "cadastro"
+                  ? "Já tem uma conta? Entrar"
+                  : "Voltar para entrar"}
+            </button>
           )}
-
-          <button
-            type="button"
-            className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
-            onClick={() => {
-              setErro("");
-              setAviso("");
-              setPasso(1);
-              setModo((m) => (m === "login" ? "cadastro" : "login"));
-            }}
-          >
-            {modo === "login"
-              ? "Ainda não tem conta? Criar agora"
-              : modo === "recuperar"
-                ? "Lembrou a senha? Voltar para entrar"
-                : "Já tem uma conta? Entrar"}
-          </button>
         </section>
       </div>
     </main>

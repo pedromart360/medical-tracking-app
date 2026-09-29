@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Check, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { Check, FileText, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
+import { abrirArquivo, enviarArquivo } from "@/lib/arquivos";
 import { z } from "zod";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
@@ -153,21 +154,41 @@ function Campo({
   );
 }
 
-function UploadFalso({ rotulo, nome, onChange }: { rotulo: string; nome: string; onChange: (n: string) => void }) {
+function UploadArquivo({
+  rotulo,
+  nome,
+  onChange,
+}: {
+  rotulo: string;
+  nome: string;
+  onChange: (nome: string, caminho: string) => void;
+}) {
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState("");
   return (
-    <label className="flex h-11 cursor-pointer items-center gap-2 rounded-full border border-dashed border-muted-foreground/40 px-4 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground transition-colors hover:bg-card">
-      <Upload className="size-4 shrink-0" />
-      <span className="truncate">{nome || rotulo}</span>
-      <input
-        type="file"
-        accept=".pdf,image/jpeg,image/png"
-        className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f && f.size <= 10 * 1024 * 1024) onChange(f.name);
-        }}
-      />
-    </label>
+    <div>
+      <label className="flex h-11 cursor-pointer items-center gap-2 rounded-full border border-dashed border-muted-foreground/40 px-4 text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground transition-colors hover:bg-card">
+        <Upload className="size-4 shrink-0" />
+        <span className="truncate">{enviando ? "Enviando..." : nome || rotulo}</span>
+        <input
+          type="file"
+          accept=".pdf,image/jpeg,image/png"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            setErro("");
+            setEnviando(true);
+            void enviarArquivo(f).then((r) => {
+              setEnviando(false);
+              if ("erro" in r) setErro(r.erro);
+              else onChange(f.name, r.caminho);
+            });
+          }}
+        />
+      </label>
+      {erro && <p className="mt-1 text-[0.75rem] text-destructive">{erro}</p>}
+    </div>
   );
 }
 
@@ -395,7 +416,7 @@ function Adicionar() {
       return;
     }
     const extras: Record<string, string> = {};
-    for (const k of ["arquivo", "laudo", "foto", "documento", "continuo"]) if (valores[k]) extras[k] = valores[k]!;
+    for (const k of ["arquivo", "laudo", "foto", "documento", "continuo", "arquivoPath", "laudoPath", "fotoPath", "documentoPath"]) if (valores[k]) extras[k] = valores[k]!;
     if (chave === "consulta") {
       extras["prescricoes"] = JSON.stringify(prescricoes);
       extras["exames"] = JSON.stringify(examesPedidos);
@@ -653,17 +674,17 @@ function Adicionar() {
                   />
                 </Campo>
                 <Campo label="Resultado (imagem ou PDF)">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar resultado"
                     nome={valores["arquivo"] ?? ""}
-                    onChange={(n) => set("arquivo", n)}
+                    onChange={(n, c) => { set("arquivo", n); set("arquivoPath", c); }}
                   />
                 </Campo>
                 <Campo label="Laudo (PDF)">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar laudo"
                     nome={valores["laudo"] ?? ""}
-                    onChange={(n) => set("laudo", n)}
+                    onChange={(n, c) => { set("laudo", n); set("laudoPath", c); }}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
@@ -715,10 +736,10 @@ function Adicionar() {
                   />
                 </Campo>
                 <Campo label="Foto">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar foto"
                     nome={valores["foto"] ?? ""}
-                    onChange={(n) => set("foto", n)}
+                    onChange={(n, c) => { set("foto", n); set("fotoPath", c); }}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
@@ -822,10 +843,10 @@ function Adicionar() {
                 </div>
                 <div className="sm:col-span-2">
                   <Campo label="Documento (receita, atestado ou prontuário em PDF)">
-                    <UploadFalso
+                    <UploadArquivo
                       rotulo="Enviar documento"
                       nome={valores["documento"] ?? ""}
-                      onChange={(n) => set("documento", n)}
+                      onChange={(n, c) => { set("documento", n); set("documentoPath", c); }}
                     />
                   </Campo>
                 </div>
@@ -982,10 +1003,10 @@ function Adicionar() {
                 </Campo>
                 <div className="sm:col-span-2">
                   <Campo label="Laudo ou documento comprobatório">
-                    <UploadFalso
+                    <UploadArquivo
                       rotulo="Enviar documento"
                       nome={valores["documento"] ?? ""}
-                      onChange={(n) => set("documento", n)}
+                      onChange={(n, c) => { set("documento", n); set("documentoPath", c); }}
                     />
                   </Campo>
                 </div>
@@ -1056,6 +1077,22 @@ function Adicionar() {
                     {r["nome"]}
                     <span className="ml-2 text-muted-foreground">{resumoRegistro(chave, r)}</span>
                   </span>
+                  {["arquivoPath", "laudoPath", "fotoPath", "documentoPath"]
+                    .map((k) => r[k])
+                    .filter((c): c is string => !!c)
+                    .slice(0, 1)
+                    .map((caminho) => (
+                      <Button
+                        key={caminho}
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Abrir arquivo de ${r["nome"]}`}
+                        onClick={() => void abrirArquivo(caminho)}
+                        className="size-8 rounded-full"
+                      >
+                        <FileText className="size-4" />
+                      </Button>
+                    ))}
                   <Button variant="ghost" size="icon" aria-label={`Editar ${r["nome"]}`} onClick={() => editar(r)} className="size-8 rounded-full">
                     <Pencil className="size-4" />
                   </Button>

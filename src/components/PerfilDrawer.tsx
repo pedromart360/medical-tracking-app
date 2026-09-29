@@ -296,9 +296,10 @@ export function PerfilDrawer() {
             variant="ghost"
             className="h-10 rounded-full text-xs font-normal text-muted-foreground"
             onClick={() => {
-              sair();
-              setAberto(false);
-              router.navigate({ to: "/entrar", replace: true });
+              void sair().then(() => {
+                setAberto(false);
+                router.navigate({ to: "/entrar", replace: true });
+              });
             }}
           >
             <LogOut className="mr-2 size-3.5" /> Sair da conta
