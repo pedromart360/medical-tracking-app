@@ -160,21 +160,69 @@ function Entrar() {
               <p className="text-xs text-muted-foreground">
                 {modo === "login"
                   ? "Bem-vindo de volta"
-                  : passo === 1
-                    ? "Passo 1 de 2"
-                    : "Passo 2 de 2"}
+                  : modo === "recuperar"
+                    ? "Confirme seus dados"
+                    : passo === 1
+                      ? "Passo 1 de 2"
+                      : "Passo 2 de 2"}
               </p>
               <h2 className="text-2xl font-medium leading-tight tracking-tight">
                 {modo === "login"
                   ? "Entrar"
-                  : passo === 1
-                    ? "Crie seu espaço"
-                    : "Personalize seu espaço"}
+                  : modo === "recuperar"
+                    ? "Redefinir senha"
+                    : passo === 1
+                      ? "Crie seu espaço"
+                      : "Personalize seu espaço"}
               </h2>
             </div>
           </div>
 
-          {modo === "login" ? (
+          {modo === "recuperar" ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Para sua segurança, confirme o e-mail e a data de nascimento cadastrados e escolha
+                uma nova senha.
+              </p>
+              <Campo label="Seu e-mail">
+                <input
+                  className={inputCls}
+                  type="email"
+                  value={email}
+                  placeholder="voce@email.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Campo>
+              <Campo label="Sua data de nascimento">
+                <input
+                  className={inputCls}
+                  value={nascimento}
+                  placeholder="DD/MM/AAAA"
+                  inputMode="numeric"
+                  onChange={(e) => setNascimento(mascaraData(e.target.value))}
+                />
+              </Campo>
+              <Campo label="Nova senha">
+                <input
+                  className={inputCls}
+                  type={verSenha ? "text" : "password"}
+                  value={senha}
+                  placeholder="Mínimo de 6 caracteres"
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+              </Campo>
+              <Campo label="Confirme a nova senha">
+                <input
+                  className={inputCls}
+                  type={verSenha ? "text" : "password"}
+                  value={confirmar}
+                  placeholder="Repita a nova senha"
+                  onChange={(e) => setConfirmar(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && recuperar()}
+                />
+              </Campo>
+            </div>
+          ) : modo === "login" ? (
             <div className="flex flex-col gap-3">
               <Campo label="Seu e-mail">
                 <input
