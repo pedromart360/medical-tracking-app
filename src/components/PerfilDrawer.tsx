@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { X, Upload, Check } from "lucide-react";
+import { X, Upload, Check, LogOut } from "lucide-react";
+import { useRouter } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { sair } from "@/lib/conta";
 import {
   aoAbrirPerfil,
   idadeDoPerfil,
   iniciais,
-  perfilPadrao,
-  perfilVazio,
   salvarPerfil,
   SEXO_OPCOES,
-  temPerfilSalvo,
   usePerfil,
   type Perfil,
 } from "@/lib/perfil";
