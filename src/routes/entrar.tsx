@@ -2,7 +2,14 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { criarConta, entrar, temConta, sessaoAtiva, validarEmail } from "@/lib/conta";
+import {
+  criarConta,
+  entrar,
+  temConta,
+  sessaoAtiva,
+  validarEmail,
+  redefinirSenha,
+} from "@/lib/conta";
 import {
   iniciais,
   perfilVazio,
@@ -54,7 +61,7 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
 
 function Entrar() {
   const router = useRouter();
-  const [modo, setModo] = useState<"cadastro" | "login">("cadastro");
+  const [modo, setModo] = useState<"cadastro" | "login" | "recuperar">("cadastro");
   const [passo, setPasso] = useState<1 | 2>(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +71,8 @@ function Entrar() {
   const [sexo, setSexo] = useState<string>("");
   const [foto, setFoto] = useState("");
   const [erro, setErro] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [aviso, setAviso] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -97,6 +106,20 @@ function Entrar() {
     router.navigate({ to: "/", replace: true });
   };
 
+  const recuperar = () => {
+    if (!validarEmail(email)) return setErro("Digite um e-mail válido.");
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) return setErro("Informe a data no formato DD/MM/AAAA.");
+    if (senha !== confirmar) return setErro("As senhas não são iguais.");
+    const msg = redefinirSenha(email, nascimento, senha);
+    if (msg) return setErro(msg);
+    setErro("");
+    setSenha("");
+    setConfirmar("");
+    setNascimento("");
+    setAviso("Senha redefinida. Entre com a nova senha.");
+    setModo("login");
+  };
+
   const lerFoto = (arquivo: File) => {
     const leitor = new FileReader();
     leitor.onload = () => setFoto(String(leitor.result));
@@ -115,11 +138,6 @@ function Entrar() {
             Reúna exames, consultas, tratamentos e diagnósticos em uma linha do tempo simples de
             entender — e leve tudo com você em um resumo em PDF.
           </p>
-          <img
-            src="/body_front.webp"
-            alt=""
-            className="mt-2 h-[min(38vh,320px)] w-auto self-start object-contain opacity-90"
-          />
         </section>
 
         <section className="flex w-full flex-col gap-5 rounded-[2rem] bg-card/60 p-[clamp(1.25rem,3vw,2rem)]">
@@ -142,21 +160,69 @@ function Entrar() {
               <p className="text-xs text-muted-foreground">
                 {modo === "login"
                   ? "Bem-vindo de volta"
-                  : passo === 1
-                    ? "Passo 1 de 2"
-                    : "Passo 2 de 2"}
+                  : modo === "recuperar"
+                    ? "Confirme seus dados"
+                    : passo === 1
+                      ? "Passo 1 de 2"
+                      : "Passo 2 de 2"}
               </p>
               <h2 className="text-2xl font-medium leading-tight tracking-tight">
                 {modo === "login"
                   ? "Entrar"
-                  : passo === 1
-                    ? "Crie seu espaço"
-                    : "Personalize seu espaço"}
+                  : modo === "recuperar"
+                    ? "Redefinir senha"
+                    : passo === 1
+                      ? "Crie seu espaço"
+                      : "Personalize seu espaço"}
               </h2>
             </div>
           </div>
 
-          {modo === "login" ? (
+          {modo === "recuperar" ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Para sua segurança, confirme o e-mail e a data de nascimento cadastrados e escolha
+                uma nova senha.
+              </p>
+              <Campo label="Seu e-mail">
+                <input
+                  className={inputCls}
+                  type="email"
+                  value={email}
+                  placeholder="voce@email.com"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </Campo>
+              <Campo label="Sua data de nascimento">
+                <input
+                  className={inputCls}
+                  value={nascimento}
+                  placeholder="DD/MM/AAAA"
+                  inputMode="numeric"
+                  onChange={(e) => setNascimento(mascaraData(e.target.value))}
+                />
+              </Campo>
+              <Campo label="Nova senha">
+                <input
+                  className={inputCls}
+                  type={verSenha ? "text" : "password"}
+                  value={senha}
+                  placeholder="Mínimo de 6 caracteres"
+                  onChange={(e) => setSenha(e.target.value)}
+                />
+              </Campo>
+              <Campo label="Confirme a nova senha">
+                <input
+                  className={inputCls}
+                  type={verSenha ? "text" : "password"}
+                  value={confirmar}
+                  placeholder="Repita a nova senha"
+                  onChange={(e) => setConfirmar(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && recuperar()}
+                />
+              </Campo>
+            </div>
+          ) : modo === "login" ? (
             <div className="flex flex-col gap-3">
               <Campo label="Seu e-mail">
                 <input
@@ -305,24 +371,59 @@ function Entrar() {
           )}
 
           {erro && <p className="text-xs text-destructive">{erro}</p>}
+          {aviso && !erro && <p className="text-xs text-foreground">{aviso}</p>}
 
           <Button
             className="h-12 w-full rounded-full text-sm font-normal"
-            onClick={modo === "login" ? fazerLogin : passo === 1 ? continuar : concluir}
+            onClick={
+              modo === "login"
+                ? fazerLogin
+                : modo === "recuperar"
+                  ? recuperar
+                  : passo === 1
+                    ? continuar
+                    : concluir
+            }
           >
-            {modo === "login" ? "Entrar" : passo === 1 ? "Continuar" : "Concluir e entrar"}
+            {modo === "login"
+              ? "Entrar"
+              : modo === "recuperar"
+                ? "Redefinir senha"
+                : passo === 1
+                  ? "Continuar"
+                  : "Concluir e entrar"}
           </Button>
+
+          {modo === "login" && (
+            <button
+              type="button"
+              className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+              onClick={() => {
+                setErro("");
+                setAviso("");
+                setSenha("");
+                setModo("recuperar");
+              }}
+            >
+              Esqueceu a senha?
+            </button>
+          )}
 
           <button
             type="button"
             className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
             onClick={() => {
               setErro("");
+              setAviso("");
               setPasso(1);
               setModo((m) => (m === "login" ? "cadastro" : "login"));
             }}
           >
-            {modo === "login" ? "Ainda não tem conta? Criar agora" : "Já tem uma conta? Entrar"}
+            {modo === "login"
+              ? "Ainda não tem conta? Criar agora"
+              : modo === "recuperar"
+                ? "Lembrou a senha? Voltar para entrar"
+                : "Já tem uma conta? Entrar"}
           </button>
         </section>
       </div>

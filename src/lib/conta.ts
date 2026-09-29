@@ -59,6 +59,32 @@ export function entrar(email: string, senha: string): string | null {
   return null;
 }
 
+/**
+ * Redefine a senha confirmando o e-mail e a data de nascimento cadastrados.
+ * Retorna null quando deu certo, ou uma mensagem de erro.
+ */
+export function redefinirSenha(email: string, nascimento: string, novaSenha: string): string | null {
+  const conta = lerConta();
+  if (!conta) return "Ainda não existe uma conta neste dispositivo.";
+  if (conta.email.trim().toLowerCase() !== email.trim().toLowerCase())
+    return "E-mail não encontrado.";
+  let nascSalvo = "";
+  try {
+    nascSalvo = (JSON.parse(localStorage.getItem("perfil-paciente") || "{}") as { nascimento?: string }).nascimento ?? "";
+  } catch {
+    /* ignora */
+  }
+  if (!nascSalvo || nascSalvo !== nascimento.trim())
+    return "A data de nascimento não confere com a cadastrada.";
+  if (novaSenha.length < 6) return "A nova senha precisa de pelo menos 6 caracteres.";
+  try {
+    localStorage.setItem(CHAVE_CONTA, JSON.stringify({ ...conta, senha: novaSenha }));
+  } catch {
+    /* ignora */
+  }
+  return null;
+}
+
 export function sair() {
   try {
     localStorage.removeItem(CHAVE_SESSAO);
