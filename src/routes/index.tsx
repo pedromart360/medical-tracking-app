@@ -82,7 +82,7 @@ function Home() {
               O topo da figura acompanha o topo da barra de pesquisa e a base acompanha a
               base dos cards de módulo; a figura está centrada na imagem original (x 315-709). */}
           <div
-            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:mt-[clamp(0.75rem,1.6vw,1.25rem)] md:h-0 md:min-h-0 md:max-h-none md:flex-1 md:[aspect-ratio:auto]"
+            className="relative mx-auto mt-3 h-[min(78vw,420px)] w-full overflow-hidden md:mt-[clamp(0.75rem,1.6vw,1.25rem)] md:h-0 md:min-h-0 md:max-h-none md:flex-1 md:![aspect-ratio:auto]"
             style={{ aspectRatio: "394 / 985" }}
           >
             <img
