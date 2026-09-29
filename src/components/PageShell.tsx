@@ -104,6 +104,18 @@ export function PageShell({
   backTo: string;
   children: React.ReactNode;
 }) {
+  const [calendario, setCalendario] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const modulo: ModuloEvento | "todos" = pathname.startsWith("/medicos")
+    ? "consultas"
+    : pathname.startsWith("/exames")
+      ? "exames"
+      : pathname.startsWith("/tratamentos")
+        ? "tratamentos"
+        : pathname.startsWith("/doencas")
+          ? "doencas"
+          : "todos";
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1366px] flex-col gap-[clamp(0.75rem,1.6vw,1.375rem)] px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.75rem,1.5vw,1.25rem)] md:h-dvh md:min-h-0 md:overflow-hidden">
       {/* Mobile: layout simples sem a pasta */}
