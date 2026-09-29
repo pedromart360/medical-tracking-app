@@ -41,8 +41,8 @@ function Campo({
 
 export function PerfilDrawer() {
   const perfil = usePerfil();
+  const router = useRouter();
   const [aberto, setAberto] = useState(false);
-  const [cadastro, setCadastro] = useState(false);
   const [form, setForm] = useState<Perfil>(perfil);
   const [salvo, setSalvo] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -50,19 +50,10 @@ export function PerfilDrawer() {
   useEffect(() => {
     return aoAbrirPerfil(() => {
       setForm(perfil);
-      setCadastro(false);
       setSalvo(false);
       setAberto(true);
     });
   }, [perfil]);
-
-  useEffect(() => {
-    if (!temPerfilSalvo()) {
-      setForm(perfilPadrao);
-      setCadastro(true);
-      setAberto(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (!aberto) return;
