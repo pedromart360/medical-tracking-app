@@ -175,46 +175,51 @@ export function CalendarOverlay({
                   <ChevronLeft className="size-[clamp(1.25rem,2.2vw,1.75rem)]" strokeWidth={2.5} />
                 </button>
 
-                <div className="flex max-h-full min-w-0 flex-1 flex-col overflow-y-auto rounded-[clamp(1rem,2.4vw,1.75rem)] bg-muted px-[clamp(0.75rem,3vw,3rem)] py-[clamp(1rem,2.4vw,2rem)]">
-                  <h2 className="flex items-baseline justify-center gap-2 text-center text-[clamp(1.375rem,4vw,2.25rem)] font-medium lowercase">
+                <div className="flex max-h-full min-w-0 flex-1 flex-col overflow-y-auto px-[clamp(0.25rem,1.5vw,1.5rem)] py-[clamp(0.5rem,1.4vw,1rem)]">
+                  <h2 className="flex items-baseline justify-center gap-2 text-center text-[clamp(1.375rem,4vw,2.25rem)] font-normal lowercase">
                     {mes}
                     <span className="text-[0.45em] tracking-wide text-muted-foreground">{ano}</span>
                   </h2>
 
-                  <div className="mx-auto mt-[clamp(0.875rem,2vw,1.75rem)] w-full max-w-[min(100%,42vh)]">
-                    <div className="grid grid-cols-7 gap-[2.5%] px-[1%] text-center text-[clamp(0.4375rem,1.5vw,0.8125rem)] uppercase tracking-[0.08em] text-muted-foreground">
+                  <div className="mx-auto mt-[clamp(1.5rem,3.4vw,2.75rem)] w-full max-w-[min(100%,58vh)]">
+                    <div className="grid grid-cols-7 gap-x-[1.5%] text-center text-[clamp(0.5rem,1.5vw,0.8125rem)] uppercase tracking-[0.1em] text-muted-foreground/70">
                       {semana.map((d) => (
                         <span key={d}>{d}</span>
                       ))}
                     </div>
 
-                    <div className="mt-[clamp(0.5rem,1.2vw,1rem)] grid grid-cols-7 gap-[2.5%]">
+                    <div className="mt-[clamp(0.875rem,2.2vw,1.75rem)] grid grid-cols-7 gap-x-[1.5%] gap-y-[clamp(0.375rem,1.4vw,1rem)]">
                       {celulas.map((c) => {
-                        const total = doDia(c.data).length;
+                        const lista = c.doMes ? doDia(c.data) : [];
+                        const pontos = lista.slice(0, 4);
+                        const extra = lista.length - pontos.length;
                         return (
                           <button
                             key={c.data}
                             onClick={() => setDia(c.data)}
-                            className={`relative flex aspect-square flex-col items-center justify-center overflow-hidden rounded-full transition-colors ${
-                              c.doMes
-                                ? "bg-card text-muted-foreground hover:bg-background hover:text-foreground"
-                                : "bg-card/40 text-muted-foreground/40 hover:bg-card"
-                            }`}
+                            className="group flex aspect-[1/0.95] flex-col items-center justify-center gap-[12%] rounded-2xl transition-colors hover:bg-muted/70"
                           >
                             <span
-                              className={`text-[clamp(0.5625rem,2vw,1.0625rem)] leading-none ${
-                                total > 0 && c.doMes ? "font-semibold text-foreground" : ""
+                              className={`text-[clamp(0.75rem,2.2vw,1.25rem)] font-normal leading-none ${
+                                c.doMes ? "text-foreground" : "text-muted-foreground/30"
                               }`}
                             >
                               {pad(c.numero)}
                             </span>
-                            {total > 0 && c.doMes ? (
-                              <span className="mt-[6%] max-w-[76%] truncate rounded-full bg-foreground px-[0.4em] py-[0.12em] text-[clamp(0.375rem,1.15vw,0.625rem)] font-medium leading-[1.4] text-background">
-                                {total > 99 ? "99+" : total}
-                              </span>
-                            ) : null}
+                            <span className="flex h-[clamp(0.25rem,0.7vw,0.4375rem)] items-center justify-center gap-[0.2em]">
+                              {pontos.map((e) => (
+                                <span
+                                  key={e.id}
+                                  className={`size-[clamp(0.25rem,0.7vw,0.4375rem)] rounded-full ${pontoModulo[e.modulo]}`}
+                                />
+                              ))}
+                              {extra > 0 ? (
+                                <span className="ml-[0.15em] text-[clamp(0.4375rem,1vw,0.625rem)] leading-none text-muted-foreground">
+                                  +{extra}
+                                </span>
+                              ) : null}
+                            </span>
                           </button>
-
                         );
                       })}
                     </div>
