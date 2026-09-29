@@ -141,7 +141,11 @@ export function PageShell({
         </div>
       </div>
 
-      <Timeline />
+      <Timeline onClick={() => setCalendario(true)} />
+
+      {calendario && (
+        <CalendarOverlay modulo={modulo} onClose={() => setCalendario(false)} />
+      )}
     </main>
   );
 }
