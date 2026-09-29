@@ -88,11 +88,9 @@ export function PerfilDrawer() {
       <aside className="relative flex h-full w-full max-w-[26rem] flex-col gap-5 overflow-y-auto bg-background p-5 shadow-2xl sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs text-muted-foreground">
-              {cadastro ? "Bem-vinda" : "Perfil do paciente"}
-            </p>
+            <p className="text-xs text-muted-foreground">Seu perfil</p>
             <h2 className="text-2xl font-medium leading-tight tracking-tight">
-              {cadastro ? "Cadastro" : form.nome || "Paciente"}
+              {form.nome || "Seu perfil"}
             </h2>
           </div>
           <Button
