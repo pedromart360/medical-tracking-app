@@ -194,19 +194,26 @@ export function CalendarOverlay({
                           <button
                             key={c.data}
                             onClick={() => setDia(c.data)}
-                            className={`relative flex aspect-square items-center justify-center rounded-full text-[clamp(0.5625rem,2vw,1.0625rem)] transition-colors ${
+                            className={`relative flex aspect-square flex-col items-center justify-center overflow-hidden rounded-full transition-colors ${
                               c.doMes
                                 ? "bg-card text-muted-foreground hover:bg-background hover:text-foreground"
                                 : "bg-card/40 text-muted-foreground/40 hover:bg-card"
                             }`}
                           >
-                            {pad(c.numero)}
+                            <span
+                              className={`text-[clamp(0.5625rem,2vw,1.0625rem)] leading-none ${
+                                total > 0 && c.doMes ? "font-semibold text-foreground" : ""
+                              }`}
+                            >
+                              {pad(c.numero)}
+                            </span>
                             {total > 0 && c.doMes ? (
-                              <span className="absolute -right-[8%] -top-[10%] flex size-[clamp(0.75rem,2.6vw,1.5rem)] items-center justify-center rounded-full bg-foreground text-[clamp(0.375rem,1.2vw,0.6875rem)] font-medium leading-none text-background">
-                                +{total}
+                              <span className="mt-[6%] max-w-[76%] truncate rounded-full bg-foreground px-[0.4em] py-[0.12em] text-[clamp(0.375rem,1.15vw,0.625rem)] font-medium leading-[1.4] text-background">
+                                {total > 99 ? "99+" : total}
                               </span>
                             ) : null}
                           </button>
+
                         );
                       })}
                     </div>
