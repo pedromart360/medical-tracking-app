@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep PageShell's desktop folder aspect ratio within viewport height and scroll only its inner content, so the folder and header stay stationary while long medical records remain reachable.
+- Use HorizontalScroll for draggable, wheel-scrollable horizontal lists; shared scroll behavior keeps category rows and specialty lists consistent.
