@@ -323,24 +323,59 @@ function Entrar() {
           )}
 
           {erro && <p className="text-xs text-destructive">{erro}</p>}
+          {aviso && !erro && <p className="text-xs text-foreground">{aviso}</p>}
 
           <Button
             className="h-12 w-full rounded-full text-sm font-normal"
-            onClick={modo === "login" ? fazerLogin : passo === 1 ? continuar : concluir}
+            onClick={
+              modo === "login"
+                ? fazerLogin
+                : modo === "recuperar"
+                  ? recuperar
+                  : passo === 1
+                    ? continuar
+                    : concluir
+            }
           >
-            {modo === "login" ? "Entrar" : passo === 1 ? "Continuar" : "Concluir e entrar"}
+            {modo === "login"
+              ? "Entrar"
+              : modo === "recuperar"
+                ? "Redefinir senha"
+                : passo === 1
+                  ? "Continuar"
+                  : "Concluir e entrar"}
           </Button>
+
+          {modo === "login" && (
+            <button
+              type="button"
+              className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
+              onClick={() => {
+                setErro("");
+                setAviso("");
+                setSenha("");
+                setModo("recuperar");
+              }}
+            >
+              Esqueceu a senha?
+            </button>
+          )}
 
           <button
             type="button"
             className="text-center text-xs text-muted-foreground underline-offset-4 hover:underline"
             onClick={() => {
               setErro("");
+              setAviso("");
               setPasso(1);
               setModo((m) => (m === "login" ? "cadastro" : "login"));
             }}
           >
-            {modo === "login" ? "Ainda não tem conta? Criar agora" : "Já tem uma conta? Entrar"}
+            {modo === "login"
+              ? "Ainda não tem conta? Criar agora"
+              : modo === "recuperar"
+                ? "Lembrou a senha? Voltar para entrar"
+                : "Já tem uma conta? Entrar"}
           </button>
         </section>
       </div>
