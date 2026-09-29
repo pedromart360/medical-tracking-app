@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdicionarRouteImport } from './routes/adicionar'
 import { Route as DoencasRouteImport } from './routes/doencas'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as TratamentosRouteImport } from './routes/tratamentos'
 import { Route as ExamesIndexRouteImport } from './routes/exames.index'
 import { Route as MedicosIndexRouteImport } from './routes/medicos.index'
@@ -34,6 +35,11 @@ const AdicionarRoute = AdicionarRouteImport.update({
 const DoencasRoute = DoencasRouteImport.update({
   id: '/doencas',
   path: '/doencas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TratamentosRoute = TratamentosRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
+  '/entrar': typeof EntrarRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames/': typeof ExamesIndexRoute
   '/medicos/': typeof MedicosIndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
+  '/entrar': typeof EntrarRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames': typeof ExamesIndexRoute
   '/medicos': typeof MedicosIndexRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/adicionar': typeof AdicionarRoute
   '/doencas': typeof DoencasRoute
+  '/entrar': typeof EntrarRoute
   '/tratamentos': typeof TratamentosRoute
   '/exames/': typeof ExamesIndexRoute
   '/medicos/': typeof MedicosIndexRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adicionar'
     | '/doencas'
+    | '/entrar'
     | '/tratamentos'
     | '/exames/'
     | '/medicos/'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adicionar'
     | '/doencas'
+    | '/entrar'
     | '/tratamentos'
     | '/exames'
     | '/medicos'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adicionar'
     | '/doencas'
+    | '/entrar'
     | '/tratamentos'
     | '/exames/'
     | '/medicos/'
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdicionarRoute: typeof AdicionarRoute
   DoencasRoute: typeof DoencasRoute
+  EntrarRoute: typeof EntrarRoute
   TratamentosRoute: typeof TratamentosRoute
   ExamesIndexRoute: typeof ExamesIndexRoute
   MedicosIndexRoute: typeof MedicosIndexRoute
@@ -194,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/doencas'
       fullPath: '/doencas'
       preLoaderRoute: typeof DoencasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tratamentos': {
@@ -259,6 +279,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdicionarRoute: AdicionarRoute,
   DoencasRoute: DoencasRoute,
+  EntrarRoute: EntrarRoute,
   TratamentosRoute: TratamentosRoute,
   ExamesIndexRoute: ExamesIndexRoute,
   MedicosIndexRoute: MedicosIndexRoute,

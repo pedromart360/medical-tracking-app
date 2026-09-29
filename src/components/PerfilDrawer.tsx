@@ -307,18 +307,17 @@ export function PerfilDrawer() {
               "Salvar perfil"
             )}
           </Button>
-          {!cadastro && (
-            <Button
-              variant="ghost"
-              className="h-10 rounded-full text-xs font-normal text-muted-foreground"
-              onClick={() => {
-                setForm(perfilVazio);
-                setCadastro(true);
-              }}
-            >
-              novo paciente
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            className="h-10 rounded-full text-xs font-normal text-muted-foreground"
+            onClick={() => {
+              sair();
+              setAberto(false);
+              router.navigate({ to: "/entrar", replace: true });
+            }}
+          >
+            <LogOut className="mr-2 size-3.5" /> Sair da conta
+          </Button>
         </div>
       </aside>
     </div>
