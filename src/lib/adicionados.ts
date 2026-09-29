@@ -21,6 +21,14 @@ import {
 
 export type TipoAdicionado = "exame" | "medico" | "consulta" | "tratamento" | "doenca";
 
+export const TIPOS_REGISTRO: TipoAdicionado[] = [
+  "exame",
+  "medico",
+  "consulta",
+  "tratamento",
+  "doenca",
+];
+
 export type RegistroSalvo = Record<string, string> & { id: string };
 
 const EVENTO = "adicionados-mudou";
@@ -35,8 +43,35 @@ export function lerRegistros(t: TipoAdicionado): RegistroSalvo[] {
   }
 }
 
+function guardarLocal(t: TipoAdicionado, lista: RegistroSalvo[]) {
+  try {
+    localStorage.setItem(`adicionados-${t}`, JSON.stringify(lista));
+  } catch {
+    /* ignora */
+  }
+  window.dispatchEvent(new Event(EVENTO));
+}
+
+/** Salva no aparelho e envia para a conta na nuvem. */
 export function salvarRegistros(t: TipoAdicionado, lista: RegistroSalvo[]) {
-  localStorage.setItem(`adicionados-${t}`, JSON.stringify(lista));
+  guardarLocal(t, lista);
+  void import("./nuvem").then((n) => n.enviarRegistros(t, lista));
+}
+
+/** Aplica os registros vindos da nuvem, sem reenviá-los. */
+export function aplicarRegistrosDaNuvem(porTipo: Record<TipoAdicionado, RegistroSalvo[]>) {
+  for (const t of TIPOS_REGISTRO) guardarLocal(t, porTipo[t] ?? []);
+}
+
+/** Limpa os registros guardados neste aparelho (usado ao sair da conta). */
+export function limparRegistrosLocais() {
+  for (const t of TIPOS_REGISTRO) {
+    try {
+      localStorage.removeItem(`adicionados-${t}`);
+    } catch {
+      /* ignora */
+    }
+  }
   window.dispatchEvent(new Event(EVENTO));
 }
 
