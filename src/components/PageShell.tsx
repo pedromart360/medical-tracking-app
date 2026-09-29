@@ -35,9 +35,13 @@ export function Avatar({ className = "" }: { className?: string }) {
   );
 }
 
-export function Rail() {
+export function Rail({ className = "" }: { className?: string }) {
   return (
-    <nav aria-label="Categorias" className="flex shrink-0 items-center gap-[clamp(0.375rem,1vw,0.875rem)]">
+    <nav
+      aria-label="Categorias"
+      className={`flex shrink-0 items-center gap-[clamp(0.375rem,1vw,0.875rem)] ${className}`}
+    >
+
       {railItems.map((r) => (
         <Link key={r.to} to={r.to} title={r.nome}>
           <img
@@ -73,7 +77,7 @@ function Titulo({ label, title, backTo }: { label: string; title: string; backTo
       </Link>
       <div className="min-w-0">
         {label && (
-          <p className="mb-1 text-[clamp(0.6875rem,1.1vw,1rem)] leading-normal text-muted-foreground">
+          <p className="mb-[0.15em] translate-y-[0.2em] text-[clamp(0.6875rem,1.1vw,1rem)] leading-none text-muted-foreground">
             {label}
           </p>
         )}
