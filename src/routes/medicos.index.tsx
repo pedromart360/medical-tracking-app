@@ -29,7 +29,7 @@ function Medicos() {
       <div className="-mx-1 overflow-x-auto px-1 pb-2">
         <div className="flex w-max gap-[clamp(0.75rem,1.4vw,1.25rem)]">
           {colunas.map((coluna, c) => (
-            <div key={c} className="flex w-[clamp(15rem,24vw,21rem)] flex-col gap-[clamp(0.625rem,1.2vw,1rem)]">
+            <div key={c} className="flex w-[clamp(16rem,27.5vw,24rem)] flex-col gap-[clamp(0.625rem,1.3vw,1.125rem)]">
               {coluna.map((e) => (
                 <Link key={e} to="/medicos/$esp" params={{ esp: especialidadeSlug(e) }}>
                   <div className={cardLista}>
