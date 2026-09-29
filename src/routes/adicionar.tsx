@@ -415,7 +415,7 @@ function Adicionar() {
       return;
     }
     const extras: Record<string, string> = {};
-    for (const k of ["arquivo", "laudo", "foto", "documento", "continuo"]) if (valores[k]) extras[k] = valores[k]!;
+    for (const k of ["arquivo", "laudo", "foto", "documento", "continuo", "arquivoPath", "laudoPath", "fotoPath", "documentoPath"]) if (valores[k]) extras[k] = valores[k]!;
     if (chave === "consulta") {
       extras["prescricoes"] = JSON.stringify(prescricoes);
       extras["exames"] = JSON.stringify(examesPedidos);
@@ -673,17 +673,17 @@ function Adicionar() {
                   />
                 </Campo>
                 <Campo label="Resultado (imagem ou PDF)">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar resultado"
                     nome={valores["arquivo"] ?? ""}
-                    onChange={(n) => set("arquivo", n)}
+                    onChange={(n, c) => { set("arquivo", n); set("arquivoPath", c); }}
                   />
                 </Campo>
                 <Campo label="Laudo (PDF)">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar laudo"
                     nome={valores["laudo"] ?? ""}
-                    onChange={(n) => set("laudo", n)}
+                    onChange={(n, c) => { set("laudo", n); set("laudoPath", c); }}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
@@ -735,10 +735,10 @@ function Adicionar() {
                   />
                 </Campo>
                 <Campo label="Foto">
-                  <UploadFalso
+                  <UploadArquivo
                     rotulo="Enviar foto"
                     nome={valores["foto"] ?? ""}
-                    onChange={(n) => set("foto", n)}
+                    onChange={(n, c) => { set("foto", n); set("fotoPath", c); }}
                   />
                 </Campo>
                 <div className="sm:col-span-2">
@@ -842,10 +842,10 @@ function Adicionar() {
                 </div>
                 <div className="sm:col-span-2">
                   <Campo label="Documento (receita, atestado ou prontuário em PDF)">
-                    <UploadFalso
+                    <UploadArquivo
                       rotulo="Enviar documento"
                       nome={valores["documento"] ?? ""}
-                      onChange={(n) => set("documento", n)}
+                      onChange={(n, c) => { set("documento", n); set("documentoPath", c); }}
                     />
                   </Campo>
                 </div>
@@ -1002,10 +1002,10 @@ function Adicionar() {
                 </Campo>
                 <div className="sm:col-span-2">
                   <Campo label="Laudo ou documento comprobatório">
-                    <UploadFalso
+                    <UploadArquivo
                       rotulo="Enviar documento"
                       nome={valores["documento"] ?? ""}
-                      onChange={(n) => set("documento", n)}
+                      onChange={(n, c) => { set("documento", n); set("documentoPath", c); }}
                     />
                   </Campo>
                 </div>
