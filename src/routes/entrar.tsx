@@ -97,6 +97,20 @@ function Entrar() {
     router.navigate({ to: "/", replace: true });
   };
 
+  const recuperar = () => {
+    if (!validarEmail(email)) return setErro("Digite um e-mail válido.");
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(nascimento)) return setErro("Informe a data no formato DD/MM/AAAA.");
+    if (senha !== confirmar) return setErro("As senhas não são iguais.");
+    const msg = redefinirSenha(email, nascimento, senha);
+    if (msg) return setErro(msg);
+    setErro("");
+    setSenha("");
+    setConfirmar("");
+    setNascimento("");
+    setAviso("Senha redefinida. Entre com a nova senha.");
+    setModo("login");
+  };
+
   const lerFoto = (arquivo: File) => {
     const leitor = new FileReader();
     leitor.onload = () => setFoto(String(leitor.result));
@@ -115,11 +129,6 @@ function Entrar() {
             Reúna exames, consultas, tratamentos e diagnósticos em uma linha do tempo simples de
             entender — e leve tudo com você em um resumo em PDF.
           </p>
-          <img
-            src="/body_front.webp"
-            alt=""
-            className="mt-2 h-[min(38vh,320px)] w-auto self-start object-contain opacity-90"
-          />
         </section>
 
         <section className="flex w-full flex-col gap-5 rounded-[2rem] bg-card/60 p-[clamp(1.25rem,3vw,2rem)]">
