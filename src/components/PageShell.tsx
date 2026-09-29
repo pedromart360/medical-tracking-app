@@ -1,7 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useState } from "react";
 import { abrirPerfil, iniciais, usePerfil } from "@/lib/perfil";
 import { ChevronLeft } from "lucide-react";
 import { Timeline } from "@/components/Timeline";
+import { CalendarOverlay } from "@/components/Calendar";
+import type { ModuloEvento } from "@/lib/eventos";
 import pastaGrande from "@/assets/pasta-grande.svg.asset.json";
 import { imgHome, imgIconeCategoria } from "@/lib/imagens";
 
@@ -101,6 +104,18 @@ export function PageShell({
   backTo: string;
   children: React.ReactNode;
 }) {
+  const [calendario, setCalendario] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const modulo: ModuloEvento | "todos" = pathname.startsWith("/medicos")
+    ? "consultas"
+    : pathname.startsWith("/exames")
+      ? "exames"
+      : pathname.startsWith("/tratamentos")
+        ? "tratamentos"
+        : pathname.startsWith("/doencas")
+          ? "doencas"
+          : "todos";
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-[1366px] flex-col gap-[clamp(0.75rem,1.6vw,1.375rem)] px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.75rem,1.5vw,1.25rem)] md:h-dvh md:min-h-0 md:overflow-hidden">
       {/* Mobile: layout simples sem a pasta */}
@@ -126,7 +141,11 @@ export function PageShell({
         </div>
       </div>
 
-      <Timeline />
+      <Timeline onClick={() => setCalendario(true)} />
+
+      {calendario && (
+        <CalendarOverlay modulo={modulo} onClose={() => setCalendario(false)} />
+      )}
     </main>
   );
 }
