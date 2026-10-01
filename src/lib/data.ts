@@ -430,6 +430,18 @@ const pontosCorpoBase: Record<string, PontoCorpo[]> = {
   ],
 };
 
+/**
+ * Pontos anatômicos disponíveis por categoria, sempre sem exames:
+ * os marcadores só aparecem com o que a pessoa cadastrar.
+ */
+export const pontosCorpo: Record<string, PontoCorpo[]> = Object.fromEntries(
+  Object.entries(pontosCorpoBase).map(([slug, pontos]) => [
+    slug,
+    pontos.map((p) => ({ ...p, exames: [] as ExameCorpo[] })),
+  ]),
+);
+
+
 /** Regiões do corpo disponíveis ao cadastrar exames de imagem e nucleares */
 export type RegiaoCorpo = {
   id: string;
