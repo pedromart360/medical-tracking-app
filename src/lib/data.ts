@@ -1,7 +1,7 @@
 export const patient = {
-  nome: "Ana Carolina",
-  sexo: "Mulher",
-  idade: "24A",
+  nome: "",
+  sexo: "",
+  idade: "",
 };
 
 export const anos = [2026, 2025, 2024, 2023];
@@ -23,22 +23,10 @@ export const meses = [
 
 export type Registro = { titulo: string; categoria: string };
 
-export const registrosDoDia: Registro[] = [
-  { titulo: "Internação", categoria: "Doenças" },
-  { titulo: "Gripe", categoria: "Doenças" },
-  { titulo: "Imunologista", categoria: "Médicos" },
-  { titulo: "RX do braço", categoria: "Exames" },
-  { titulo: "Gastrointerite", categoria: "Doenças" },
-  { titulo: "Cardiologista", categoria: "Médicos" },
-  { titulo: "Pregabalina", categoria: "Tratamentos" },
-];
+export const registrosDoDia: Registro[] = [];
 
 /* Marcadores (badges) por mês: índice do dia -> quantidade */
-export const marcadores: Record<string, Record<number, number>> = {
-  Janeiro: { 3: 1, 19: 12, 25: 5 },
-  Fevereiro: { 0: 1, 1: 5, 9: 12 },
-  Dezembro: { 17: 1, 18: 5, 19: 12 },
-};
+export const marcadores: Record<string, Record<number, number>> = {};
 
 export const exameCategorias = [
   { slug: "laboratoriais", nome: "Laboratoriais" },
