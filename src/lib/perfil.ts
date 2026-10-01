@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { patient } from "@/lib/data";
 
 export type Perfil = {
   nome: string;
@@ -33,12 +32,7 @@ export const perfilVazio: Perfil = {
   carteirinha: "",
 };
 
-export const perfilPadrao: Perfil = {
-  ...perfilVazio,
-  nome: patient.nome,
-  sexo: patient.sexo,
-  nascimento: "14/06/2002",
-};
+export const perfilPadrao: Perfil = { ...perfilVazio };
 
 const CHAVE = "perfil-paciente";
 
