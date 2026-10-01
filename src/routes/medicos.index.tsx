@@ -8,9 +8,9 @@ import { HorizontalScroll } from "@/components/HorizontalScroll";
 export const Route = createFileRoute("/medicos/")({
   head: () => ({
     meta: [
-      { title: "Médicos — Ana Carolina" },
-      { name: "description", content: "Especialidades e médicos que acompanham Ana Carolina." },
-      { property: "og:title", content: "Médicos — Ana Carolina" },
+      { title: "Médicos — Lyna" },
+      { name: "description", content: "Especialidades e médicos que acompanham você." },
+      { property: "og:title", content: "Médicos — Lyna" },
       { property: "og:description", content: "Especialidades médicas do prontuário." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

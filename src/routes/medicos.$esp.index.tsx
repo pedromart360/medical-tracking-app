@@ -1,15 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { FotoMedico } from "@/components/FotoMedico";
+import { Vazio } from "@/components/Vazio";
 import { nomeEspecialidadePorSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/medicos/$esp/")({
   head: () => ({
     meta: [
-      { title: "Especialidade — Ana Carolina" },
+      { title: "Especialidade — Lyna" },
       { name: "description", content: "Médicos da especialidade selecionada." },
-      { property: "og:title", content: "Especialidade — Ana Carolina" },
+      { property: "og:title", content: "Especialidade — Lyna" },
       { property: "og:description", content: "Médicos da especialidade selecionada." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -27,7 +28,7 @@ function Especialidade() {
   return (
     <PageShell label="Médicos" title={nome} backTo="/medicos">
       {lista.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nenhum médico cadastrado nesta especialidade.</p>
+        <Vazio titulo="Nenhum médico cadastrado nesta especialidade." acao="+ cadastrar médico" />
       ) : (
         <div className="flex flex-wrap gap-[clamp(1rem,3vw,3rem)]">
           {lista.map((m) => (

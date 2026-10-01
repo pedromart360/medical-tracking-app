@@ -9,9 +9,9 @@ import { HorizontalScroll } from "@/components/HorizontalScroll";
 export const Route = createFileRoute("/exames/$slug/")({
   head: () => ({
     meta: [
-      { title: "Categoria de exames — Ana Carolina" },
+      { title: "Categoria de exames — Lyna" },
       { name: "description", content: "Áreas médicas e tipos de exames da categoria selecionada." },
-      { property: "og:title", content: "Categoria de exames — Ana Carolina" },
+      { property: "og:title", content: "Categoria de exames — Lyna" },
       { property: "og:description", content: "Áreas médicas e tipos de exames." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -49,21 +49,23 @@ function Categoria() {
 
   const secoes = (
     <div className="flex h-full min-w-0 flex-col justify-center gap-[clamp(1.25rem,3.2vw,2.75rem)]">
-      <Secao titulo="Áreas médicas">
-        {areas.map((a) => (
-          <Link
-            key={a}
-            to="/exames/$slug/area/$area"
-            params={{ slug, area: areaSlug(a) }}
-            className="shrink-0"
-          >
-            <span className={`${chipClass} hover:bg-border`}>
-              <img src={imgEspecialidade(a)} alt="" loading="lazy" className={chipImg} />
-              {a}
-            </span>
-          </Link>
-        ))}
-      </Secao>
+      {areas.length > 0 && (
+        <Secao titulo="Áreas médicas">
+          {areas.map((a) => (
+            <Link
+              key={a}
+              to="/exames/$slug/area/$area"
+              params={{ slug, area: areaSlug(a) }}
+              className="shrink-0"
+            >
+              <span className={`${chipClass} hover:bg-border`}>
+                <img src={imgEspecialidade(a)} alt="" loading="lazy" className={chipImg} />
+                {a}
+              </span>
+            </Link>
+          ))}
+        </Secao>
+      )}
 
       <Secao titulo="Tipos de exames">
         {tipos.map((t) => (

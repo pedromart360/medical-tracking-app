@@ -1,4 +1,5 @@
-import { patient, tratamentoTipos, tratamentosBase, type TratamentoRegistro } from "@/lib/data";
+import { tratamentoTipos, tratamentosBase, type TratamentoRegistro } from "@/lib/data";
+import { idadeDoPerfil, lerPerfilLocal } from "@/lib/perfil";
 
 const ordem = (d: string) => {
   const [dia, mes] = d.split("/");
@@ -47,7 +48,12 @@ export async function exportarHistoricoPDF(
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
   doc.setTextColor(110);
-  doc.text(`${patient.nome} · ${patient.sexo} · ${patient.idade}`, margem, y);
+  const perfil = lerPerfilLocal();
+  doc.text(
+    `${perfil.nome || "Paciente"} · ${perfil.sexo || "—"} · ${idadeDoPerfil(perfil) || "—"}`,
+    margem,
+    y,
+  );
   y += 15;
   doc.text(
     `Ano de referência: ${ano} · Documento gerado em ${new Date().toLocaleDateString("pt-BR")}`,

@@ -1,7 +1,7 @@
 export const patient = {
-  nome: "Ana Carolina",
-  sexo: "Mulher",
-  idade: "24A",
+  nome: "",
+  sexo: "",
+  idade: "",
 };
 
 export const anos = [2026, 2025, 2024, 2023];
@@ -23,22 +23,10 @@ export const meses = [
 
 export type Registro = { titulo: string; categoria: string };
 
-export const registrosDoDia: Registro[] = [
-  { titulo: "Internação", categoria: "Doenças" },
-  { titulo: "Gripe", categoria: "Doenças" },
-  { titulo: "Imunologista", categoria: "Médicos" },
-  { titulo: "RX do braço", categoria: "Exames" },
-  { titulo: "Gastrointerite", categoria: "Doenças" },
-  { titulo: "Cardiologista", categoria: "Médicos" },
-  { titulo: "Pregabalina", categoria: "Tratamentos" },
-];
+export const registrosDoDia: Registro[] = [];
 
 /* Marcadores (badges) por mês: índice do dia -> quantidade */
-export const marcadores: Record<string, Record<number, number>> = {
-  Janeiro: { 3: 1, 19: 12, 25: 5 },
-  Fevereiro: { 0: 1, 1: 5, 9: 12 },
-  Dezembro: { 17: 1, 18: 5, 19: 12 },
-};
+export const marcadores: Record<string, Record<number, number>> = {};
 
 export const exameCategorias = [
   { slug: "laboratoriais", nome: "Laboratoriais" },
@@ -313,7 +301,7 @@ const ex = (nome: string, data: string, pedidoPor: string, local: string): Exame
   local,
 });
 
-export const pontosCorpo: Record<string, PontoCorpo[]> = {
+const pontosCorpoBase: Record<string, PontoCorpo[]> = {
   "de-imagem": [
     {
       id: "cranio",
@@ -441,6 +429,18 @@ export const pontosCorpo: Record<string, PontoCorpo[]> = {
     },
   ],
 };
+
+/**
+ * Pontos anatômicos disponíveis por categoria, sempre sem exames:
+ * os marcadores só aparecem com o que a pessoa cadastrar.
+ */
+export const pontosCorpo: Record<string, PontoCorpo[]> = Object.fromEntries(
+  Object.entries(pontosCorpoBase).map(([slug, pontos]) => [
+    slug,
+    pontos.map((p) => ({ ...p, exames: [] as ExameCorpo[] })),
+  ]),
+);
+
 
 /** Regiões do corpo disponíveis ao cadastrar exames de imagem e nucleares */
 export type RegiaoCorpo = {
@@ -605,7 +605,7 @@ function gerarArquivos(): ExameArquivo[] {
   return lista;
 }
 
-export const arquivosExame: ExameArquivo[] = gerarArquivos();
+export const arquivosExame: ExameArquivo[] = [];
 
 const porAno = (a: ExameArquivo, b: ExameArquivo) => b.ano - a.ano;
 
@@ -818,7 +818,7 @@ function gerarMedicos(): Medico[] {
   return lista;
 }
 
-export const medicosBase: Medico[] = gerarMedicos();
+export const medicosBase: Medico[] = [];
 
 export function medicosPorEspecialidade(slug: string) {
   return medicosBase.filter((m) => m.especialidadeSlug === slug);
@@ -943,7 +943,7 @@ function gerarTratamentos(): TratamentoRegistro[] {
   return lista;
 }
 
-export const tratamentosBase: TratamentoRegistro[] = gerarTratamentos();
+export const tratamentosBase: TratamentoRegistro[] = [];
 
 export function tratamentosPorCategoria(categoria: string, ano: number) {
   return tratamentosBase.filter((t) => t.categoria === categoria && t.ano === ano);
@@ -1011,7 +1011,7 @@ function gerarDoencas(): DoencaRegistro[] {
   return lista;
 }
 
-export const doencasBase: DoencaRegistro[] = gerarDoencas();
+export const doencasBase: DoencaRegistro[] = [];
 
 export function acharTratamento(id: string) {
   return tratamentosBase.find((t) => t.id === id);

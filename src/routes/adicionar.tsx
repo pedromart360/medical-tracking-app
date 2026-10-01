@@ -36,9 +36,9 @@ import {
 export const Route = createFileRoute("/adicionar")({
   head: () => ({
     meta: [
-      { title: "Adicionar dados — Ana Carolina" },
+      { title: "Adicionar dados — Lyna" },
       { name: "description", content: "Cadastre novos exames, médicos, consultas, tratamentos e doenças no prontuário." },
-      { property: "og:title", content: "Adicionar dados — Ana Carolina" },
+      { property: "og:title", content: "Adicionar dados — Lyna" },
       { property: "og:description", content: "Cadastre novos dados no prontuário." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -4,15 +4,16 @@ import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
-import { anos, patient, type DoencaRegistro } from "@/lib/data";
+import { Vazio } from "@/components/Vazio";
+import { anos, type DoencaRegistro } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/doencas")({
   head: () => ({
     meta: [
-      { title: "Doenças — Ana Carolina" },
+      { title: "Doenças — Lyna" },
       { name: "description", content: "Histórico de doenças, diagnósticos e tratamentos vinculados." },
-      { property: "og:title", content: "Doenças — Ana Carolina" },
+      { property: "og:title", content: "Doenças — Lyna" },
       { property: "og:description", content: "Histórico de doenças e internações." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -131,11 +132,18 @@ function Doencas() {
           </div>
 
           <div className="-mx-1 mt-[clamp(0.75rem,1.4vw,1.25rem)] flex gap-[clamp(0.75rem,1.6vw,1.5rem)] overflow-x-auto px-1 pb-2">
-            {colunas.length === 0 && (
-              <p className="text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
-                Nenhuma doença encontrada.
-              </p>
-            )}
+            {colunas.length === 0 &&
+              (termo ? (
+                <p className="text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
+                  Nenhuma doença encontrada.
+                </p>
+              ) : (
+                <Vazio
+                  titulo="Nenhuma doença registrada ainda."
+                  acao="+ registrar doença"
+                  className="w-full"
+                />
+              ))}
             {colunas.map((coluna, ci) => (
               <div key={ci} className="min-w-[clamp(15rem,20vw,19rem)] flex-1 space-y-0.5">
                 {coluna.map((d) => {
@@ -257,7 +265,7 @@ function Doencas() {
             </>
           ) : (
             <p className="text-[clamp(0.75rem,1vw,0.9375rem)] text-muted-foreground">
-              Selecione um item do histórico de {patient.nome.split(" ")[0]}.
+              Selecione um item do histórico.
             </p>
           )}
         </div>

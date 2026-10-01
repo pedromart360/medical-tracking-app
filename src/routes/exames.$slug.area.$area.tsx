@@ -7,9 +7,9 @@ import { useProntuario } from "@/lib/adicionados";
 export const Route = createFileRoute("/exames/$slug/area/$area")({
   head: () => ({
     meta: [
-      { title: "Exames por área médica — Ana Carolina" },
+      { title: "Exames por área médica — Lyna" },
       { name: "description", content: "Arquivos de exames filtrados pela área médica escolhida." },
-      { property: "og:title", content: "Exames por área médica — Ana Carolina" },
+      { property: "og:title", content: "Exames por área médica — Lyna" },
       { property: "og:description", content: "Escolha um exame para ver a ficha completa." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

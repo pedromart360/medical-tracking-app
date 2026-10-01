@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/medicos/$esp/$doc")({
   head: () => ({
     meta: [
-      { title: "Médico — Ana Carolina" },
+      { title: "Médico — Lyna" },
       { name: "description", content: "Consultas, remédios prescritos e exames solicitados pelo médico." },
-      { property: "og:title", content: "Médico — Ana Carolina" },
+      { property: "og:title", content: "Médico — Lyna" },
       { property: "og:description", content: "Consultas e prescrições do médico." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
