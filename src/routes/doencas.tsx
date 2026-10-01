@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
+import { Vazio } from "@/components/Vazio";
 import { anos, patient, type DoencaRegistro } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 
