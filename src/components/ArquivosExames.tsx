@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ExameArte } from "@/components/ExameArte";
+import { Vazio } from "@/components/Vazio";
 import { ExameModal } from "@/components/ExameModal";
 import type { ExameArquivo } from "@/lib/data";
 
@@ -28,7 +29,7 @@ export function ArquivosExames({ itens }: { itens: ExameArquivo[] }) {
   }, [colunas]);
 
   if (itens.length === 0) {
-    return <p className="text-sm text-muted-foreground">Nenhum exame arquivado nesta seleção.</p>;
+    return <Vazio titulo="Nenhum exame cadastrado aqui ainda." acao="+ adicionar exame" />;
   }
 
   return (

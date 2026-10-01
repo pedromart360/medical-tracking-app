@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
 import { FotoMedico } from "@/components/FotoMedico";
+import { Vazio } from "@/components/Vazio";
 import { nomeEspecialidadePorSlug } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 
@@ -27,7 +28,7 @@ function Especialidade() {
   return (
     <PageShell label="Médicos" title={nome} backTo="/medicos">
       {lista.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Nenhum médico cadastrado nesta especialidade.</p>
+        <Vazio titulo="Nenhum médico cadastrado nesta especialidade." acao="+ cadastrar médico" />
       ) : (
         <div className="flex flex-wrap gap-[clamp(1rem,3vw,3rem)]">
           {lista.map((m) => (
