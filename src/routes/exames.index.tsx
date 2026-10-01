@@ -6,10 +6,10 @@ import { imgCategoriaExame } from "@/lib/imagens";
 export const Route = createFileRoute("/exames/")({
   head: () => ({
     meta: [
-      { title: "Exames — Ana Carolina" },
+      { title: "Exames — Lyna" },
       { name: "description", content: "Categorias de exames: laboratoriais, de imagem, gráficos e mais." },
-      { property: "og:title", content: "Exames — Ana Carolina" },
-      { property: "og:description", content: "Categorias de exames do prontuário de Ana Carolina." },
+      { property: "og:title", content: "Exames — Lyna" },
+      { property: "og:description", content: "Categorias de exames do prontuário do seu prontuário." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

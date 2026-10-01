@@ -13,13 +13,13 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ana Carolina — Prontuário digital" },
+      { title: "Lyna — Seu prontuário digital" },
       {
         name: "description",
         content:
-          "Prontuário visual de Ana Carolina: exames, médicos, tratamentos e doenças organizados em uma linha do tempo.",
+          "Prontuário visual do seu prontuário: exames, médicos, tratamentos e doenças organizados em uma linha do tempo.",
       },
-      { property: "og:title", content: "Ana Carolina — Prontuário digital" },
+      { property: "og:title", content: "Lyna — Seu prontuário digital" },
       {
         property: "og:description",
         content: "Exames, médicos, tratamentos e doenças em uma linha do tempo.",

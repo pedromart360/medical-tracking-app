@@ -98,7 +98,7 @@ function Pagina({ doc, indice }: { doc: DocumentoAberto; indice: number }) {
 
       {indice === 0 && (
         <p className="mt-[6%] text-[0.6rem] leading-relaxed text-foreground/80 sm:text-xs">
-          Documento emitido em {doc.data}, referente ao atendimento da paciente Ana Carolina.
+          Documento emitido em {doc.data}, referente ao atendimento do titular da conta.
         </p>
       )}
 

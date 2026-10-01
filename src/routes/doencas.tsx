@@ -11,9 +11,9 @@ import { useProntuario } from "@/lib/adicionados";
 export const Route = createFileRoute("/doencas")({
   head: () => ({
     meta: [
-      { title: "Doenças — Ana Carolina" },
+      { title: "Doenças — Lyna" },
       { name: "description", content: "Histórico de doenças, diagnósticos e tratamentos vinculados." },
-      { property: "og:title", content: "Doenças — Ana Carolina" },
+      { property: "og:title", content: "Doenças — Lyna" },
       { property: "og:description", content: "Histórico de doenças e internações." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

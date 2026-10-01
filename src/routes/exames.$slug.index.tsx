@@ -9,9 +9,9 @@ import { HorizontalScroll } from "@/components/HorizontalScroll";
 export const Route = createFileRoute("/exames/$slug/")({
   head: () => ({
     meta: [
-      { title: "Categoria de exames — Ana Carolina" },
+      { title: "Categoria de exames — Lyna" },
       { name: "description", content: "Áreas médicas e tipos de exames da categoria selecionada." },
-      { property: "og:title", content: "Categoria de exames — Ana Carolina" },
+      { property: "og:title", content: "Categoria de exames — Lyna" },
       { property: "og:description", content: "Áreas médicas e tipos de exames." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -16,9 +16,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/tratamentos")({
   head: () => ({
     meta: [
-      { title: "Tratamentos — Ana Carolina" },
+      { title: "Tratamentos — Lyna" },
       { name: "description", content: "Tratamentos domiciliares, hospitalares e medicamentosos com períodos." },
-      { property: "og:title", content: "Tratamentos — Ana Carolina" },
+      { property: "og:title", content: "Tratamentos — Lyna" },
       { property: "og:description", content: "Tratamentos e períodos de aplicação." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

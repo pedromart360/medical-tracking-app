@@ -8,9 +8,9 @@ import { useProntuario } from "@/lib/adicionados";
 export const Route = createFileRoute("/medicos/$esp/")({
   head: () => ({
     meta: [
-      { title: "Especialidade — Ana Carolina" },
+      { title: "Especialidade — Lyna" },
       { name: "description", content: "Médicos da especialidade selecionada." },
-      { property: "og:title", content: "Especialidade — Ana Carolina" },
+      { property: "og:title", content: "Especialidade — Lyna" },
       { property: "og:description", content: "Médicos da especialidade selecionada." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
