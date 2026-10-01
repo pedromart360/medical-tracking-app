@@ -117,7 +117,7 @@ export function usePerfil(): Perfil {
 /** Idade em anos no formato "24A", calculada a partir da data de nascimento. */
 export function idadeDoPerfil(p: Perfil): string {
   const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(p.nascimento.trim());
-  if (!m) return patient.idade;
+  if (!m) return "";
   const dia = Number(m[1]);
   const mes = Number(m[2]);
   const ano = Number(m[3]);
@@ -126,7 +126,7 @@ export function idadeDoPerfil(p: Perfil): string {
   const aniversarioPassou =
     hoje.getMonth() + 1 > mes || (hoje.getMonth() + 1 === mes && hoje.getDate() >= dia);
   if (!aniversarioPassou) idade -= 1;
-  if (idade < 0 || idade > 130) return patient.idade;
+  if (idade < 0 || idade > 130) return "";
   return `${idade}A`;
 }
 
