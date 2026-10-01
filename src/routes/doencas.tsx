@@ -5,7 +5,7 @@ import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
 import { Vazio } from "@/components/Vazio";
-import { anos, patient, type DoencaRegistro } from "@/lib/data";
+import { anos, type DoencaRegistro } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
 
 export const Route = createFileRoute("/doencas")({
@@ -265,7 +265,7 @@ function Doencas() {
             </>
           ) : (
             <p className="text-[clamp(0.75rem,1vw,0.9375rem)] text-muted-foreground">
-              Selecione um item do histórico de {patient.nome.split(" ")[0]}.
+              Selecione um item do histórico.
             </p>
           )}
         </div>
