@@ -301,7 +301,7 @@ const ex = (nome: string, data: string, pedidoPor: string, local: string): Exame
   local,
 });
 
-export const pontosCorpo: Record<string, PontoCorpo[]> = {
+const pontosCorpoBase: Record<string, PontoCorpo[]> = {
   "de-imagem": [
     {
       id: "cranio",
@@ -593,7 +593,7 @@ function gerarArquivos(): ExameArquivo[] {
   return lista;
 }
 
-export const arquivosExame: ExameArquivo[] = gerarArquivos();
+export const arquivosExame: ExameArquivo[] = [];
 
 const porAno = (a: ExameArquivo, b: ExameArquivo) => b.ano - a.ano;
 
@@ -806,7 +806,7 @@ function gerarMedicos(): Medico[] {
   return lista;
 }
 
-export const medicosBase: Medico[] = gerarMedicos();
+export const medicosBase: Medico[] = [];
 
 export function medicosPorEspecialidade(slug: string) {
   return medicosBase.filter((m) => m.especialidadeSlug === slug);
@@ -931,7 +931,7 @@ function gerarTratamentos(): TratamentoRegistro[] {
   return lista;
 }
 
-export const tratamentosBase: TratamentoRegistro[] = gerarTratamentos();
+export const tratamentosBase: TratamentoRegistro[] = [];
 
 export function tratamentosPorCategoria(categoria: string, ano: number) {
   return tratamentosBase.filter((t) => t.categoria === categoria && t.ano === ano);
@@ -999,7 +999,7 @@ function gerarDoencas(): DoencaRegistro[] {
   return lista;
 }
 
-export const doencasBase: DoencaRegistro[] = gerarDoencas();
+export const doencasBase: DoencaRegistro[] = [];
 
 export function acharTratamento(id: string) {
   return tratamentosBase.find((t) => t.id === id);
