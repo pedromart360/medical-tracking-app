@@ -286,7 +286,6 @@ export function mesclarPontos(slug: string, exames: ExameArquivo[]): PontoCorpo[
   const base = pontosCorpo[slug];
   if (!base) return undefined;
   const novos = exames.filter((e) => e.categoriaSlug === slug && e.regiao);
-  if (novos.length === 0) return base;
 
   const lista: PontoCorpo[] = base.map((p) => ({ ...p, exames: [...p.exames] }));
   for (const e of novos) {
@@ -309,7 +308,8 @@ export function mesclarPontos(slug: string, exames: ExameArquivo[]): PontoCorpo[
       ...ponto.exames,
     ];
   }
-  return lista;
+  /* só mostra marcador onde existe exame cadastrado */
+  return lista.filter((p) => p.exames.length > 0);
 }
 
 export type Prontuario = {
