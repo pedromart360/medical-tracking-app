@@ -131,11 +131,18 @@ function Doencas() {
           </div>
 
           <div className="-mx-1 mt-[clamp(0.75rem,1.4vw,1.25rem)] flex gap-[clamp(0.75rem,1.6vw,1.5rem)] overflow-x-auto px-1 pb-2">
-            {colunas.length === 0 && (
-              <p className="text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
-                Nenhuma doença encontrada.
-              </p>
-            )}
+            {colunas.length === 0 &&
+              (termo ? (
+                <p className="text-[clamp(0.75rem,1vw,0.875rem)] text-muted-foreground">
+                  Nenhuma doença encontrada.
+                </p>
+              ) : (
+                <Vazio
+                  titulo="Nenhuma doença registrada ainda."
+                  acao="+ registrar doença"
+                  className="w-full"
+                />
+              ))}
             {colunas.map((coluna, ci) => (
               <div key={ci} className="min-w-[clamp(15rem,20vw,19rem)] flex-1 space-y-0.5">
                 {coluna.map((d) => {
