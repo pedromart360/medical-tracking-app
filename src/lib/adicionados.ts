@@ -162,6 +162,8 @@ function paraArquivo(r: RegistroSalvo): ExameArquivo {
   };
   if (r["regiao"]) arquivo.regiao = r["regiao"];
   if (r["observacoes"]) arquivo.observacoes = r["observacoes"];
+  if (r["arquivoPath"]) arquivo.arquivoPath = r["arquivoPath"];
+  if (r["laudoPath"]) arquivo.laudoPath = r["laudoPath"];
   return arquivo;
 }
 
@@ -191,7 +193,7 @@ function paraConsulta(r: RegistroSalvo): Consulta {
     data,
     ano: p.a,
     local: r["local"] || "Não informado",
-    laudos: r["documento"] ? [{ id: `${r.id}-doc`, titulo: r["documento"], paginas: 1 }] : [],
+    laudos: r["documento"] ? [{ id: `${r.id}-doc`, titulo: r["documento"], paginas: 1, ...(r["documentoPath"] ? { caminho: r["documentoPath"] } : {}) }] : [],
     exames: listaJson(r["exames"]).map((nome) => ({ nome, midia: "laudo" as MidiaExame })),
     resumo: r["resumo"] ?? "",
   };
@@ -241,7 +243,7 @@ function paraDoenca(r: RegistroSalvo, tratamentos: TratamentoRegistro[]): Doenca
       medicoId: vinculo?.id ?? "",
     },
     tratamentoId: trat?.id ?? "",
-    documentos: r["documento"] ? [{ id: `${r.id}-doc`, titulo: r["documento"], paginas: 1 }] : [],
+    documentos: r["documento"] ? [{ id: `${r.id}-doc`, titulo: r["documento"], paginas: 1, ...(r["documentoPath"] ? { caminho: r["documentoPath"] } : {}) }] : [],
   };
 }
 
@@ -304,7 +306,16 @@ export function mesclarPontos(slug: string, exames: ExameArquivo[]): PontoCorpo[
       lista.push(ponto);
     }
     ponto.exames = [
-      { nome: e.nome, data: e.data, pedidoPor: e.pedidoPor, realizadoEm: e.data, local: e.local },
+      {
+        nome: e.nome,
+        data: e.data,
+        pedidoPor: e.pedidoPor,
+        realizadoEm: e.data,
+        local: e.local,
+        ...(e.arquivoPath ? { arquivoPath: e.arquivoPath } : {}),
+        ...(e.laudoPath ? { laudoPath: e.laudoPath } : {}),
+        ...(e.observacoes ? { observacoes: e.observacoes } : {}),
+      },
       ...ponto.exames,
     ];
   }
