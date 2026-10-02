@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageShell } from "@/components/PageShell";
-import { areaSlug, exameCategorias, tiposPorCategoria } from "@/lib/data";
+import { areaSlug, areasMedicas, exameCategorias, tiposPorCategoria } from "@/lib/data";
 import { mesclarPontos, useProntuario } from "@/lib/adicionados";
 import { BodyFigure } from "@/components/BodyFigure";
 import { imgEspecialidade, imgTipoExame } from "@/lib/imagens";
@@ -43,9 +43,7 @@ function Categoria() {
   const { arquivos } = useProntuario();
   const pontos = mesclarPontos(slug, arquivos);
 
-  const areas = Array.from(
-    new Set(arquivos.filter((a) => a.categoriaSlug === slug).map((a) => a.areaMedica)),
-  );
+    const areas = areasMedicas;
 
   const secoes = (
     <div className="flex h-full min-w-0 flex-col justify-center gap-[clamp(1.25rem,3.2vw,2.75rem)]">
