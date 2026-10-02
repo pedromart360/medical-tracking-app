@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { PageShell } from "@/components/PageShell";
 import { Button } from "@/components/ui/button";
+import { abrirArquivo } from "@/lib/arquivos";
 import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoViewer";
 import { Vazio } from "@/components/Vazio";
 import { anos, type DoencaRegistro } from "@/lib/data";
@@ -236,7 +237,9 @@ function Doencas() {
                   <Button
                     key={d.id}
                     onClick={() =>
-                      setDocumento({
+                      d.caminho
+                        ? void abrirArquivo(d.caminho)
+                        : setDocumento({
                         titulo: d.titulo,
                         paginas: d.paginas,
                         medico: item.percebidaPor.nome,

@@ -7,6 +7,7 @@ import { DocumentoViewer, type DocumentoAberto } from "@/components/DocumentoVie
 import { ExameModal, type ExameDetalhe } from "@/components/ExameModal";
 import { nomeEspecialidadePorSlug, type Consulta } from "@/lib/data";
 import { useProntuario } from "@/lib/adicionados";
+import { abrirArquivo } from "@/lib/arquivos";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/medicos/$esp/$doc")({
@@ -28,7 +29,7 @@ const POR_QUADRO = 10;
 function MedicoDetalhe() {
   const { esp, doc } = Route.useParams();
   const nomeEsp = nomeEspecialidadePorSlug(esp) ?? "Médicos";
-  const { medicos } = useProntuario();
+  const { medicos, arquivos } = useProntuario();
   const daEsp = medicos.filter((m) => m.especialidadeSlug === esp);
   const medico = daEsp.find((m) => m.id === doc) ?? daEsp[0];
 
@@ -83,7 +84,9 @@ function MedicoDetalhe() {
                 <Chip
                   key={l.id}
                   onClick={() =>
-                    setDocumento({
+                    l.caminho
+                      ? void abrirArquivo(l.caminho)
+                      : setDocumento({
                       titulo: l.titulo,
                       paginas: l.paginas,
                       medico: medico.nome,
@@ -108,15 +111,20 @@ function MedicoDetalhe() {
                 consulta.exames.map((e, i) => (
                   <Chip
                     key={`${e.nome}-${i}`}
-                    onClick={() =>
+                    onClick={() => {
+                      const alvo = e.nome.trim().toLowerCase();
+                      const enviado = arquivos.find((a) => a.nome.trim().toLowerCase() === alvo);
                       setExame({
                         nome: e.nome,
                         pedidoPor: medico.nome,
-                        data: consulta.data,
-                        local: consulta.local,
+                        data: enviado?.data ?? consulta.data,
+                        local: enviado?.local ?? consulta.local,
                         midia: e.midia,
-                      })
-                    }
+                        arquivoPath: enviado?.arquivoPath,
+                        laudoPath: enviado?.laudoPath,
+                        observacoes: enviado?.observacoes,
+                      });
+                    }}
                   >
                     {e.nome}
                   </Chip>
