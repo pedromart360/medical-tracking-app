@@ -278,6 +278,9 @@ export type ExameCorpo = {
   pedidoPor: string;
   realizadoEm: string;
   local: string;
+  arquivoPath?: string;
+  laudoPath?: string;
+  observacoes?: string;
 };
 
 export type PontoCorpo = {
@@ -489,6 +492,8 @@ export type ExameArquivo = {
   /** região do corpo (exames de imagem e nucleares) */
   regiao?: string;
   observacoes?: string;
+  arquivoPath?: string;
+  laudoPath?: string;
 };
 
 type PerfilTipo = { nomes: string[]; area: string; midia: MidiaExame };
@@ -625,6 +630,8 @@ export type DocumentoConsulta = {
   id: string;
   titulo: string;
   paginas: number;
+  /** arquivo real enviado para a nuvem */
+  caminho?: string;
 };
 
 export type ExameDaConsulta = {

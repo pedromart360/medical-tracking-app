@@ -93,6 +93,9 @@ export function ArquivosExames({ itens }: { itens: ExameArquivo[] }) {
             realizadoPor: aberto.realizadoPor,
             local: aberto.local,
             midia: aberto.midia,
+            arquivoPath: aberto.arquivoPath,
+            laudoPath: aberto.laudoPath,
+            observacoes: aberto.observacoes,
           }}
           onClose={() => setAberto(null)}
         />

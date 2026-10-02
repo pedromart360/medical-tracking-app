@@ -153,6 +153,9 @@ export function BodyFigure({ pontos }: { pontos: PontoCorpo[] }) {
             data: exame.data,
             local: exame.local,
             midia: "rx",
+            arquivoPath: exame.arquivoPath,
+            laudoPath: exame.laudoPath,
+            observacoes: exame.observacoes,
           }}
           onClose={() => setExame(null)}
         />
