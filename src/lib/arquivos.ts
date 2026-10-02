@@ -26,10 +26,23 @@ export async function enviarArquivo(file: File): Promise<{ caminho: string } | {
   return { caminho };
 }
 
-/** Link temporário para abrir um arquivo guardado. */
-export async function abrirArquivo(caminho: string) {
+/** Link temporário (10 min) para um arquivo guardado. */
+export async function linkArquivo(caminho: string): Promise<string | null> {
   const { data } = await supabase.storage.from(BUCKET).createSignedUrl(caminho, 60 * 10);
-  if (data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener");
+  return data?.signedUrl ?? null;
+}
+
+/** Abre o arquivo guardado em nova aba (a aba abre já no clique para não ser bloqueada). */
+export async function abrirArquivo(caminho: string) {
+  const aba = window.open("", "_blank");
+  const url = await linkArquivo(caminho);
+  if (!url) {
+    aba?.close();
+    window.alert("Não foi possível abrir o arquivo. Tente novamente.");
+    return;
+  }
+  if (aba) aba.location.href = url;
+  else window.location.href = url;
 }
 
 export async function removerArquivo(caminho: string) {
