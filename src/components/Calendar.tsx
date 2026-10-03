@@ -24,12 +24,12 @@ export function CalendarOverlay({
   onClose: () => void;
   modulo?: ModuloEvento | "todos";
 }) {
-  // pos = índice do ponto na linha do tempo (anos exibidos do mais recente ao mais antigo)
+  // pos = índice do ponto na linha do tempo: 0 = Dez do ano mais recente, decrescente até Jan do mais antigo
   const [pos, setPos] = useState(() => {
     const hoje = new Date();
     const ai = anos.indexOf(hoje.getFullYear());
-    if (ai >= 0) return ai * 12 + hoje.getMonth();
-    return hoje.getFullYear() > (anos[0] as number) ? 11 : (anos.length - 1) * 12;
+    if (ai >= 0) return ai * 12 + (11 - hoje.getMonth());
+    return hoje.getFullYear() > (anos[0] as number) ? 0 : TOTAL - 1;
   });
   const [dia, setDia] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<ModuloEvento | "todos">(moduloInicial);
@@ -38,19 +38,18 @@ export function CalendarOverlay({
   const eventos = useEventos(prontuario);
 
   const anoIndex = Math.floor(pos / 12);
-  const mesIndex = pos % 12;
+  const mesIndex = 11 - (pos % 12);
   const mes = meses[mesIndex] as string;
   const ano = anos[anoIndex] as number;
   const diasNoMes = new Date(ano, mesIndex + 1, 0).getDate();
   const offset = new Date(ano, mesIndex, 1).getDay();
 
-  // índice cronológico: 0 = Janeiro do ano mais antigo ... TOTAL-1 = Dezembro do mais recente
-  const cron = (anos.length - 1 - anoIndex) * 12 + mesIndex;
+  // cron: 0 = mês mais antigo ... TOTAL-1 = mês mais recente (usado nos limites das setas)
+  const cron = TOTAL - 1 - pos;
 
+  // delta > 0 avança para o futuro (para a esquerda na linha do tempo)
   const ir = (delta: number) => {
-    const alvo = Math.min(TOTAL - 1, Math.max(0, cron + delta));
-    const ai = anos.length - 1 - Math.floor(alvo / 12);
-    setPos(ai * 12 + (alvo % 12));
+    setPos(Math.min(TOTAL - 1, Math.max(0, pos - delta)));
     setDia(null);
   };
 
