@@ -25,7 +25,12 @@ export function CalendarOverlay({
   modulo?: ModuloEvento | "todos";
 }) {
   // pos = índice do ponto na linha do tempo (anos exibidos do mais recente ao mais antigo)
-  const [pos, setPos] = useState(0);
+  const [pos, setPos] = useState(() => {
+    const hoje = new Date();
+    const ai = anos.indexOf(hoje.getFullYear());
+    if (ai >= 0) return ai * 12 + hoje.getMonth();
+    return hoje.getFullYear() > (anos[0] as number) ? 11 : (anos.length - 1) * 12;
+  });
   const [dia, setDia] = useState<string | null>(null);
   const [filtro, setFiltro] = useState<ModuloEvento | "todos">(moduloInicial);
 
@@ -76,8 +81,8 @@ export function CalendarOverlay({
         if (dia) setDia(null);
         else onClose();
       }
-      if (e.key === "ArrowLeft") ir(-1);
-      if (e.key === "ArrowRight") ir(1);
+      if (e.key === "ArrowLeft") ir(1);
+      if (e.key === "ArrowRight") ir(-1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -167,9 +172,9 @@ export function CalendarOverlay({
             <>
               <div className="flex min-h-0 flex-1 items-center gap-[clamp(0.5rem,1.8vw,1.5rem)]">
                 <button
-                  aria-label="Mês anterior"
-                  disabled={cron === 0}
-                  onClick={() => ir(-1)}
+                  aria-label="Mês seguinte"
+                  disabled={cron === TOTAL - 1}
+                  onClick={() => ir(1)}
                   className={`hidden sm:flex ${seta}`}
                 >
                   <ChevronLeft className="size-[clamp(1.25rem,2.2vw,1.75rem)]" strokeWidth={2.5} />
@@ -227,9 +232,9 @@ export function CalendarOverlay({
                 </div>
 
                 <button
-                  aria-label="Próximo mês"
-                  disabled={cron === TOTAL - 1}
-                  onClick={() => ir(1)}
+                  aria-label="Mês anterior"
+                  disabled={cron === 0}
+                  onClick={() => ir(-1)}
                   className={`hidden sm:flex ${seta}`}
                 >
                   <ChevronRight className="size-[clamp(1.25rem,2.2vw,1.75rem)]" strokeWidth={2.5} />
@@ -238,17 +243,17 @@ export function CalendarOverlay({
 
               <div className="mt-3 flex shrink-0 items-center justify-center gap-6 sm:hidden">
                 <button
-                  aria-label="Mês anterior"
-                  disabled={cron === 0}
-                  onClick={() => ir(-1)}
+                  aria-label="Mês seguinte"
+                  disabled={cron === TOTAL - 1}
+                  onClick={() => ir(1)}
                   className={seta}
                 >
                   <ChevronLeft className="size-5" strokeWidth={2.5} />
                 </button>
                 <button
-                  aria-label="Próximo mês"
-                  disabled={cron === TOTAL - 1}
-                  onClick={() => ir(1)}
+                  aria-label="Mês anterior"
+                  disabled={cron === 0}
+                  onClick={() => ir(-1)}
                   className={seta}
                 >
                   <ChevronRight className="size-5" strokeWidth={2.5} />
