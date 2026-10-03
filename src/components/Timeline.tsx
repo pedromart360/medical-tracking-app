@@ -43,7 +43,7 @@ export function Timeline({
               <button
                 key={i}
                 type="button"
-                aria-label={`Mês ${i + 1}`}
+                aria-label={`${["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"][11 - (i % 12)]} ${anos[Math.floor(i / 12)]}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelect(i);
